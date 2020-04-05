@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h1>Gravity Crash</h1>
-
     <v-layout column justify-center align-center>
       <v-tabs v-model="tab" fixed-tabs>
         <v-tab> Caotic Isabelle </v-tab>
@@ -17,7 +15,6 @@
               :options="chartOption"
               :styles="chartStyles"
             />
-            <v-text-field v-model="x" label="MA"></v-text-field>
           </v-card>
         </v-tabs-items>
       </v-container>
@@ -26,18 +23,31 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
 import { ChartData, ChartOptions } from 'chart.js'
+import { makeArr, calcDamage } from '~/utils/calc'
 import ChartLine from '~/components/ChartLine.vue'
 import { isabelle, toilet, little, straw } from '~/utils/monsters'
+import { attribute } from '~/types'
 
 @Component({
   components: {
     ChartLine
   }
 })
-export default class Index extends Vue {
-  x = 1000
+export default class FarmingMonster extends Vue {
+  @Prop({ required: true })
+  attack!: number
+
+  @Prop({ required: true })
+  attacktype!: 'magic' | 'physical'
+
+  @Prop({ required: true })
+  attribute!: attribute
+
+  @Prop({ required: false })
+  attacknum?: number
+
   datanum = 5
   tab = 0
 
@@ -56,26 +66,20 @@ export default class Index extends Vue {
     }
   }
 
-  get dmg() {
-    return (
-      ((100 - this.monster.darkR) / 100) *
-      ((this.x * 1200) / 10 - this.monster.md * 0.75)
+  get damage() {
+    return calcDamage(
+      this.monster,
+      this.attack,
+      this.attacktype,
+      this.attribute,
+      this.attacknum ?? 1
     )
-  }
-
-  makeArr = (startValue: number, stopValue: number, cardinality: number) => {
-    const arr = []
-    const step = (stopValue - startValue) / (cardinality - 1)
-    for (let i = 0; i < cardinality; i++) {
-      arr.push(startValue + step * i)
-    }
-    return arr
   }
 
   get dmgList() {
     return [
-      ...this.makeArr(0, this.dmg, this.datanum),
-      this.dmg + this.dmg / this.datanum
+      ...makeArr(0, this.damage, this.datanum),
+      this.damage + this.damage / this.datanum
     ].map((x) => Math.round(x))
   }
 
@@ -88,7 +92,7 @@ export default class Index extends Vue {
       datasets: [
         {
           label: 'your damage',
-          data: [{ x: this.dmgList[this.datanum - 1], y: this.dmg }],
+          data: [{ x: this.dmgList[this.datanum - 1], y: this.damage }],
           borderColor: 'orange',
           pointBackgroundColor: 'orange',
           type: 'scatter',

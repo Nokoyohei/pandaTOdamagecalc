@@ -13,3 +13,4 @@ export interface Monster {
   phisicalR: number
   gunR: number
 }
+export type attribute = keyof Monster
