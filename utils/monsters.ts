@@ -53,15 +53,15 @@ const straw: Monster = {
   dp: 180000,
   md: 35000,
   fireR: 135,
-  waterR: 99,
-  windR: 95,
-  earthR: 92,
+  waterR: 90,
+  windR: 90,
+  earthR: 90,
   elecR: 90,
   lightR: 50,
   darkR: 90,
   noPropR: 90,
-  gunR: 95,
-  phisicalR: 99
+  gunR: 80,
+  phisicalR: 85
 }
 
 export { isabelle, little, toilet, straw }

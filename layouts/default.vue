@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer expand-on-hover clipped fixed app>
+    <v-navigation-drawer expand-on-hover permanent clipped fixed app>
       <v-list-item>
         <v-list-item-icon>
           <img src="~/assets/mac.gif" />

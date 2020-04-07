@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout column justify-center align-center>
-      <v-tabs v-model="tab" fixed-tabs>
+      <v-tabs v-model="tab" fixed-tabs @change="changeSelectedMonster">
         <v-tab> Caotic Isabelle </v-tab>
         <v-tab> Mermaid little </v-tab>
         <v-tab> Haunted Toilet </v-tab>
@@ -23,12 +23,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, Prop, PropSync } from 'nuxt-property-decorator'
 import { ChartData, ChartOptions } from 'chart.js'
-import { makeArr, calcDamage } from '~/utils/calc'
+import { makeArr } from '~/utils/calc'
 import ChartLine from '~/components/ChartLine.vue'
 import { isabelle, toilet, little, straw } from '~/utils/monsters'
-import { attribute } from '~/types'
+import { Monster } from '~/types'
 
 @Component({
   components: {
@@ -37,43 +37,31 @@ import { attribute } from '~/types'
 })
 export default class FarmingMonster extends Vue {
   @Prop({ required: true })
-  attack!: number
+  damage!: number
 
-  @Prop({ required: true })
-  attacktype!: 'magic' | 'physical'
-
-  @Prop({ required: true })
-  attribute!: attribute
-
-  @Prop({ required: false })
-  attacknum?: number
+  @PropSync('monster', { required: true })
+  _monster!: Monster
 
   datanum = 5
   tab = 0
 
-  get monster() {
+  changeSelectedMonster() {
     switch (this.tab) {
       case 0:
-        return isabelle
+        this._monster = isabelle
+        break
       case 1:
-        return little
+        this._monster = little
+        break
       case 2:
-        return toilet
+        this._monster = toilet
+        break
       case 3:
-        return straw
+        this._monster = straw
+        break
       default:
         return isabelle
     }
-  }
-
-  get damage() {
-    return calcDamage(
-      this.monster,
-      this.attack,
-      this.attacktype,
-      this.attribute,
-      this.attacknum ?? 1
-    )
   }
 
   get dmgList() {
@@ -93,15 +81,15 @@ export default class FarmingMonster extends Vue {
         {
           label: 'your damage',
           data: [{ x: this.dmgList[this.datanum - 1], y: this.damage }],
-          borderColor: 'orange',
-          pointBackgroundColor: 'orange',
+          pointBackgroundColor:
+            this.damage >= this._monster.hp ? 'green' : 'gray',
           type: 'scatter',
           radius: 8
         },
         {
           label: `Isabelle's hp`,
           borderColor: 'red',
-          data: new Array<number>(this.datanum + 1).fill(this.monster.hp),
+          data: new Array<number>(this.datanum + 1).fill(this._monster.hp),
           radius: 0
         },
         {
