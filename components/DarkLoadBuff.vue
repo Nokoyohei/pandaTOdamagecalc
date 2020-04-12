@@ -1,20 +1,20 @@
 <template>
   <v-row>
-    <v-col cols="6" md="2">
+    <v-col cols="6" md="4">
       <v-switch
         v-model="_buff"
         label="Mist Of Mana"
         value="mistOfMana"
       ></v-switch>
     </v-col>
-    <v-col cols="6" md="2">
+    <v-col cols="6" md="4">
       <v-switch
         v-model="_buff"
         label="Dark Commando"
         value="darkCommando"
       ></v-switch>
     </v-col>
-    <v-col cols="6" md="2">
+    <v-col cols="6" md="4">
       <v-switch
         v-model="_buff"
         label="Blood Testament"

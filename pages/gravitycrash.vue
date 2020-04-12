@@ -1,13 +1,19 @@
 <template>
   <v-container>
     <h1>Gravity Crash</h1>
-    <farming-monster :damage="damage" :monster.sync="monster"/>
+    <farming-monster :damage="damage" :monster.sync="monster" />
     <p>{{ damage }} damage!!</p>
-    <p>
-      less than {{ resMa }} MA
-      <dark-load-buff :buff.sync="buff" />
-      <v-text-field v-model="ma" label="MA"></v-text-field></p
-  ></v-container>
+    less than {{ resMa }} MA
+
+    <v-row>
+      <v-col cols="12" md="6">
+        <dark-load-buff :buff.sync="buff" />
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-text-field v-model="ma" label="MA"></v-text-field>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -23,7 +29,7 @@ import {
   calcMonsterDef
 } from '~/utils/calc'
 import { MistOfManaBuff, BloodyTestamentBuff } from '~/utils/buffRatio'
-import { GravityCrashRatio, DarkCommandoRatio } from '~/utils/skillRatio'
+import SkillRatio from '~/utils/skillRatio'
 
 import { Monster } from '~/types'
 
@@ -68,8 +74,8 @@ export default class GravityCrash extends Vue {
 
   get resMa() {
     let attackRatio = this.buff.includes('darkCommando')
-      ? GravityCrashRatio + DarkCommandoRatio
-      : GravityCrashRatio
+      ? SkillRatio.GravityCrashRatio + SkillRatio.DarkCommandoRatio
+      : SkillRatio.GravityCrashRatio
     attackRatio = this.buff.includes('bloodTestament')
       ? attackRatio * BloodyTestamentBuff
       : attackRatio
