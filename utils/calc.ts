@@ -21,39 +21,49 @@ const calcGravityCrashDamage = (ma: number) =>
 
 const calcMonsterDef = (monster: Monster, attacktype: 'magic' | 'physical') =>
   attacktype === 'magic'
-    ? Math.round(monster.md * 0.9)
-    : Math.round(monster.dp * 0.75)
+    ? Math.ceil(monster.md * 0.9)
+    : Math.ceil(monster.dp * 0.75)
 
 const calcDamage = (
-  monster: Monster,
-  rogicalDamage: number,
-  attacktype: 'magic' | 'physical',
-  attribute: attribute,
-  attacknum: number = 1
+  monsterDef: number,
+  monsterResist: number,
+  rogicalDamage: number
 ) => {
-  const monsterDef = calcMonsterDef(monster, attacktype)
   const damage = Math.floor(
-    ((100 - monster[attribute]) / 100) *
-      (rogicalDamage - monsterDef * attacknum)
+    ((100 - monsterResist) / 100) * (rogicalDamage - monsterDef)
   )
   return damage < 0 ? 0 : damage
 }
 
+// const calcNeedStats = (
+//   monster: Monster,
+//   attacktype: 'magic' | 'physical',
+//   attribute: attribute,
+//   attackRatio: number,
+//   dependStats: number,
+//   constStats = 49,
+//   attacknum: number = 1
+// ) => {
+//   const monsterDef = calcMonsterDef(monster, attacktype)
+//   const resistance = (100 - monster[attribute]) / 100
+//   return (
+//     (monster.hp / resistance + attacknum * monsterDef) / attackRatio +
+//     constStats -
+//     dependStats
+//   )
+// }
+
 const calcNeedStats = (
-  monster: Monster,
-  attacktype: 'magic' | 'physical',
-  attribute: attribute,
+  monsterHp: number,
+  monsterDef: number,
+  monsterResist: number,
   attackRatio: number,
-  dependStats: number,
-  constStats = 49,
-  attacknum: number = 1
+  nowStats: number,
+  constStats = 49
 ) => {
-  const monsterDef = calcMonsterDef(monster, attacktype)
-  const resistance = (100 - monster[attribute]) / 100
+  const resistance = (100 - monsterResist) / 100
   return (
-    (monster.hp / resistance + attacknum * monsterDef) / attackRatio +
-    constStats -
-    dependStats
+    (monsterHp / resistance + monsterDef) / attackRatio + constStats - nowStats
   )
 }
 
@@ -61,6 +71,7 @@ export {
   makeArr,
   calcDarkCommandoDamage,
   calcGravityCrashDamage,
+  calcMonsterDef,
   calcDamage,
   calcNeedStats
 }

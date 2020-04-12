@@ -2,7 +2,7 @@
   <v-container>
     <h1>Gravity Crash</h1>
     <farming-monster :damage="damage" :monster.sync="monster"/>
-    <p>{{ this.damage }} damage!!</p>
+    <p>{{ damage }} damage!!</p>
     <p>
       less than {{ resMa }} MA
       <dark-load-buff :buff.sync="buff" />
@@ -19,7 +19,8 @@ import {
   calcDarkCommandoDamage,
   calcGravityCrashDamage,
   calcDamage,
-  calcNeedStats
+  calcNeedStats,
+  calcMonsterDef
 } from '~/utils/calc'
 import { MistOfManaBuff, BloodyTestamentBuff } from '~/utils/buffRatio'
 import { GravityCrashRatio, DarkCommandoRatio } from '~/utils/skillRatio'
@@ -52,13 +53,17 @@ export default class GravityCrash extends Vue {
     }
 
     return (
-      calcDamage(this.monster, gravityCrashDamage, 'magic', 'darkR') +
-      calcDamage(this.monster, darkCommandoDamage, 'magic', 'darkR')
+      calcDamage(
+        calcMonsterDef(this.monster, 'magic'),
+        this.monster.darkR,
+        gravityCrashDamage
+      ) +
+      calcDamage(
+        calcMonsterDef(this.monster, 'magic'),
+        this.monster.darkR,
+        darkCommandoDamage
+      )
     )
-  }
-
-  get needMa() {
-    return (466190 * 10 + 31500) / 120 + 49
   }
 
   get resMa() {
@@ -69,22 +74,23 @@ export default class GravityCrash extends Vue {
       ? attackRatio * BloodyTestamentBuff
       : attackRatio
     const constStats = 49
-    const attacknum = this.buff.includes('darkCommando') ? 2 : 1
-    const dependStats = this.buff.includes('mistOfMana')
+    const monsterDef =
+      calcMonsterDef(this.monster, 'magic') *
+      (this.buff.includes('darkCommando') ? 2 : 1)
+    const nowStats = this.buff.includes('mistOfMana')
       ? this.ma * MistOfManaBuff
       : this.ma
 
     const needMa = calcNeedStats(
-      this.monster,
-      'magic',
-      'darkR',
+      this.monster.hp,
+      monsterDef,
+      this.monster.darkR,
       attackRatio,
-      dependStats,
-      constStats,
-      attacknum
+      nowStats,
+      constStats
     )
 
-    return Math.round(
+    return Math.ceil(
       this.buff.includes('mistOfMana') ? needMa / MistOfManaBuff : needMa
     )
   }
