@@ -1,7 +1,7 @@
-import { Monster, attribute } from '~/types'
-import { DarkCommandoRatio, GravityCrashRatio } from '~/utils/skillRatio'
+import { Monster } from '~/types'
+import SkillRatio from '~/utils/skillRatio'
 
-const makeArr = (
+export const makeArr = (
   startValue: number,
   stopValue: number,
   cardinality: number
@@ -14,17 +14,22 @@ const makeArr = (
   return arr
 }
 
-const calcDarkCommandoDamage = (ma: number) =>
-  Math.floor((ma - 49) * DarkCommandoRatio)
-const calcGravityCrashDamage = (ma: number) =>
-  Math.floor((ma - 49) * GravityCrashRatio)
+export const calcDarkCommandoDamage = (ma: number) =>
+  Math.floor((ma - 49) * SkillRatio.DarkCommandoRatio)
+export const calcGravityCrashDamage = (ma: number) =>
+  Math.floor((ma - 49) * SkillRatio.GravityCrashRatio)
+export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
+  Math.floor((ap + (lk + hv) * 8) * SkillRatio.FullHouseRatio)
 
-const calcMonsterDef = (monster: Monster, attacktype: 'magic' | 'physical') =>
+export const calcMonsterDef = (
+  monster: Monster,
+  attacktype: 'magic' | 'physical'
+) =>
   attacktype === 'magic'
     ? Math.ceil(monster.md * 0.9)
     : Math.ceil(monster.dp * 0.75)
 
-const calcDamage = (
+export const calcDamage = (
   monsterDef: number,
   monsterResist: number,
   rogicalDamage: number
@@ -32,28 +37,10 @@ const calcDamage = (
   const damage = Math.floor(
     ((100 - monsterResist) / 100) * (rogicalDamage - monsterDef)
   )
-  return damage < 0 ? 0 : damage
+  return Math.floor(damage < 0 ? 0 : damage)
 }
 
-// const calcNeedStats = (
-//   monster: Monster,
-//   attacktype: 'magic' | 'physical',
-//   attribute: attribute,
-//   attackRatio: number,
-//   dependStats: number,
-//   constStats = 49,
-//   attacknum: number = 1
-// ) => {
-//   const monsterDef = calcMonsterDef(monster, attacktype)
-//   const resistance = (100 - monster[attribute]) / 100
-//   return (
-//     (monster.hp / resistance + attacknum * monsterDef) / attackRatio +
-//     constStats -
-//     dependStats
-//   )
-// }
-
-const calcNeedStats = (
+export const calcNeedStats = (
   monsterHp: number,
   monsterDef: number,
   monsterResist: number,
@@ -65,13 +52,4 @@ const calcNeedStats = (
   return (
     (monsterHp / resistance + monsterDef) / attackRatio + constStats - nowStats
   )
-}
-
-export {
-  makeArr,
-  calcDarkCommandoDamage,
-  calcGravityCrashDamage,
-  calcMonsterDef,
-  calcDamage,
-  calcNeedStats
 }

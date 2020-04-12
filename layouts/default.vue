@@ -73,6 +73,11 @@ export default class DefaultLayout extends Vue {
       imgsrc: require('~/assets/hardgravity.gif'),
       title: 'GRAVITY CRASH',
       to: '/gravitycrash'
+    },
+    {
+      imgsrc: require('~/assets/hardgravity.gif'),
+      title: 'FULL HOUSE',
+      to: '/fullhouse'
     }
   ]
 
