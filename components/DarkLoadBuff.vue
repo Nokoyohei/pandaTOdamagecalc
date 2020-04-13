@@ -1,25 +1,20 @@
 <template>
   <v-row>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Mist Of Mana"
-        value="mistOfMana"
-      ></v-switch>
+    <v-col cols="6" md="5">
+      <v-switch v-model="_buff" value="darkCommando">
+        <template #label>
+          <img src="~/assets/darkcommando.gif" />
+          Dark Commando
+        </template>
+      </v-switch>
     </v-col>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Dark Commando"
-        value="darkCommando"
-      ></v-switch>
-    </v-col>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Blood Testament"
-        value="bloodTestament"
-      ></v-switch>
+    <v-col cols="6" md="5">
+      <v-switch v-model="_buff" value="bloodTestament">
+        <template #label>
+          <img src="~/assets/bloodTestament.gif" />
+          Blood Testament
+        </template>
+      </v-switch>
     </v-col>
   </v-row>
 </template>
@@ -30,6 +25,6 @@ import { Component, Vue, PropSync } from 'nuxt-property-decorator'
 @Component({})
 export default class DarkLoadBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: ('mistOfMana' | 'bloodTestament' | 'darkCommando')[]
+  _buff!: ('bloodTestament' | 'darkCommando')[]
 }
 </script>

@@ -1,18 +1,20 @@
 <template>
   <v-row dense>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Lucky Seven"
-        value="luckySeven"
-      ></v-switch>
+    <v-col cols="6" md="5">
+      <v-switch v-model="_buff" value="luckySeven">
+        <template #label>
+          <img src="~/assets/lucky7.gif" />
+          Lucky Seven
+        </template>
+      </v-switch>
     </v-col>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Aura of Luck"
-        value="auraOfLuck"
-      ></v-switch>
+    <v-col cols="6" md="5">
+      <v-switch v-model="_buff" value="auraOfLuck">
+        <template #label>
+          <img src="~/assets/luckyday.gif" />
+          Aura of Luck
+        </template>
+      </v-switch>
     </v-col>
   </v-row>
 </template>

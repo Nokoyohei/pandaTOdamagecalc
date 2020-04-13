@@ -1,18 +1,20 @@
 <template>
   <v-row dense>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Pumping Heart"
-        value="pumpingHeart"
-      ></v-switch>
+    <v-col cols="6" md="5">
+      <v-switch v-model="_buff" value="pumpingHeart">
+        <template #label>
+          <img src="~/assets/bh.gif" />
+          Pumping Heart
+        </template>
+      </v-switch>
     </v-col>
-    <v-col cols="6" md="4">
-      <v-switch
-        v-model="_buff"
-        label="Adrenaline"
-        value="adrenaline"
-      ></v-switch>
+    <v-col cols="6" md="5">
+      <v-switch v-model="_buff" value="adrenaline"
+        ><template #label>
+          <img src="~/assets/adrenaline.gif" />
+          Adrenaline
+        </template></v-switch
+      >
     </v-col>
   </v-row>
 </template>
