@@ -3,9 +3,6 @@
     <h1>Full House</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
     <p>{{ damage }} damage!!</p>
-    <p>less than {{ resAP }} AP</p>
-    <p>less than {{ resLK }} LK</p>
-    <p>less than {{ resHV }} HV</p>
     <v-row>
       <v-col cols="12" md="6">
         <ap-buff :buff.sync="APBuff" />
@@ -13,9 +10,21 @@
         <hv-buff :buff.sync="HVBuff" />
       </v-col>
       <v-col cols="12" md="6">
-        <v-text-field v-model.number="ap" label="AP"></v-text-field>
-        <v-text-field v-model.number="lk" label="LK"></v-text-field>
-        <v-text-field v-model.number="hv" label="HV"></v-text-field>
+        <stats-text-field
+          :input-stats.sync="ap"
+          :need-stats="resAP"
+          label="AP"
+        />
+        <stats-text-field
+          :input-stats.sync="lk"
+          :need-stats="resLK"
+          label="LK"
+        />
+        <stats-text-field
+          :input-stats.sync="hv"
+          :need-stats="resHV"
+          label="HV"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -27,6 +36,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import ApBuff from '~/components/APBuff.vue'
 import LkBuff from '~/components/LKBuff.vue'
 import HvBuff from '~/components/HVBuff.vue'
+import StatsTextField from '~/components/StatsTextField.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcFullHouseDamage,
@@ -50,7 +60,8 @@ import { Monster } from '~/types'
     FarmingMonster,
     ApBuff,
     LkBuff,
-    HvBuff
+    HvBuff,
+    StatsTextField
   }
 })
 export default class FullHouse extends Vue {

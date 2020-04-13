@@ -3,14 +3,17 @@
     <h1>Gravity Crash</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
     <p>{{ damage }} damage!!</p>
-    less than {{ resMa }} MA
 
     <v-row>
       <v-col cols="12" md="6">
         <dark-load-buff :buff.sync="buff" />
       </v-col>
       <v-col cols="12" md="6">
-        <v-text-field v-model="ma" label="MA"></v-text-field>
+        <stats-text-field
+          :input-stats.sync="ma"
+          :need-stats="resMa"
+          label="MA"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -20,6 +23,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
+import StatsTextField from '~/components/StatsTextField.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
@@ -36,7 +40,8 @@ import { Monster } from '~/types'
 @Component({
   components: {
     FarmingMonster,
-    DarkLoadBuff
+    DarkLoadBuff,
+    StatsTextField
   }
 })
 export default class GravityCrash extends Vue {
