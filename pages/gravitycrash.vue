@@ -2,11 +2,12 @@
   <v-container>
     <h1>Gravity Crash</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <p>{{ damage }} damage!!</p>
+    <damage-area :damage="damage" />
 
     <v-row>
       <v-col cols="12" md="6">
-        <dark-load-buff :buff.sync="buff" />
+        <ma-buff :buff.sync="MABuff" />
+        <dark-load-buff :buff.sync="DLBuff" />
       </v-col>
       <v-col cols="12" md="6">
         <stats-text-field
@@ -23,7 +24,9 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
+import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
+import DamageArea from '~/components/DamageArea.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
@@ -41,24 +44,27 @@ import { Monster } from '~/types'
   components: {
     FarmingMonster,
     DarkLoadBuff,
-    StatsTextField
+    MaBuff,
+    StatsTextField,
+    DamageArea
   }
 })
 export default class GravityCrash extends Vue {
   ma = 53129
   monster: Monster = isabelle
 
-  buff: ('mistOfMana' | 'bloodTestament' | 'darkCommando')[] = []
+  MABuff: 'mistOfMana'[] = []
+  DLBuff: ('bloodTestament' | 'darkCommando')[] = []
 
   get damage() {
-    const buffedMa = this.buff.includes('mistOfMana')
+    const buffedMa = this.MABuff.includes('mistOfMana')
       ? Math.round(MistOfManaBuff * this.ma)
       : this.ma
-    let darkCommandoDamage = this.buff.includes('darkCommando')
+    let darkCommandoDamage = this.DLBuff.includes('darkCommando')
       ? calcDarkCommandoDamage(buffedMa)
       : 0
     let gravityCrashDamage = calcGravityCrashDamage(buffedMa)
-    if (this.buff.includes('bloodTestament')) {
+    if (this.DLBuff.includes('bloodTestament')) {
       darkCommandoDamage = Math.round(darkCommandoDamage * BloodyTestamentBuff)
       gravityCrashDamage = Math.round(gravityCrashDamage * BloodyTestamentBuff)
     }
@@ -78,17 +84,17 @@ export default class GravityCrash extends Vue {
   }
 
   get resMa() {
-    let attackRatio = this.buff.includes('darkCommando')
+    let attackRatio = this.DLBuff.includes('darkCommando')
       ? SkillRatio.GravityCrashRatio + SkillRatio.DarkCommandoRatio
       : SkillRatio.GravityCrashRatio
-    attackRatio = this.buff.includes('bloodTestament')
+    attackRatio = this.DLBuff.includes('bloodTestament')
       ? attackRatio * BloodyTestamentBuff
       : attackRatio
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *
-      (this.buff.includes('darkCommando') ? 2 : 1)
-    const nowStats = this.buff.includes('mistOfMana')
+      (this.DLBuff.includes('darkCommando') ? 2 : 1)
+    const nowStats = this.MABuff.includes('mistOfMana')
       ? this.ma * MistOfManaBuff
       : this.ma
 
@@ -102,7 +108,7 @@ export default class GravityCrash extends Vue {
     )
 
     return Math.ceil(
-      this.buff.includes('mistOfMana') ? needMa / MistOfManaBuff : needMa
+      this.MABuff.includes('mistOfMana') ? needMa / MistOfManaBuff : needMa
     )
   }
 }

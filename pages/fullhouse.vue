@@ -2,7 +2,7 @@
   <v-container>
     <h1>Full House</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <p>{{ damage }} damage!!</p>
+    <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <ap-buff :buff.sync="APBuff" />
@@ -37,6 +37,7 @@ import ApBuff from '~/components/APBuff.vue'
 import LkBuff from '~/components/LKBuff.vue'
 import HvBuff from '~/components/HVBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
+import DamageArea from '~/components/DamageArea.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcFullHouseDamage,
@@ -61,7 +62,8 @@ import { Monster } from '~/types'
     ApBuff,
     LkBuff,
     HvBuff,
-    StatsTextField
+    StatsTextField,
+    DamageArea
   }
 })
 export default class FullHouse extends Vue {
@@ -124,20 +126,20 @@ export default class FullHouse extends Vue {
     let needAP = this.needStats
     if (this.APBuff.includes('pumpingHeart')) needAP /= PumpingHeartBuff
     if (this.APBuff.includes('adrenaline')) needAP /= AdrenalineBuff
-    return needAP
+    return Math.ceil(needAP)
   }
 
   get resLK() {
     let needLK = this.needStats / 8
     if (this.LKBuff.includes('luckySeven')) needLK /= LuckySevenBuff
     if (this.LKBuff.includes('auraOfLuck')) needLK /= AuraOfLuckBuff
-    return needLK
+    return Math.ceil(needLK)
   }
 
   get resHV() {
     let needHV = this.needStats / 8
     if (this.HVBuff.includes('dodgeMaster')) needHV /= DodgeMasterBuff
-    return needHV
+    return Math.ceil(needHV)
   }
 }
 </script>
