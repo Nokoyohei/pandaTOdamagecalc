@@ -1,11 +1,13 @@
-const DarkCommandoRatio = 300 / 10
-const GravityCrashRatio = 1200 / 10
-const FullHouseRatio = 800 / 100
-const EarthquakeBladeRatio = (attr: number) => 270 / 100 + (attr * 2) / 100
+const DarkCommando = 300 / 10
+const GravityCrash = 1200 / 10
+const FullHouse = 800 / 100
+const EarthquakeBlade = (attr: number) => 270 / 100 + (attr * 2) / 100
+const FanOfKnives = 800 / 10
 
 export default {
-  DarkCommandoRatio,
-  GravityCrashRatio,
-  FullHouseRatio,
-  EarthquakeBladeRatio
+  DarkCommando,
+  GravityCrash,
+  FullHouse,
+  EarthquakeBlade,
+  FanOfKnives
 }

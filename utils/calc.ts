@@ -15,13 +15,15 @@ export const makeArr = (
 }
 
 export const calcDarkCommandoDamage = (ma: number) =>
-  Math.ceil((ma - 49) * SkillRatio.DarkCommandoRatio)
+  Math.ceil((ma - 49) * SkillRatio.DarkCommando)
 export const calcGravityCrashDamage = (ma: number) =>
-  Math.ceil((ma - 49) * SkillRatio.GravityCrashRatio)
+  Math.ceil((ma - 49) * SkillRatio.GravityCrash)
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
-  Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouseRatio)
+  Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
 export const calcEarthquakeBladeDamage = (ap: number, soil: number) =>
-  Math.ceil(ap * SkillRatio.EarthquakeBladeRatio(soil))
+  Math.ceil(ap * SkillRatio.EarthquakeBlade(soil))
+export const calcFanOfKnicesDamage = (da: number, throwAp: number) =>
+  Math.ceil((da + throwAp / 10) * SkillRatio.FanOfKnives)
 
 export const calcMonsterDef = (
   monster: Monster,

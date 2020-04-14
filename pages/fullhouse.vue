@@ -112,7 +112,7 @@ export default class FullHouse extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.phisicalR,
-      SkillRatio.FullHouseRatio,
+      SkillRatio.FullHouse,
       this.buffedAP + (this.buffedLK + this.buffedHV) * 8,
       0
     )

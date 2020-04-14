@@ -70,19 +70,24 @@ export default class DefaultLayout extends Vue {
   drawer = false
   farmingMenu = [
     {
+      imgsrc: require('~/assets/earthquakeblade.gif'),
+      title: 'EARTHQUAKE BLADE',
+      to: '/earthquakeblade'
+    },
+    {
       imgsrc: require('~/assets/hardgravity.gif'),
       title: 'GRAVITY CRASH',
       to: '/gravitycrash'
     },
     {
+      imgsrc: require('~/assets/fanofknives.gif'),
+      title: 'FAN OF KNIVES',
+      to: '/fanofknives'
+    },
+    {
       imgsrc: require('~/assets/fullhouse.gif'),
       title: 'FULL HOUSE',
       to: '/fullhouse'
-    },
-    {
-      imgsrc: require('~/assets/earthquakeblade.gif'),
-      title: 'EARTHQUAKE BLADE',
-      to: '/earthquakeblade'
     }
   ]
 

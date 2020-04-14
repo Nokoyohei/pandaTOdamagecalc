@@ -77,7 +77,7 @@ export default class EarthquakeBlade extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.phisicalR,
-      SkillRatio.EarthquakeBladeRatio(this.soil),
+      SkillRatio.EarthquakeBlade(this.soil),
       this.buffedAP + (this.soil * 2) / 100,
       0
     )
@@ -93,7 +93,7 @@ export default class EarthquakeBlade extends Vue {
         calcMonsterDef(this.monster, 'physical'),
         this.monster.phisicalR,
         this.buffedAP + (this.soil * 2) / 100,
-        SkillRatio.EarthquakeBladeRatio(this.soil),
+        SkillRatio.EarthquakeBlade(this.soil),
         0
       ) * 50
     )

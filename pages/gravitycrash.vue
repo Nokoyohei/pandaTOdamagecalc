@@ -85,8 +85,8 @@ export default class GravityCrash extends Vue {
 
   get resMa() {
     let attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.GravityCrashRatio + SkillRatio.DarkCommandoRatio
-      : SkillRatio.GravityCrashRatio
+      ? SkillRatio.GravityCrash + SkillRatio.DarkCommando
+      : SkillRatio.GravityCrash
     attackRatio = this.DLBuff.includes('bloodTestament')
       ? attackRatio * BloodyTestamentBuff
       : attackRatio
