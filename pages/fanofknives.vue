@@ -71,13 +71,13 @@ export default class FanOfKnives extends Vue {
     )
   }
 
-  get resAP() {
+  get resDA() {
     let needDA = calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.phisicalR,
       SkillRatio.FanOfKnives,
-      this.buffedDA + this.throwAp,
+      this.buffedDA + this.throwAp / 10,
       0
     )
     if (this.DABuff.includes('sixthSense')) needDA /= SixthSenseBuff
