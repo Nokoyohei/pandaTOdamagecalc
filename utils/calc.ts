@@ -41,7 +41,7 @@ export const calcDamage = (
   const damage = Math.floor(
     ((100 - monsterResist) / 100) * (rogicalDamage - monsterDef)
   )
-  return Math.floor(damage < 0 ? 0 : damage)
+  return Math.floor(damage < 0 ? 0 : damage) + 1
 }
 
 export const calcNeedStats = (

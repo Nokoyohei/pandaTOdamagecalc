@@ -3,7 +3,7 @@
     <v-col cols="6" md="5">
       <v-switch v-model="_buff" value="darkCommando">
         <template #label>
-          <img src="~/assets/darkcommando.gif" />
+          <img src="~/static/darkcommando.gif" />
           Dark Commando
         </template>
       </v-switch>
@@ -11,7 +11,7 @@
     <v-col cols="6" md="5">
       <v-switch v-model="_buff" value="bloodTestament">
         <template #label>
-          <img src="~/assets/bloodTestament.gif" />
+          <img src="~/static/bloodTestament.gif" />
           Blood Testament
         </template>
       </v-switch>

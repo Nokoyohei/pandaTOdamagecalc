@@ -3,7 +3,7 @@
     <v-col cols="6" md="6">
       <v-switch v-model="_buff" value="mistOfMana">
         <template #label>
-          <img src="~/assets/fw.gif" />
+          <img src="~/static/fw.gif" />
           Mist of Mana
         </template>
       </v-switch>

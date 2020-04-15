@@ -50,8 +50,8 @@ import { Monster } from '~/types'
   }
 })
 export default class EarthquakeBlade extends Vue {
-  ap = 244498
-  soil = 1500
+  ap = 100000
+  soil = 1000
   monster: Monster = isabelle
 
   APBuff: ('pumpingHeart' | 'adrenaline')[] = []

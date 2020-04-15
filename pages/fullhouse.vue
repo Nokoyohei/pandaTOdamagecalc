@@ -67,9 +67,9 @@ import { Monster } from '~/types'
   }
 })
 export default class FullHouse extends Vue {
-  ap = 244498
-  lk = 36395
-  hv = 68403
+  ap = 100000
+  lk = 10000
+  hv = 10000
   monster: Monster = isabelle
 
   APBuff: ('pumpingHeart' | 'adrenaline')[] = []

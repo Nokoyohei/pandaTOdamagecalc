@@ -146,7 +146,7 @@ export default class DefaultLayout extends Vue {
     }
   ]
 
-  title = 'PandaTo Damage calculator'
+  title = 'PandaTO Damage calculator'
 }
 </script>
 

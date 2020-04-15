@@ -50,8 +50,8 @@ import { Monster } from '~/types'
   }
 })
 export default class FanOfKnives extends Vue {
-  da = 4381
-  throwAp = 60
+  da = 10000
+  throwAp = 20
   monster: Monster = isabelle
 
   DABuff: 'sixthSense'[] = []

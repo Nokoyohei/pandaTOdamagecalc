@@ -3,7 +3,7 @@
     <v-col cols="6" md="6">
       <v-switch v-model="_buff" value="sixthSense">
         <template #label>
-          <img src="~/assets/Isp.png" />
+          <img src="~/static/Isp.png" />
           Sixth Sense
         </template>
       </v-switch>

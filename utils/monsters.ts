@@ -49,7 +49,7 @@ const toilet: Monster = {
 }
 
 const straw: Monster = {
-  hp: 1100000,
+  hp: 1400000,
   dp: 180000,
   md: 32000,
   fireR: 135,
@@ -58,7 +58,7 @@ const straw: Monster = {
   earthR: 99,
   elecR: 90,
   lightR: 50,
-  darkR: 90,
+  darkR: 85,
   noPropR: 90,
   gunR: 80,
   phisicalR: 75

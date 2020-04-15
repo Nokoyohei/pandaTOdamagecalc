@@ -50,7 +50,7 @@ import { Monster } from '~/types'
   }
 })
 export default class GravityCrash extends Vue {
-  ma = 53129
+  ma = 10000
   monster: Monster = isabelle
 
   MABuff: 'mistOfMana'[] = []

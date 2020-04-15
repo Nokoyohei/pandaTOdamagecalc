@@ -3,7 +3,7 @@
     <v-col cols="6" md="6">
       <v-switch v-model="_buff" value="dodgeMaster">
         <template #label>
-          <img src="~/assets/su.gif" />
+          <img src="~/static/su.gif" />
           Dodge Master
         </template>
       </v-switch>

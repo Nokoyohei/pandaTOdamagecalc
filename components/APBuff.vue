@@ -3,7 +3,7 @@
     <v-col cols="6" md="5">
       <v-switch v-model="_buff" value="pumpingHeart">
         <template #label>
-          <img src="~/assets/bh.gif" />
+          <img src="~/static/bh.gif" />
           Pumping Heart
         </template>
       </v-switch>
@@ -11,7 +11,7 @@
     <v-col cols="6" md="5">
       <v-switch v-model="_buff" value="adrenaline"
         ><template #label>
-          <img src="~/assets/adrenaline.gif" />
+          <img src="~/static/adrenaline.gif" />
           Adrenaline
         </template></v-switch
       >
