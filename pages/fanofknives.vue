@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Full House</h1>
+    <h1>Fan of Knives</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
     <damage-area :damage="damage" />
     <v-row>
