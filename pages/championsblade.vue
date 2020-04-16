@@ -86,7 +86,7 @@ export default class ChampionsBlade extends Vue {
     let buffRatio = 1
     if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff - 1
     if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff - 1
-    return needAP / buffRatio
+    return Math.ceil(needAP / buffRatio)
   }
 
   get resFire() {
