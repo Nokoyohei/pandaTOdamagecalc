@@ -59,8 +59,10 @@ export default class EarthquakeBlade extends Vue {
   get buffedAP() {
     let buffedAP = this.ap
 
-    if (this.APBuff.includes('pumpingHeart')) buffedAP *= PumpingHeartBuff
-    if (this.APBuff.includes('adrenaline')) buffedAP *= AdrenalineBuff
+    if (this.APBuff.includes('pumpingHeart'))
+      buffedAP += Math.floor(this.ap * (PumpingHeartBuff - 1))
+    if (this.APBuff.includes('adrenaline'))
+      buffedAP += Math.floor(this.ap * (AdrenalineBuff - 1))
     return buffedAP
   }
 
@@ -73,7 +75,7 @@ export default class EarthquakeBlade extends Vue {
   }
 
   get resAP() {
-    let needAP = calcNeedStats(
+    const needAP = calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.phisicalR,
@@ -81,9 +83,10 @@ export default class EarthquakeBlade extends Vue {
       this.buffedAP + (this.soil * 2) / 100,
       0
     )
-    if (this.APBuff.includes('pumpingHeart')) needAP /= PumpingHeartBuff
-    if (this.APBuff.includes('adrenaline')) needAP /= AdrenalineBuff
-    return Math.ceil(needAP)
+    let buffRatio = 1
+    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff - 1
+    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff - 1
+    return Math.ceil(needAP / buffRatio)
   }
 
   get resSoil() {

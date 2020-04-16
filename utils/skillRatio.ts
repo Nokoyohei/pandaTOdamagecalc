@@ -4,6 +4,8 @@ const FullHouse = 800 / 100
 const EarthquakeBlade = (attr: number) => 230 / 100 + (attr * 2) / 100
 const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
 const FanOfKnives = 800 / 10
+const ShootingSpree = 400 / 100
+const Berserk = 550 / 100
 
 export default {
   DarkCommando,
@@ -11,5 +13,7 @@ export default {
   FullHouse,
   EarthquakeBlade,
   ChampionsBlade,
-  FanOfKnives
+  FanOfKnives,
+  ShootingSpree,
+  Berserk
 }

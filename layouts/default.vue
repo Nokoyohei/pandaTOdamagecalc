@@ -127,6 +127,16 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/fanofknives.gif'),
           title: 'FAN OF KNIVES',
           to: '/fanofknives'
+        },
+        {
+          imgsrc: require('~/static/shootingspree.gif'),
+          title: 'SHOOTING SPREE',
+          to: '/shootingspree'
+        },
+        {
+          imgsrc: require('~/static/violenceshot.gif'),
+          title: 'BERSERK',
+          to: '/berserk'
         }
       ]
     },

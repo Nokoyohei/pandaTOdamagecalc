@@ -1,5 +1,6 @@
 import { Monster } from '~/types'
 import SkillRatio from '~/utils/skillRatio'
+import skillRatio from '~/utils/skillRatio'
 
 export const makeArr = (
   startValue: number,
@@ -29,15 +30,19 @@ export const calcChampionsBladeDamage = (ap: number, fire: number) =>
 
 export const calcFanOfKnicesDamage = (da: number, throwAp: number) =>
   Math.ceil((da + throwAp / 10) * SkillRatio.FanOfKnives)
+export const calcShootingSpreeDamage = (gunAP: number) =>
+  Math.ceil((gunAP - 48 * 20) * skillRatio.ShootingSpree)
+export const calcBerserkDamage = (gunAP: number) =>
+  Math.ceil((gunAP - 48 * 20) * skillRatio.Berserk)
 
 export const calcMonsterDef = (
   monster: Monster,
-  attacktype: 'magic' | 'physical'
-) =>
-  attacktype === 'magic'
-    ? Math.ceil(monster.md * 0.9)
-    : Math.ceil(monster.dp * 0.75)
-
+  attacktype: 'magic' | 'physical' | 'gun'
+) => {
+  if (attacktype === 'magic') return Math.ceil(monster.md * 0.9)
+  if (attacktype === 'physical') return Math.ceil(monster.dp * 0.75)
+  return monster.hv * 30
+}
 export const calcDamage = (
   monsterDef: number,
   monsterResist: number,

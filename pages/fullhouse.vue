@@ -79,16 +79,20 @@ export default class FullHouse extends Vue {
   get buffedAP() {
     let buffedAP = this.ap
 
-    if (this.APBuff.includes('pumpingHeart')) buffedAP *= PumpingHeartBuff
-    if (this.APBuff.includes('adrenaline')) buffedAP *= AdrenalineBuff
+    if (this.APBuff.includes('pumpingHeart'))
+      buffedAP += Math.floor(this.ap * (PumpingHeartBuff - 1))
+    if (this.APBuff.includes('adrenaline'))
+      buffedAP += Math.floor(this.ap * (AdrenalineBuff - 1))
     return buffedAP
   }
 
   get buffedLK() {
     let buffedLK = this.lk
 
-    if (this.LKBuff.includes('luckySeven')) buffedLK *= LuckySevenBuff
-    if (this.LKBuff.includes('auraOfLuck')) buffedLK *= AuraOfLuckBuff
+    if (this.LKBuff.includes('luckySeven'))
+      buffedLK += Math.floor(this.lk * (LuckySevenBuff - 1))
+    if (this.LKBuff.includes('auraOfLuck'))
+      buffedLK += Math.floor(this.lk * (AuraOfLuckBuff - 1))
     return buffedLK
   }
 
@@ -119,17 +123,21 @@ export default class FullHouse extends Vue {
   }
 
   get resAP() {
-    let needAP = this.needStats
-    if (this.APBuff.includes('pumpingHeart')) needAP /= PumpingHeartBuff
-    if (this.APBuff.includes('adrenaline')) needAP /= AdrenalineBuff
-    return Math.ceil(needAP)
+    const needAP = this.needStats
+
+    let buffRatio = 1
+    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff - 1
+    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff - 1
+    return Math.ceil(needAP / buffRatio)
   }
 
   get resLK() {
-    let needLK = this.needStats / 8
-    if (this.LKBuff.includes('luckySeven')) needLK /= LuckySevenBuff
-    if (this.LKBuff.includes('auraOfLuck')) needLK /= AuraOfLuckBuff
-    return Math.ceil(needLK)
+    const needLK = this.needStats / 8
+
+    let buffRatio = 1
+    if (this.LKBuff.includes('luckySeven')) buffRatio += LuckySevenBuff - 1
+    if (this.LKBuff.includes('auraOfLuck')) buffRatio += AuraOfLuckBuff - 1
+    return Math.ceil(needLK / buffRatio)
   }
 
   get resHV() {

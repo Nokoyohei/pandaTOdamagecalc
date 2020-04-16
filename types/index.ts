@@ -2,6 +2,7 @@ export interface Monster {
   hp: number
   dp: number
   md: number
+  hv: number
   fireR: number
   waterR: number
   earthR: number
