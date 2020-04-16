@@ -100,6 +100,11 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/earthquakeblade.gif'),
           title: 'EARTHQUAKE BLADE',
           to: '/earthquakeblade'
+        },
+        {
+          imgsrc: require('~/static/championsblade.gif'),
+          title: "CHAMPION'S BLADE",
+          to: '/championsblade'
         }
       ]
     },
