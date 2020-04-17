@@ -1,7 +1,7 @@
 import { Monster } from '~/types'
 
 const isabelle: Monster = {
-  hp: 200000,
+  hp: 180000,
   dp: 11000,
   md: 3600,
   hv: 250,
