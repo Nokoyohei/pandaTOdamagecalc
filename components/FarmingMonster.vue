@@ -42,7 +42,7 @@ export default class FarmingMonster extends Vue {
   @PropSync('monster', { required: true })
   _monster!: Monster
 
-  datanum = 5
+  datanum = 100
   tab = 0
 
   changeSelectedMonster() {
@@ -66,8 +66,7 @@ export default class FarmingMonster extends Vue {
 
   get dmgList() {
     return [
-      ...makeArr(0, this.damage, this.datanum),
-      this.damage + this.damage / this.datanum
+      ...makeArr(0, this._monster.hp + this._monster.hp * 0.2, this.datanum)
     ].map((x) => Math.round(x))
   }
 
@@ -80,7 +79,19 @@ export default class FarmingMonster extends Vue {
       datasets: [
         {
           label: 'your damage',
-          data: [{ x: this.dmgList[this.datanum - 1], y: this.damage }],
+          data: [
+            {
+              x:
+                this.dmgList.find((x) => x > this.damage) == null
+                  ? this.dmgList[this.dmgList.length - 1]
+                  : this.dmgList.find((x) => x > this.damage),
+              y:
+                this.damage > this._monster.hp * 1.2
+                  ? this._monster.hp * 1.2
+                  : this.damage,
+              t: this.damage
+            }
+          ],
           pointBackgroundColor:
             this.damage >= this._monster.hp ? 'green' : 'gray',
           type: 'scatter',
@@ -109,6 +120,17 @@ export default class FarmingMonster extends Vue {
     legend: {
       display: false,
       position: 'bottom'
+    },
+    tooltips: {
+      callbacks: {
+        title(_tooltipItem, _chart) {
+          return 'your damage'
+        },
+        label(tooltipItem, chart) {
+          const index = tooltipItem.index ?? 0
+          return chart.datasets[index].data[0].t.toLocaleString()
+        }
+      }
     },
     scales: {
       xAxes: [
