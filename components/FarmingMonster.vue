@@ -123,13 +123,8 @@ export default class FarmingMonster extends Vue {
     },
     tooltips: {
       callbacks: {
-        title(_tooltipItem, _chart) {
-          return 'your damage'
-        },
-        label(tooltipItem, chart) {
-          const index = tooltipItem.index ?? 0
-          return chart.datasets[index].data[0].t.toLocaleString()
-        }
+        title: (_tooltipItem, _chart) => 'your damage',
+        label: (_tooltipItem, _chart) => this.damage.toLocaleString()
       }
     },
     scales: {
