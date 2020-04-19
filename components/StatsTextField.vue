@@ -47,7 +47,7 @@ export default class StatsTextField extends Vue {
 
   parseInput() {
     console.log(this.input.match(/^[^\D]\d+\+*\d+$/g)?.length)
-    if (this.input.match(/^[^\D]\d+\+*\d+$/g)?.length == null) return
+    if (this.input.match(/^[^\D]\d+(\+*\d+)*$/g)?.length == null) return
 
     if (this.input.includes('+')) {
       const left = this.input.split('+')[0]
