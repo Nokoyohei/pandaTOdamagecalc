@@ -13,6 +13,7 @@
         <stats-text-field
           :input-stats.sync="ma"
           :need-stats="resMa"
+          :buffed-stats="buffedMa"
           label="MA"
         />
       </v-col>

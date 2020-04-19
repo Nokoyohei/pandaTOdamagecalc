@@ -11,6 +11,7 @@
         <stats-text-field
           :input-stats.sync="da"
           :need-stats="resDA"
+          :buffed-stats="buffedDA"
           label="DA"
         />
         <stats-text-field

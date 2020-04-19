@@ -11,6 +11,7 @@
         <stats-text-field
           :input-stats.sync="ac"
           :need-stats="resAC"
+          :buffed-stats="buffedAC"
           label="AC"
         />
         <stats-text-field

@@ -11,6 +11,7 @@
         <stats-text-field
           :input-stats.sync="ap"
           :need-stats="resAP"
+          :buffed-stats="buffedAP"
           label="AP"
         />
         <stats-text-field

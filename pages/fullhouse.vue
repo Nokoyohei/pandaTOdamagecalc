@@ -13,16 +13,19 @@
         <stats-text-field
           :input-stats.sync="ap"
           :need-stats="resAP"
+          :buffed-stats="buffedAP"
           label="AP"
         />
         <stats-text-field
           :input-stats.sync="lk"
           :need-stats="resLK"
+          :buffed-stats="buffedLK"
           label="LK"
         />
         <stats-text-field
           :input-stats.sync="hv"
           :need-stats="resHV"
+          :buffed-stats="buffedHV"
           label="HV"
         />
       </v-col>

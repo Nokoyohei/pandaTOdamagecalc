@@ -2,7 +2,7 @@
   <div>
     <v-layout column justify-center align-center>
       <v-tabs v-model="tab" fixed-tabs @change="changeSelectedMonster">
-        <v-tab> Caotic Isabelle </v-tab>
+        <v-tab> Chaotic Isabelle </v-tab>
         <v-tab> Mermaid little </v-tab>
         <v-tab> Haunted Toilet </v-tab>
         <v-tab> Haunted Straw </v-tab>
