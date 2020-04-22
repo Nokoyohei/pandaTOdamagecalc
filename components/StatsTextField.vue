@@ -46,6 +46,7 @@ export default class StatsTextField extends Vue {
   }
 
   parseInput() {
+    // Only accept 'number' '+' 'number' or 'number'
     if (this.input.match(/^[^\D]\d*(\+\d+)*$/g)?.length == null) return
 
     if (this.input.includes('+')) {

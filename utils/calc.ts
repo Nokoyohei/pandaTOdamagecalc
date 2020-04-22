@@ -1,6 +1,8 @@
 import { Monster } from '~/types'
 import SkillRatio from '~/utils/skillRatio'
 
+// like python's np.linspace
+// Returns a cardinality-divided value from startValue to stopValue
 export const makeArr = (
   startValue: number,
   stopValue: number,
@@ -34,6 +36,7 @@ export const calcShootingSpreeDamage = (gunAP: number) =>
 export const calcBerserkDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.Berserk)
 
+// Calculate the monster's effective defense
 export const calcMonsterDef = (
   monster: Monster,
   attacktype: 'magic' | 'physical' | 'gun'
@@ -42,17 +45,42 @@ export const calcMonsterDef = (
   if (attacktype === 'physical') return Math.ceil(monster.dp * 0.75)
   return monster.hv * 30
 }
+
+// Calculate the damage considering defensive and resistance
+/* 
+  args: 
+    monsterDef: effective defence -> calcMonsterDef
+    monsterResist: monster's resistance for example fireR, waterR... etc.
+    ideallDamage: Ideal damage against opponents with 0 defense and 0 resistance
+*/
 export const calcDamage = (
   monsterDef: number,
   monsterResist: number,
-  rogicalDamage: number
+  idealDamage: number
 ) => {
   const damage = Math.floor(
-    ((100 - monsterResist) / 100) * (rogicalDamage - monsterDef)
+    ((100 - monsterResist) / 100) * (idealDamage - monsterDef)
   )
   return Math.floor(damage < 0 ? 0 : damage) + 1
 }
 
+// Calculate the missing status
+/* 
+  args: 
+    monsterHp: monster's max hp
+    monsterDef: effective defence -> calcMonsterDef
+    monsterResist: monster's resistance for example fireR, waterR... etc.
+    attackRatio: skill magnification -> skillRatio 
+    nowStats: Status when you deal current damage
+    constStats: Last Subtract Status. For example, GravityCrash's 49
+*/
+/*
+  logic: e.g. gravity crash ; x -> needed stats what we know
+    ((MA + x - 49) * skillRatio.GravityCrash - monsterDef) * monsterResist = monsterHp
+    (MA + x - 49) * skillRatio.GravityCrash = monsterHp / monsterReist + monsterDef
+    x = (monsterHp / monsterresist + monsterDef) / skillRatio.GravityCrash 49 - MA
+
+*/
 export const calcNeedStats = (
   monsterHp: number,
   monsterDef: number,

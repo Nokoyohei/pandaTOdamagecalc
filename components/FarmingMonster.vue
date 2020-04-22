@@ -46,64 +46,52 @@ export default class FarmingMonster extends Vue {
   tab = 0
 
   changeSelectedMonster() {
-    switch (this.tab) {
-      case 0:
-        this._monster = isabelle
-        break
-      case 1:
-        this._monster = little
-        break
-      case 2:
-        this._monster = toilet
-        break
-      case 3:
-        this._monster = straw
-        break
-      default:
-        return isabelle
-    }
+    this._monster = [isabelle, little, toilet, straw][this.tab]
   }
 
+  // Limit the drawing range to 0-monster.hp*1.2 so that the drawing of the graph is not corrupted
   get dmgList() {
-    return [
-      ...makeArr(0, this._monster.hp + this._monster.hp * 0.2, this.datanum)
-    ].map((x) => Math.round(x))
+    return [...makeArr(0, this._monster.hp * 1.2, this.datanum)].map((x) =>
+      Math.round(x)
+    )
   }
 
-  // チャートのデータ
   get chartData(): ChartData {
     return {
-      // 横軸のラベル
       labels: this.dmgList,
-      // データのリスト
       datasets: [
         {
           label: 'your damage',
+          // scatter
           data: [
             {
+              // If you set a value that is not in dmgList, the graph will be corrupted, so set the value closest to the current damage as x
               x:
                 this.dmgList.find((x) => x > this.damage) == null
                   ? this.dmgList[this.dmgList.length - 1]
                   : this.dmgList.find((x) => x > this.damage),
+              // Set the maximum value to monster.hp*1.2 because the graph will be corrupted if damage is too large
               y:
                 this.damage > this._monster.hp * 1.2
                   ? this._monster.hp * 1.2
-                  : this.damage,
-              t: this.damage
+                  : this.damage
             }
           ],
+          // For usability, the color of the pointer will be green when damage is larger than monster.hp
           pointBackgroundColor:
             this.damage >= this._monster.hp ? 'green' : 'gray',
           type: 'scatter',
           radius: 8
         },
         {
+          // mosnter's HP line (horizontal line)
           label: `Isabelle's hp`,
           borderColor: 'red',
-          data: new Array<number>(this.datanum + 1).fill(this._monster.hp),
+          data: new Array<number>(this.datanum).fill(this._monster.hp),
           radius: 0
         },
         {
+          // damage line (linear line)
           label: 'DAMAGE',
           data: this.dmgList,
           radius: 0,
@@ -113,13 +101,10 @@ export default class FarmingMonster extends Vue {
     }
   }
 
-  // チャートのオプション
   private chartOption: ChartOptions = {
-    // アスペクト比を固定しないように変更
     maintainAspectRatio: false,
     legend: {
-      display: false,
-      position: 'bottom'
+      display: false
     },
     tooltips: {
       callbacks: {
@@ -143,7 +128,6 @@ export default class FarmingMonster extends Vue {
     }
   }
 
-  // チャートのスタイル: <canvas>のstyle属性として設定
   private chartStyles = {
     height: '100%',
     width: '100%'
