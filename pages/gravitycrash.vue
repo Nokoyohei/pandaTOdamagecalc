@@ -34,12 +34,13 @@ import {
   calcGravityCrashDamage,
   calcDamage,
   calcNeedStats,
-  calcMonsterDef
+  calcMonsterDef,
+  calcMABuffRatio
 } from '~/utils/calc'
-import { MistOfManaBuff, BloodyTestamentBuff } from '~/utils/buffRatio'
+import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster } from '~/types'
+import { Monster, MABuffName, DLBuffName } from '~/types'
 
 @Component({
   components: {
@@ -54,8 +55,12 @@ export default class GravityCrash extends Vue {
   ma = 10000
   monster: Monster = isabelle
 
-  MABuff: 'mistOfMana'[] = []
-  DLBuff: ('bloodTestament' | 'darkCommando')[] = []
+  MABuff: MABuffName[] = []
+  DLBuff: DLBuffName[] = []
+
+  get buffedMA() {
+    return Math.floor(this.ma * calcMABuffRatio(this.MABuff))
+  }
 
   get damage() {
     let darkCommandoDamage = this.DLBuff.includes('darkCommando')
@@ -63,8 +68,12 @@ export default class GravityCrash extends Vue {
       : 0
     let gravityCrashDamage = calcGravityCrashDamage(this.buffedMA)
     if (this.DLBuff.includes('bloodTestament')) {
-      darkCommandoDamage = Math.round(darkCommandoDamage * BloodyTestamentBuff)
-      gravityCrashDamage = Math.round(gravityCrashDamage * BloodyTestamentBuff)
+      darkCommandoDamage = Math.round(
+        darkCommandoDamage * (1 + BloodTestamentBuff)
+      )
+      gravityCrashDamage = Math.round(
+        gravityCrashDamage * (1 + BloodTestamentBuff)
+      )
     }
 
     return (
@@ -81,20 +90,12 @@ export default class GravityCrash extends Vue {
     )
   }
 
-  get buffedMA() {
-    let buffedMA = this.ma
-
-    if (this.MABuff.includes('mistOfMana'))
-      buffedMA += Math.floor(buffedMA * MistOfManaBuff)
-    return buffedMA
-  }
-
   get resMA() {
     let attackRatio = this.DLBuff.includes('darkCommando')
       ? SkillRatio.GravityCrash + SkillRatio.DarkCommando
       : SkillRatio.GravityCrash
     attackRatio = this.DLBuff.includes('bloodTestament')
-      ? attackRatio * BloodyTestamentBuff
+      ? attackRatio * (1 + BloodTestamentBuff)
       : attackRatio
     const constStats = 49
     const monsterDef =
@@ -110,9 +111,7 @@ export default class GravityCrash extends Vue {
       constStats
     )
 
-    let buffRatio = 1
-    if (this.MABuff.includes('mistOfMana')) buffRatio += MistOfManaBuff
-    return Math.ceil(needMA / buffRatio)
+    return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
   }
 }
 </script>

@@ -15,3 +15,11 @@ export interface Monster {
   gunR: number
 }
 export type attribute = keyof Monster
+
+export type APBuffName = 'pumpingHeart' | 'adrenaline'
+export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye'
+export type LKBuffName = 'luckySeven' | 'auraOfLuck'
+export type DABuffName = 'sixthSense'
+export type MABuffName = 'mistOfMana'
+export type DLBuffName = 'bloodTestament' | 'darkCommando'
+export type HVBuffName = 'dodgeMaster'

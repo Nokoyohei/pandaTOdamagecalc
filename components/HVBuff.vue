@@ -13,10 +13,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { HVBuffName } from '~/types'
 
 @Component({})
 export default class HvBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: 'dodgeMaster'[]
+  _buff!: HVBuffName[]
 }
 </script>

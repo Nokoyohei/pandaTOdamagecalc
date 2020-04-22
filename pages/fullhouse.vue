@@ -46,18 +46,14 @@ import {
   calcFullHouseDamage,
   calcDamage,
   calcNeedStats,
-  calcMonsterDef
+  calcMonsterDef,
+  calcLKBuffRatio,
+  calcHVBuffRatio,
+  calcAPBuffRatio
 } from '~/utils/calc'
-import {
-  PumpingHeartBuff,
-  AdrenalineBuff,
-  LuckySevenBuff,
-  AuraOfLuckBuff,
-  DodgeMasterBuff
-} from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster } from '~/types'
+import { Monster, APBuffName, LKBuffName, HVBuffName } from '~/types'
 
 @Component({
   components: {
@@ -75,36 +71,20 @@ export default class FullHouse extends Vue {
   hv = 10000
   monster: Monster = isabelle
 
-  APBuff: ('pumpingHeart' | 'adrenaline')[] = []
-  LKBuff: ('luckySeven' | 'auraOfLuck')[] = []
-  HVBuff: 'dodgeMaster'[] = []
+  APBuff: APBuffName[] = []
+  LKBuff: LKBuffName[] = []
+  HVBuff: HVBuffName[] = []
 
   get buffedAP() {
-    let buffedAP = this.ap
-
-    if (this.APBuff.includes('pumpingHeart'))
-      buffedAP += Math.floor(this.ap * PumpingHeartBuff)
-    if (this.APBuff.includes('adrenaline'))
-      buffedAP += Math.floor(this.ap * AdrenalineBuff)
-    return buffedAP
+    return Math.floor(this.ap * calcAPBuffRatio(this.APBuff))
   }
 
   get buffedLK() {
-    let buffedLK = this.lk
-
-    if (this.LKBuff.includes('luckySeven'))
-      buffedLK += Math.floor(this.lk * LuckySevenBuff)
-    if (this.LKBuff.includes('auraOfLuck'))
-      buffedLK += Math.floor(this.lk * AuraOfLuckBuff)
-    return buffedLK
+    return Math.floor(this.lk * calcLKBuffRatio(this.LKBuff))
   }
 
   get buffedHV() {
-    let buffedHV = this.hv
-
-    if (this.HVBuff.includes('dodgeMaster'))
-      buffedHV += Math.floor(buffedHV * DodgeMasterBuff)
-    return buffedHV
+    return Math.floor(this.hv * calcHVBuffRatio(this.HVBuff))
   }
 
   get damage() {
@@ -127,29 +107,17 @@ export default class FullHouse extends Vue {
   }
 
   get resAP() {
-    const needAP = this.needStats
-
-    let buffRatio = 1
-    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff
-    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff
-    return Math.ceil(needAP / buffRatio)
+    return Math.ceil(this.needStats / calcAPBuffRatio(this.APBuff))
   }
 
   get resLK() {
     const needLK = this.needStats / 8
-
-    let buffRatio = 1
-    if (this.LKBuff.includes('luckySeven')) buffRatio += LuckySevenBuff
-    if (this.LKBuff.includes('auraOfLuck')) buffRatio += AuraOfLuckBuff
-    return Math.ceil(needLK / buffRatio)
+    return Math.ceil(needLK / calcLKBuffRatio(this.LKBuff))
   }
 
   get resHV() {
     const needHV = this.needStats / 8
-
-    let buffRatio = 1
-    if (this.HVBuff.includes('dodgeMaster')) buffRatio += DodgeMasterBuff
-    return Math.ceil(needHV / buffRatio)
+    return Math.ceil(needHV / calcHVBuffRatio(this.HVBuff))
   }
 }
 </script>

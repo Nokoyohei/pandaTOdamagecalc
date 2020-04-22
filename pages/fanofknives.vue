@@ -35,12 +35,12 @@ import {
   calcFanOfKnicesDamage,
   calcDamage,
   calcNeedStats,
-  calcMonsterDef
+  calcMonsterDef,
+  calcDABuffRatio
 } from '~/utils/calc'
-import { SixthSenseBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster } from '~/types'
+import { Monster, DABuffName } from '~/types'
 
 @Component({
   components: {
@@ -55,14 +55,10 @@ export default class FanOfKnives extends Vue {
   throwAp = 20
   monster: Monster = isabelle
 
-  DABuff: 'sixthSense'[] = []
+  DABuff: DABuffName[] = []
 
   get buffedDA() {
-    let buffedDA = this.da
-
-    if (this.DABuff.includes('sixthSense'))
-      buffedDA += buffedDA * SixthSenseBuff
-    return buffedDA
+    return Math.floor(this.da * calcDABuffRatio(this.DABuff))
   }
 
   get damage() {
@@ -83,9 +79,7 @@ export default class FanOfKnives extends Vue {
       0
     )
 
-    let buffRatio = 1
-    if (this.DABuff.includes('sixthSense')) buffRatio += SixthSenseBuff
-    return Math.ceil(needDA / buffRatio)
+    return Math.ceil(needDA / calcDABuffRatio(this.DABuff))
   }
 }
 </script>

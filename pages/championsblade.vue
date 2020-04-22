@@ -35,12 +35,12 @@ import {
   calcChampionsBladeDamage,
   calcDamage,
   calcNeedStats,
-  calcMonsterDef
+  calcMonsterDef,
+  calcAPBuffRatio
 } from '~/utils/calc'
-import { PumpingHeartBuff, AdrenalineBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster } from '~/types'
+import { Monster, APBuffName } from '~/types'
 
 @Component({
   components: {
@@ -55,16 +55,10 @@ export default class ChampionsBlade extends Vue {
   fire = 1000
   monster: Monster = isabelle
 
-  APBuff: ('pumpingHeart' | 'adrenaline')[] = []
+  APBuff: APBuffName[] = []
 
   get buffedAP() {
-    let buffedAP = this.ap
-
-    if (this.APBuff.includes('pumpingHeart'))
-      buffedAP += Math.floor(this.ap * PumpingHeartBuff)
-    if (this.APBuff.includes('adrenaline'))
-      buffedAP += Math.floor(this.ap * AdrenalineBuff)
-    return buffedAP
+    return Math.floor(this.ap * calcAPBuffRatio(this.APBuff))
   }
 
   get damage() {
@@ -81,13 +75,11 @@ export default class ChampionsBlade extends Vue {
       calcMonsterDef(this.monster, 'physical'),
       this.monster.phisicalR,
       SkillRatio.ChampionsBlade(this.fire),
-      this.buffedAP + (this.fire * 2) / 100,
+      this.buffedAP,
       0
     )
-    let buffRatio = 1
-    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff
-    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff
-    return Math.ceil(needAP / buffRatio)
+
+    return Math.ceil(needAP / calcAPBuffRatio(this.APBuff))
   }
 
   get resFire() {
@@ -96,7 +88,7 @@ export default class ChampionsBlade extends Vue {
         this.monster.hp,
         calcMonsterDef(this.monster, 'physical'),
         this.monster.phisicalR,
-        this.buffedAP + this.fire / 100,
+        this.buffedAP,
         SkillRatio.ChampionsBlade(this.fire),
         0
       ) * 100

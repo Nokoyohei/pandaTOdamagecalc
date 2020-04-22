@@ -21,10 +21,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { LKBuffName } from '~/types'
 
 @Component({})
 export default class LkBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: ('luckySeven' | 'auraOfLuck')[]
+  _buff!: LKBuffName[]
 }
 </script>

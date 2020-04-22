@@ -21,10 +21,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { APBuffName } from '~/types'
 
 @Component({})
 export default class ApBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: ('pumpingHeart' | 'adrenaline')[]
+  _buff!: APBuffName[]
 }
 </script>

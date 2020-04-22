@@ -21,10 +21,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { DLBuffName } from '~/types'
 
 @Component({})
 export default class DarkLoadBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: ('bloodTestament' | 'darkCommando')[]
+  _buff!: DLBuffName[]
 }
 </script>

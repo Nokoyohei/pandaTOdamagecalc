@@ -13,10 +13,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { MABuffName } from '~/types'
 
 @Component({})
 export default class MaBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: 'mistOfMana'[]
+  _buff!: MABuffName[]
 }
 </script>

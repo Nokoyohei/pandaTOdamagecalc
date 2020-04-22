@@ -13,10 +13,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { DABuffName } from '~/types'
 
 @Component({})
 export default class DaBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: 'sixthSense'[]
+  _buff!: DABuffName[]
 }
 </script>

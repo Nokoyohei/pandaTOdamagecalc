@@ -1,3 +1,4 @@
+import BuffRatio from '~/utils/buffRatio'
 import { Monster } from '~/types'
 import SkillRatio from '~/utils/skillRatio'
 
@@ -70,15 +71,15 @@ export const calcDamage = (
     monsterHp: monster's max hp
     monsterDef: effective defence -> calcMonsterDef
     monsterResist: monster's resistance for example fireR, waterR... etc.
-    attackRatio: skill magnification -> skillRatio 
+    attackRatio: skill magnification -> buffRatio 
     nowStats: Status when you deal current damage
     constStats: Last Subtract Status. For example, GravityCrash's 49
 */
 /*
   logic: e.g. gravity crash ; x -> needed stats what we know
-    ((MA + x - 49) * skillRatio.GravityCrash - monsterDef) * monsterResist = monsterHp
-    (MA + x - 49) * skillRatio.GravityCrash = monsterHp / monsterReist + monsterDef
-    x = (monsterHp / monsterresist + monsterDef) / skillRatio.GravityCrash 49 - MA
+    ((MA + x - 49) * buffRatio.GravityCrash - monsterDef) * monsterResist = monsterHp
+    (MA + x - 49) * buffRatio.GravityCrash = monsterHp / monsterReist + monsterDef
+    x = (monsterHp / monsterresist + monsterDef) / buffRatio.GravityCrash + 49 - MA
 
 */
 export const calcNeedStats = (
@@ -93,4 +94,52 @@ export const calcNeedStats = (
   return (
     (monsterHp / resistance + monsterDef) / attackRatio + constStats - nowStats
   )
+}
+
+export const calcLKBuffRatio = (LKBuff: ('luckySeven' | 'auraOfLuck')[]) => {
+  let buffRatio = 1
+
+  if (LKBuff.includes('luckySeven')) buffRatio += BuffRatio.LuckySevenBuff
+  if (LKBuff.includes('auraOfLuck')) buffRatio += BuffRatio.AuraOfLuckBuff
+  return buffRatio
+}
+
+export const calcHVBuffRatio = (HVBuff: 'dodgeMaster'[]) => {
+  let buffRatio = 1
+
+  if (HVBuff.includes('dodgeMaster')) buffRatio += BuffRatio.DodgeMasterBuff
+  return buffRatio
+}
+
+export const calcAPBuffRatio = (APBuff: ('pumpingHeart' | 'adrenaline')[]) => {
+  let buffRatio = 1
+
+  if (APBuff.includes('pumpingHeart')) buffRatio += BuffRatio.PumpingHeartBuff
+  if (APBuff.includes('adrenaline')) buffRatio += BuffRatio.AdrenalineBuff
+  return buffRatio
+}
+
+export const calcDABuffRatio = (DABuff: 'sixthSense'[]) => {
+  let buffRatio = 1
+
+  if (DABuff.includes('sixthSense')) buffRatio += BuffRatio.SixthSenseBuff
+  return buffRatio
+}
+
+export const calcMABuffRatio = (MABuff: 'mistOfMana'[]) => {
+  let buffRatio = 1
+
+  if (MABuff.includes('mistOfMana')) buffRatio += BuffRatio.MistOfManaBuff
+  return buffRatio
+}
+
+export const calcACBuffRatio = (
+  ACBuff: ('gunBooster' | 'bullsEye' | 'eagleEye')[]
+) => {
+  let buffRatio = 1
+
+  if (ACBuff.includes('gunBooster')) buffRatio += BuffRatio.GunBoosterBuff
+  if (ACBuff.includes('bullsEye')) buffRatio += BuffRatio.BullsEyeBuff
+  if (ACBuff.includes('eagleEye')) buffRatio += BuffRatio.EagleEyeBuff
+  return buffRatio
 }

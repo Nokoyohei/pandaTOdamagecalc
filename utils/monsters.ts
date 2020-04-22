@@ -53,19 +53,19 @@ const toilet: Monster = {
 
 const straw: Monster = {
   hp: 1400000,
-  dp: 180000,
+  dp: 200000,
   md: 32000,
   hv: 4000,
   fireR: 135,
   waterR: 90,
   windR: 90,
-  earthR: 99,
+  earthR: 105,
   elecR: 90,
   lightR: 50,
   darkR: 85,
   noPropR: 90,
   gunR: 80,
-  phisicalR: 75
+  phisicalR: 80
 }
 
 export { isabelle, little, toilet, straw }

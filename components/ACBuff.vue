@@ -1,7 +1,7 @@
 <template>
   <v-row dense>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="bullseye"
+      <v-switch v-model="_buff" value="bullsEye"
         ><template #label>
           <img src="~/static/be.gif" />
           Bull's Eye
@@ -9,7 +9,7 @@
       </v-switch>
     </v-col>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="eagleeye">
+      <v-switch v-model="_buff" value="eagleEye">
         <template #label>
           <img src="~/static/hawk_eye.gif" />
           Eagle Eye
@@ -17,7 +17,7 @@
       </v-switch>
     </v-col>
     <v-col cols="12" md="8">
-      <v-switch v-model="_buff" value="gunbooster">
+      <v-switch v-model="_buff" value="gunBooster">
         <template #label>
           <img src="~/static/guns.gif" />
           Gun Booster
@@ -29,10 +29,11 @@
 
 <script lang="ts">
 import { Component, Vue, PropSync } from 'nuxt-property-decorator'
+import { ACBuffName } from '~/types'
 
 @Component({})
 export default class AcBuff extends Vue {
   @PropSync('buff', { required: true })
-  _buff!: ('gunbooster' | 'bullseye' | 'eagleeye')[]
+  _buff!: ACBuffName[]
 }
 </script>
