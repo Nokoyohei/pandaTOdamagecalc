@@ -37,7 +37,7 @@ import {
   calcNeedStats,
   calcMonsterDef
 } from '~/utils/calc'
-import { GunBooster, BullsEye, EagleEye } from '~/utils/buffRatio'
+import { GunBoosterBuff, BullsEyeBuff, EagleEyeBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
 import { Monster } from '~/types'
@@ -61,11 +61,11 @@ export default class ShootingSpree extends Vue {
     let buffedAC = this.ac
 
     if (this.ACBuff.includes('gunbooster'))
-      buffedAC += Math.floor(this.ac * GunBooster)
+      buffedAC += Math.floor(this.ac * GunBoosterBuff)
     if (this.ACBuff.includes('bullseye'))
-      buffedAC += Math.floor(this.ac * BullsEye)
+      buffedAC += Math.floor(this.ac * BullsEyeBuff)
     if (this.ACBuff.includes('eagleeye'))
-      buffedAC += Math.floor(this.ac * EagleEye)
+      buffedAC += Math.floor(this.ac * EagleEyeBuff)
     return buffedAC
   }
 
@@ -91,9 +91,9 @@ export default class ShootingSpree extends Vue {
   get resAC() {
     const needAC = this.needStats
     let buffRatio = 1
-    if (this.ACBuff.includes('gunbooster')) buffRatio += GunBooster
-    if (this.ACBuff.includes('bullseye')) buffRatio += BullsEye
-    if (this.ACBuff.includes('eagleeye')) buffRatio += EagleEye
+    if (this.ACBuff.includes('gunbooster')) buffRatio += GunBoosterBuff
+    if (this.ACBuff.includes('bullseye')) buffRatio += BullsEyeBuff
+    if (this.ACBuff.includes('eagleeye')) buffRatio += EagleEyeBuff
     return Math.ceil(needAC / buffRatio / 20)
   }
 
