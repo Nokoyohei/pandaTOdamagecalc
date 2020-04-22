@@ -61,9 +61,9 @@ export default class EarthquakeBlade extends Vue {
     let buffedAP = this.ap
 
     if (this.APBuff.includes('pumpingHeart'))
-      buffedAP += Math.floor(this.ap * (PumpingHeartBuff - 1))
+      buffedAP += Math.floor(this.ap * PumpingHeartBuff)
     if (this.APBuff.includes('adrenaline'))
-      buffedAP += Math.floor(this.ap * (AdrenalineBuff - 1))
+      buffedAP += Math.floor(this.ap * AdrenalineBuff)
     return buffedAP
   }
 
@@ -85,8 +85,8 @@ export default class EarthquakeBlade extends Vue {
       0
     )
     let buffRatio = 1
-    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff - 1
-    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff - 1
+    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff
+    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff
     return Math.ceil(needAP / buffRatio)
   }
 

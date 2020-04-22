@@ -60,7 +60,8 @@ export default class FanOfKnives extends Vue {
   get buffedDA() {
     let buffedDA = this.da
 
-    if (this.DABuff.includes('sixthSense')) buffedDA *= SixthSenseBuff
+    if (this.DABuff.includes('sixthSense'))
+      buffedDA += buffedDA * SixthSenseBuff
     return buffedDA
   }
 
@@ -73,7 +74,7 @@ export default class FanOfKnives extends Vue {
   }
 
   get resDA() {
-    let needDA = calcNeedStats(
+    const needDA = calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.phisicalR,
@@ -81,8 +82,10 @@ export default class FanOfKnives extends Vue {
       this.buffedDA + this.throwAp / 10,
       0
     )
-    if (this.DABuff.includes('sixthSense')) needDA /= SixthSenseBuff
-    return Math.ceil(needDA)
+
+    let buffRatio = 1
+    if (this.DABuff.includes('sixthSense')) buffRatio += SixthSenseBuff
+    return Math.ceil(needDA / buffRatio)
   }
 }
 </script>

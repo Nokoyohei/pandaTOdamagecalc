@@ -12,8 +12,8 @@
       <v-col cols="12" md="6">
         <stats-text-field
           :input-stats.sync="ma"
-          :need-stats="resMa"
-          :buffed-stats="buffedMa"
+          :need-stats="resMA"
+          :buffed-stats="buffedMA"
           label="MA"
         />
       </v-col>
@@ -58,13 +58,10 @@ export default class GravityCrash extends Vue {
   DLBuff: ('bloodTestament' | 'darkCommando')[] = []
 
   get damage() {
-    const buffedMa = this.MABuff.includes('mistOfMana')
-      ? Math.round(MistOfManaBuff * this.ma)
-      : this.ma
     let darkCommandoDamage = this.DLBuff.includes('darkCommando')
-      ? calcDarkCommandoDamage(buffedMa)
+      ? calcDarkCommandoDamage(this.buffedMA)
       : 0
-    let gravityCrashDamage = calcGravityCrashDamage(buffedMa)
+    let gravityCrashDamage = calcGravityCrashDamage(this.buffedMA)
     if (this.DLBuff.includes('bloodTestament')) {
       darkCommandoDamage = Math.round(darkCommandoDamage * BloodyTestamentBuff)
       gravityCrashDamage = Math.round(gravityCrashDamage * BloodyTestamentBuff)
@@ -84,7 +81,15 @@ export default class GravityCrash extends Vue {
     )
   }
 
-  get resMa() {
+  get buffedMA() {
+    let buffedMA = this.ma
+
+    if (this.MABuff.includes('mistOfMana'))
+      buffedMA += Math.floor(buffedMA * MistOfManaBuff)
+    return buffedMA
+  }
+
+  get resMA() {
     let attackRatio = this.DLBuff.includes('darkCommando')
       ? SkillRatio.GravityCrash + SkillRatio.DarkCommando
       : SkillRatio.GravityCrash
@@ -95,22 +100,19 @@ export default class GravityCrash extends Vue {
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *
       (this.DLBuff.includes('darkCommando') ? 2 : 1)
-    const nowStats = this.MABuff.includes('mistOfMana')
-      ? this.ma * MistOfManaBuff
-      : this.ma
 
-    const needMa = calcNeedStats(
+    const needMA = calcNeedStats(
       this.monster.hp,
       monsterDef,
       this.monster.darkR,
       attackRatio,
-      nowStats,
+      this.buffedMA,
       constStats
     )
 
-    return Math.ceil(
-      this.MABuff.includes('mistOfMana') ? needMa / MistOfManaBuff : needMa
-    )
+    let buffRatio = 1
+    if (this.MABuff.includes('mistOfMana')) buffRatio += MistOfManaBuff
+    return Math.ceil(needMA / buffRatio)
   }
 }
 </script>

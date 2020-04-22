@@ -61,11 +61,11 @@ export default class ShootingSpree extends Vue {
     let buffedAC = this.ac
 
     if (this.ACBuff.includes('gunbooster'))
-      buffedAC += Math.floor(this.ac * (GunBooster - 1))
+      buffedAC += Math.floor(this.ac * GunBooster)
     if (this.ACBuff.includes('bullseye'))
-      buffedAC += Math.floor(this.ac * (BullsEye - 1))
+      buffedAC += Math.floor(this.ac * BullsEye)
     if (this.ACBuff.includes('eagleeye'))
-      buffedAC += Math.floor(this.ac * (EagleEye - 1))
+      buffedAC += Math.floor(this.ac * EagleEye)
     return buffedAC
   }
 
@@ -91,9 +91,9 @@ export default class ShootingSpree extends Vue {
   get resAC() {
     const needAC = this.needStats
     let buffRatio = 1
-    if (this.ACBuff.includes('gunbooster')) buffRatio += GunBooster - 1
-    if (this.ACBuff.includes('bullseye')) buffRatio += BullsEye - 1
-    if (this.ACBuff.includes('eagleeye')) buffRatio += EagleEye - 1
+    if (this.ACBuff.includes('gunbooster')) buffRatio += GunBooster
+    if (this.ACBuff.includes('bullseye')) buffRatio += BullsEye
+    if (this.ACBuff.includes('eagleeye')) buffRatio += EagleEye
     return Math.ceil(needAC / buffRatio / 20)
   }
 

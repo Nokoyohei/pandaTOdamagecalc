@@ -83,9 +83,9 @@ export default class FullHouse extends Vue {
     let buffedAP = this.ap
 
     if (this.APBuff.includes('pumpingHeart'))
-      buffedAP += Math.floor(this.ap * (PumpingHeartBuff - 1))
+      buffedAP += Math.floor(this.ap * PumpingHeartBuff)
     if (this.APBuff.includes('adrenaline'))
-      buffedAP += Math.floor(this.ap * (AdrenalineBuff - 1))
+      buffedAP += Math.floor(this.ap * AdrenalineBuff)
     return buffedAP
   }
 
@@ -93,16 +93,17 @@ export default class FullHouse extends Vue {
     let buffedLK = this.lk
 
     if (this.LKBuff.includes('luckySeven'))
-      buffedLK += Math.floor(this.lk * (LuckySevenBuff - 1))
+      buffedLK += Math.floor(this.lk * LuckySevenBuff)
     if (this.LKBuff.includes('auraOfLuck'))
-      buffedLK += Math.floor(this.lk * (AuraOfLuckBuff - 1))
+      buffedLK += Math.floor(this.lk * AuraOfLuckBuff)
     return buffedLK
   }
 
   get buffedHV() {
     let buffedHV = this.hv
 
-    if (this.HVBuff.includes('dodgeMaster')) buffedHV *= DodgeMasterBuff
+    if (this.HVBuff.includes('dodgeMaster'))
+      buffedHV += Math.floor(buffedHV * DodgeMasterBuff)
     return buffedHV
   }
 
@@ -129,8 +130,8 @@ export default class FullHouse extends Vue {
     const needAP = this.needStats
 
     let buffRatio = 1
-    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff - 1
-    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff - 1
+    if (this.APBuff.includes('pumpingHeart')) buffRatio += PumpingHeartBuff
+    if (this.APBuff.includes('adrenaline')) buffRatio += AdrenalineBuff
     return Math.ceil(needAP / buffRatio)
   }
 
@@ -138,15 +139,17 @@ export default class FullHouse extends Vue {
     const needLK = this.needStats / 8
 
     let buffRatio = 1
-    if (this.LKBuff.includes('luckySeven')) buffRatio += LuckySevenBuff - 1
-    if (this.LKBuff.includes('auraOfLuck')) buffRatio += AuraOfLuckBuff - 1
+    if (this.LKBuff.includes('luckySeven')) buffRatio += LuckySevenBuff
+    if (this.LKBuff.includes('auraOfLuck')) buffRatio += AuraOfLuckBuff
     return Math.ceil(needLK / buffRatio)
   }
 
   get resHV() {
-    let needHV = this.needStats / 8
-    if (this.HVBuff.includes('dodgeMaster')) needHV /= DodgeMasterBuff
-    return Math.ceil(needHV)
+    const needHV = this.needStats / 8
+
+    let buffRatio = 1
+    if (this.HVBuff.includes('dodgeMaster')) buffRatio += DodgeMasterBuff
+    return Math.ceil(needHV / buffRatio)
   }
 }
 </script>
