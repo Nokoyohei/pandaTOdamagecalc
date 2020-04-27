@@ -12,6 +12,7 @@
           :input-stats.sync="da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
+          :extra-stats.sync="extraDA"
           label="DA"
         />
         <stats-text-field
@@ -52,13 +53,17 @@ import { Monster, DABuffName } from '~/types'
 })
 export default class FanOfKnives extends Vue {
   da = 10000
+  extraDA = 0
   throwAp = 20
   monster: Monster = isabelle
 
   DABuff: DABuffName[] = []
 
   get buffedDA() {
-    return Math.floor(this.da * calcDABuffRatio(this.DABuff))
+    return (
+      Math.floor((this.da - this.extraDA) * calcDABuffRatio(this.DABuff)) +
+      this.extraDA
+    )
   }
 
   get damage() {

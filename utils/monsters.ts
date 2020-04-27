@@ -36,13 +36,13 @@ const little: Monster = {
 
 const toilet: Monster = {
   hp: 600000,
-  dp: 85000,
+  dp: 100000,
   md: 18000,
   hv: 1800,
   fireR: 90,
   waterR: 90,
   windR: 90,
-  earthR: 90,
+  earthR: 99,
   elecR: 90,
   lightR: 90,
   darkR: 90,

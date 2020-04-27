@@ -12,6 +12,7 @@
           :input-stats.sync="ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
+          :extra-stats.sync="extraAP"
           label="AP"
         />
         <stats-text-field
@@ -51,13 +52,17 @@ import { Monster, APBuffName } from '~/types'
 })
 export default class EarthquakeBlade extends Vue {
   ap = 100000
+  extraAP = 0
   soil = 1000
   monster: Monster = isabelle
 
   APBuff: APBuffName[] = []
 
   get buffedAP() {
-    return Math.floor(this.ap * calcAPBuffRatio(this.APBuff))
+    return (
+      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
+      this.extraAP
+    )
   }
 
   get damage() {

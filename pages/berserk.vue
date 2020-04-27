@@ -12,6 +12,7 @@
           :input-stats.sync="ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
+          :extra-stats.sync="extraAC"
           label="AC"
         />
         <stats-text-field
@@ -52,13 +53,17 @@ import { Monster, ACBuffName } from '~/types'
 })
 export default class ShootingSpree extends Vue {
   ac = 1092
+  extraAC = 0
   gunAP = 12480
   monster: Monster = isabelle
 
   ACBuff: ACBuffName[] = []
 
   get buffedAC() {
-    return Math.floor(this.ac * calcACBuffRatio(this.ACBuff))
+    return (
+      Math.floor((this.ac - this.extraAC) * calcACBuffRatio(this.ACBuff)) +
+      this.extraAC
+    )
   }
 
   get damage() {

@@ -14,18 +14,21 @@
           :input-stats.sync="ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
+          :extra-stats.sync="extraAP"
           label="AP"
         />
         <stats-text-field
           :input-stats.sync="lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
+          :extra-stats.sync="extraLK"
           label="LK"
         />
         <stats-text-field
           :input-stats.sync="hv"
           :need-stats="resHV"
           :buffed-stats="buffedHV"
+          :extra-stats.sync="extraHV"
           label="HV"
         />
       </v-col>
@@ -67,8 +70,11 @@ import { Monster, APBuffName, LKBuffName, HVBuffName } from '~/types'
 })
 export default class FullHouse extends Vue {
   ap = 100000
+  extraAP = 0
   lk = 10000
+  extraLK = 0
   hv = 10000
+  extraHV = 0
   monster: Monster = isabelle
 
   APBuff: APBuffName[] = []
@@ -76,15 +82,24 @@ export default class FullHouse extends Vue {
   HVBuff: HVBuffName[] = []
 
   get buffedAP() {
-    return Math.floor(this.ap * calcAPBuffRatio(this.APBuff))
+    return (
+      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
+      this.extraAP
+    )
   }
 
   get buffedLK() {
-    return Math.floor(this.lk * calcLKBuffRatio(this.LKBuff))
+    return (
+      Math.floor((this.lk - this.extraLK) * calcLKBuffRatio(this.LKBuff)) +
+      this.extraLK
+    )
   }
 
   get buffedHV() {
-    return Math.floor(this.hv * calcHVBuffRatio(this.HVBuff))
+    return (
+      Math.floor((this.hv - this.extraHV) * calcHVBuffRatio(this.HVBuff)) +
+      this.extraHV
+    )
   }
 
   get damage() {

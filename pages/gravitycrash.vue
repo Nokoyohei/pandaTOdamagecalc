@@ -14,6 +14,7 @@
           :input-stats.sync="ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
+          :extra-stats.sync="extraMA"
           label="MA"
         />
       </v-col>
@@ -53,13 +54,17 @@ import { Monster, MABuffName, DLBuffName } from '~/types'
 })
 export default class GravityCrash extends Vue {
   ma = 10000
+  extraMA = 0
   monster: Monster = isabelle
 
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
 
   get buffedMA() {
-    return Math.floor(this.ma * calcMABuffRatio(this.MABuff))
+    return (
+      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
+      this.extraMA
+    )
   }
 
   get damage() {
