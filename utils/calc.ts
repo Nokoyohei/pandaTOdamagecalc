@@ -119,10 +119,14 @@ export const calcAPBuffRatio = (APBuff: ('pumpingHeart' | 'adrenaline')[]) => {
   return buffRatio
 }
 
-export const calcDABuffRatio = (DABuff: 'sixthSense'[]) => {
+export const calcDABuffRatio = (
+  DABuff: ('sixthSense' | 'secondAnniversary')[]
+) => {
   let buffRatio = 1
 
   if (DABuff.includes('sixthSense')) buffRatio += BuffRatio.SixthSenseBuff
+  if (DABuff.includes('secondAnniversary'))
+    buffRatio += BuffRatio.secondAnniversaryBuff
   return buffRatio
 }
 
@@ -138,8 +142,8 @@ export const calcACBuffRatio = (
 ) => {
   let buffRatio = 1
 
-  if (ACBuff.includes('gunBooster')) buffRatio += BuffRatio.GunBoosterBuff
-  if (ACBuff.includes('bullsEye')) buffRatio += BuffRatio.BullsEyeBuff
+  if (ACBuff.includes('gunBooster') || ACBuff.includes('bullsEye'))
+    buffRatio += BuffRatio.GunBoosterBuff
   if (ACBuff.includes('eagleEye')) buffRatio += BuffRatio.EagleEyeBuff
   return buffRatio
 }

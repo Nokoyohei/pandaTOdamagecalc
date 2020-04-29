@@ -18,7 +18,7 @@ const isabelle: Monster = {
 }
 
 const little: Monster = {
-  hp: 500000,
+  hp: 450000,
   dp: 65000,
   md: 15000,
   hv: 1500,
