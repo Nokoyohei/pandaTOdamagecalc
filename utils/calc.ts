@@ -21,6 +21,8 @@ export const calcDarkCommandoDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.DarkCommando)
 export const calcGravityCrashDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.GravityCrash)
+export const calcCelestialStrikeDamage = (ma: number) =>
+  Math.ceil((ma - 25) * SkillRatio.CelestialStrike)
 
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
@@ -71,15 +73,15 @@ export const calcDamage = (
     monsterHp: monster's max hp
     monsterDef: effective defence -> calcMonsterDef
     monsterResist: monster's resistance for example fireR, waterR... etc.
-    attackRatio: skill magnification -> buffRatio 
+    attackRatio: skill magnification -> skillRatio 
     nowStats: Status when you deal current damage
     constStats: Last Subtract Status. For example, GravityCrash's 49
 */
 /*
   logic: e.g. gravity crash ; x -> needed stats what we know
-    ((MA + x - 49) * buffRatio.GravityCrash - monsterDef) * monsterResist = monsterHp
-    (MA + x - 49) * buffRatio.GravityCrash = monsterHp / monsterReist + monsterDef
-    x = (monsterHp / monsterresist + monsterDef) / buffRatio.GravityCrash + 49 - MA
+    ((MA + x - 49) * skillRatio.GravityCrash - monsterDef) * monsterResist = monsterHp
+    (MA + x - 49) * skillRatio.GravityCrash = monsterHp / monsterReist + monsterDef
+    x = (monsterHp / monsterresist + monsterDef) / skillRatio.GravityCrash + 49 - MA
 
 */
 export const calcNeedStats = (

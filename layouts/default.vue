@@ -111,6 +111,11 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/hardgravity.gif'),
           title: 'GRAVITY CRASH',
           to: '/gravitycrash'
+        },
+        {
+          imgsrc: require('~/static/celestialstrike.gif'),
+          title: 'CELESTIAL STRIKE',
+          to: '/celestialstrike'
         }
       ]
     },

@@ -19,7 +19,7 @@ const isabelle: Monster = {
 
 const little: Monster = {
   hp: 450000,
-  dp: 65000,
+  dp: 75000,
   md: 15000,
   hv: 1500,
   fireR: 90,
@@ -61,7 +61,7 @@ const straw: Monster = {
   windR: 90,
   earthR: 105,
   elecR: 90,
-  lightR: 50,
+  lightR: 75,
   darkR: 85,
   noPropR: 90,
   gunR: 80,
