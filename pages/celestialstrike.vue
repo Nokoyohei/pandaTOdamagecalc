@@ -1,12 +1,27 @@
 <template>
   <v-container>
-    <p>{{ cdamage }}</p>
     <h1>Celestial Strike</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
     <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <ma-buff :buff.sync="MABuff" />
+        <p>Light Skills</p>
+        <v-btn-toggle
+          v-model="selectedLightSkills"
+          multiple
+          borderless
+          background-color="black"
+        >
+          <v-tooltip v-for="skill in lightSkills" :key="skill.name" bottom>
+            <template #activator="{on}">
+              <v-btn :value="skill.value" v-on="on">
+                <img :src="skill.img" />
+              </v-btn>
+            </template>
+            <span>{{ skill.name }}</span>
+          </v-tooltip>
+        </v-btn-toggle>
       </v-col>
       <v-col cols="12" md="6">
         <stats-text-field
@@ -36,7 +51,7 @@ import {
   calcMABuffRatio
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, MABuffName } from '~/types'
+import { Monster, MABuffName, LightSkillName } from '~/types'
 
 @Component({
   components: {
@@ -52,6 +67,45 @@ export default class CelestialStrike extends Vue {
   monster: Monster = isabelle
 
   MABuff: MABuffName[] = []
+  selectedLightSkills: LightSkillName[] = []
+
+  lightSkills = [
+    {
+      value: 'ArrowOfLight',
+      name: 'Arrow of Light',
+      img: require('~/static/light_arrow.gif')
+    },
+    {
+      value: 'CatastropheHeal',
+      name: 'Catastrophe Heal',
+      img: require('~/static/emergency.gif')
+    },
+    {
+      value: 'BasicHealing',
+      name: 'Basic Healing',
+      img: require('~/static/treatment.gif')
+    },
+    {
+      value: 'LightWave',
+      name: 'Light Wave',
+      img: require('~/static/plasma_shock.gif')
+    },
+    {
+      value: 'RadientStrike',
+      name: 'Radient Strike',
+      img: require('~/static/shining_burst.gif')
+    },
+    {
+      value: 'HeartsGrace',
+      name: "Heart's Grase",
+      img: require('~/static/force_field.gif')
+    },
+    {
+      value: 'SealingLight',
+      name: 'Sealing Light',
+      img: require('~/static/holylance.gif')
+    }
+  ]
 
   get buffedMA() {
     return (
@@ -64,7 +118,7 @@ export default class CelestialStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'magic'),
       this.monster.lightR,
-      calcCelestialStrikeDamage(this.buffedMA)
+      calcCelestialStrikeDamage(this.buffedMA, this.selectedLightSkills.length)
     )
   }
 
@@ -73,7 +127,7 @@ export default class CelestialStrike extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.lightR,
-      SkillRatio.CelestialStrike,
+      SkillRatio.CelestialStrike(this.selectedLightSkills.length),
       this.buffedMA,
       25
     )
