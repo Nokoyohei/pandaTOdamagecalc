@@ -38,16 +38,11 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [['nuxt-webfontloader']],
+  modules: [],
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
    */
-  webfontloader: {
-    google: {
-      families: ['Bellefair']
-    }
-  },
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {

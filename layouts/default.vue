@@ -10,12 +10,10 @@
       width="300"
     >
       <v-list-item>
-        <!-- <div style="height:0;"> -->
         <v-list-item-icon>
           <img :src="currentHeader.img" height="100" />
         </v-list-item-icon>
         <v-list-item-title> {{ currentHeader.title }} </v-list-item-title>
-        <!-- </div> -->
         <v-divider vertical dark />
         <img
           :src="otherHeader.img"

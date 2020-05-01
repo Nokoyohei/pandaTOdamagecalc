@@ -38,8 +38,4 @@ import WhatsThisSite from '~/components/WhatsThisSite.vue'
 export default class Index extends Vue {}
 </script>
 
-<style>
-.title-text {
-  font-family: 'Bellefair', serif !important;
-}
-</style>
+<style></style>
