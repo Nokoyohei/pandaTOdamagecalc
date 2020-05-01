@@ -5,7 +5,7 @@
         v-for="(item, i) in displayNotes"
         :key="i"
         :date="item.date"
-        :text="item.text"
+        :texts="item.texts"
         :color="i === 0 ? 'blue-grey darken-3' : 'default'"
       ></release-text>
       <v-list-item v-if="displayNotes.length !== releaseNotes.length">
@@ -35,36 +35,47 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2020/05/01',
+      texts: [
+        '1. Added Celestial Strike skill',
+        '2. Renewed top page',
+        '3. Renewed sidebar (still WIP on boss column)'
+      ]
+    },
+    {
       date: '2020/04/29',
-      text: 'Added 2nd Anniversary skill'
+      texts: [
+        '1. Added 2nd Anniversary skill',
+        '2. Followed the Earthquake Blade nerf'
+      ]
     },
     {
       date: '2020/04/28',
-      text: 'Followed the Eqrthquake Blade nerf'
+      texts: 'Followed the Earthquake Blade nerf'
     },
     {
       date: '2020/04/22',
-      text: 'Fixed the method of calculation buff'
+      texts: 'Fixed the method of calculation buff'
     },
     {
       date: '2020/04/19',
-      text: 'Changed the behavior of the graph'
+      texts: 'Changed the behavior of the graph'
     },
     {
       date: '2020/04/17',
-      text: "Fixed Isabelle's HP 200k to 180k"
+      texts: "Fixed Isabelle's HP 200k to 180k"
     },
     {
       date: '2020/04/16',
-      text: "Added champion's blade page"
+      texts: "Added champion's blade page"
     },
     {
       date: '2020/04/15',
-      text: 'Added 2nd Anniversary skill'
+      texts: 'Added 2nd Anniversary skill'
     },
     {
       date: '2020/04/29',
-      text: 'Opened this site as a beta version'
+      texts: 'Opened this site as a beta version'
     }
   ]
 
