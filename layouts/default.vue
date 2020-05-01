@@ -8,16 +8,23 @@
       permanent
       :mini-variant.sync="minivaliant"
       width="300"
-      class="test"
     >
       <v-list-item>
+        <!-- <div style="height:0;"> -->
         <v-list-item-icon>
-          <img src="~/static/mac.gif" />
+          <img :src="currentHeader.img" height="100" />
         </v-list-item-icon>
-        <v-list-item-title> Farming </v-list-item-title>
+        <v-list-item-title> {{ currentHeader.title }} </v-list-item-title>
+        <!-- </div> -->
+        <v-divider vertical dark />
+        <img
+          :src="otherHeader.img"
+          style="cursor: pointer;"
+          @click="menuChange"
+        />
       </v-list-item>
       <v-expansion-panels v-model="farmingPanel" multiple accordion>
-        <v-expansion-panel v-for="item in farmingMenu" :key="item.title">
+        <v-expansion-panel v-for="item in currentMenu" :key="item.title">
           <v-expansion-panel-header>
             <div>
               <img :src="item.imgsrc" />
@@ -44,37 +51,15 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <v-list-item>
-        <v-list-item-icon>
-          <img src="~/static/hecate.gif" />
-        </v-list-item-icon>
-        <v-list-item-title> Boss (WIP) </v-list-item-title>
-      </v-list-item>
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in BossMenu"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-img :src="item.imgsrc" />
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
     </v-navigation-drawer>
     <v-app-bar clipped-left fixed app>
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title style="cursor: pointer" @click="$router.push('/')">
+        {{ title }}
+      </v-toolbar-title>
       <v-spacer />
     </v-app-bar>
     <v-content>
-      <v-container>
-        <nuxt />
-      </v-container>
+      <nuxt />
     </v-content>
 
     <v-footer fixed app>
@@ -89,8 +74,18 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class DefaultLayout extends Vue {
   drawer = true
-  farmingPanel = [0]
+  farmingPanel = []
   minivaliant = false
+  currentHeader = {
+    img: require('~/static/mac.gif'),
+    title: 'Farming'
+  }
+
+  otherHeader = {
+    img: require('~/static/hecate.gif'),
+    title: 'Boss'
+  }
+
   farmingMenu = [
     {
       imgsrc: require('~/static/attacktype.jpg'),
@@ -155,18 +150,46 @@ export default class DefaultLayout extends Vue {
 
   BossMenu = [
     {
-      imgsrc: require('~/static/hellfulks.gif'),
-      title: 'SCYTHE',
-      to: '/scythe'
+      imgsrc: require('~/static/attacktype.jpg'),
+      title: 'ATTACK TYPE',
+      skills: []
+    },
+    {
+      imgsrc: require('~/static/magictype.jpg'),
+      title: 'MAGIC TYPE',
+      skills: [
+        {
+          imgsrc: require('~/static/hellfulks.gif'),
+          title: 'SCYTHE',
+          to: '/scythe'
+        }
+      ]
+    },
+    {
+      imgsrc: require('~/static/sensetype.jpg'),
+      title: 'SENSE TYPE',
+      skills: []
+    },
+    {
+      imgsrc: require('~/static/charmtype.jpg'),
+      title: 'CHARM TYPE',
+      skills: []
     }
   ]
 
   title = 'PandaTO Damage calculator'
+  currentMenu = this.farmingMenu
+  otherMenu = this.BossMenu
+
+  menuChange() {
+    this.farmingPanel = []
+    ;[this.currentHeader, this.otherHeader] = [
+      this.otherHeader,
+      this.currentHeader
+    ]
+    ;[this.currentMenu, this.otherMenu] = [this.otherMenu, this.currentMenu]
+  }
 }
 </script>
 
-<style>
-.test {
-  overflow: hidden;
-}
-</style>
+<style></style>
