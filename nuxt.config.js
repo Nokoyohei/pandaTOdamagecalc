@@ -43,6 +43,9 @@ export default {
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
    */
+  generate: {
+    fallback: true
+  },
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {

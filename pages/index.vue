@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-row class="text-center pb-5">
         <v-col cols="12" sm="12">
-          <v-img :src="require('~/static/vampcastle.jpg')"> </v-img>
+          <img src="~/static/vampcastle.jpg" width="100%" />
           <h1 class="display-2 font-weight-bold">What's this site?</h1>
         </v-col>
         <whats-this-site></whats-this-site>
