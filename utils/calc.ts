@@ -31,6 +31,8 @@ export const calcWindBladeDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.WindBlade)
 export const calcElectroAttackDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.ElectroAttack)
+export const calcScytheDamage = (ma: number, dark: number) =>
+  Math.ceil((ma - 49) * SkillRatio.Scythe(dark))
 
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)

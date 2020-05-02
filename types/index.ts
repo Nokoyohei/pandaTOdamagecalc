@@ -23,6 +23,25 @@ export interface Skill {
   img: NodeRequire
 }
 
+export interface BossMonster {
+  hp: number
+  dp: number
+  md: number
+  hv: number
+  da: number
+  fireR: number
+  waterR: number
+  earthR: number
+  windR: number
+  elecR: number
+  lightR: number
+  darkR: number
+  noPropR: number
+  phisicalR: number
+  gunR: number
+  gaugeNum: number
+}
+
 export type APBuffName = 'pumpingHeart' | 'adrenaline'
 export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye'
 export type LKBuffName = 'luckySeven' | 'auraOfLuck'

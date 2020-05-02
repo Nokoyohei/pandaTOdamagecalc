@@ -1,12 +1,7 @@
 <template>
   <v-container>
-    <h1>Gravity Crash</h1>
-    <boss-monster-panel
-      v-if="mode === 'boss'"
-      :damage="damage"
-      :monster.sync="monster"
-    ></boss-monster-panel>
-    <farming-monster v-else :damage="damage" :monster.sync="monster" />
+    <h1>Scythe</h1>
+    <boss-monster-panel :damage="damage" :monster.sync="monster" />
     <damage-area :damage="damage" />
 
     <v-row>
@@ -22,6 +17,11 @@
           :extra-stats.sync="extraMA"
           label="MA"
         />
+        <stats-text-field
+          :input-stats.sync="dark"
+          :need-stats="resDark"
+          label="DARK attr"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -29,16 +29,15 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle, requiem } from '~/utils/monsters'
+import { requiem } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
-  calcGravityCrashDamage,
+  calcScytheDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
@@ -47,11 +46,10 @@ import {
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster, BossMonster, MABuffName, DLBuffName } from '~/types'
+import { BossMonster, MABuffName, DLBuffName } from '~/types'
 
 @Component({
   components: {
-    FarmingMonster,
     BossMonsterPanel,
     DarkLoadBuff,
     MaBuff,
@@ -59,27 +57,14 @@ import { Monster, BossMonster, MABuffName, DLBuffName } from '~/types'
     DamageArea
   }
 })
-export default class GravityCrash extends Vue {
-  ma = 10000
+export default class Scythe extends Vue {
+  ma = 13541
   extraMA = 0
-  mode = 'farming'
-  monster: Monster | BossMonster = isabelle
+  dark = 1295
+  monster: BossMonster = requiem
 
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
-
-  created() {
-    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
-    if (this.mode === 'boss') {
-      this.monster = requiem
-    }
-  }
-
-  get monsterHP() {
-    return this.mode === 'boss'
-      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
-      : this.monster.hp
-  }
 
   get buffedMA() {
     return (
@@ -92,21 +77,19 @@ export default class GravityCrash extends Vue {
     let darkCommandoDamage = this.DLBuff.includes('darkCommando')
       ? calcDarkCommandoDamage(this.buffedMA)
       : 0
-    let gravityCrashDamage = calcGravityCrashDamage(this.buffedMA)
+    let scytheDamage = calcScytheDamage(this.buffedMA, this.dark)
     if (this.DLBuff.includes('bloodTestament')) {
       darkCommandoDamage = Math.round(
         darkCommandoDamage * (1 + BloodTestamentBuff)
       )
-      gravityCrashDamage = Math.round(
-        gravityCrashDamage * (1 + BloodTestamentBuff)
-      )
+      scytheDamage = Math.round(scytheDamage * (1 + BloodTestamentBuff))
     }
 
     return (
       calcDamage(
         calcMonsterDef(this.monster, 'magic'),
         this.monster.darkR,
-        gravityCrashDamage
+        scytheDamage
       ) +
       calcDamage(
         calcMonsterDef(this.monster, 'magic'),
@@ -118,8 +101,8 @@ export default class GravityCrash extends Vue {
 
   get resMA() {
     let attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.GravityCrash + SkillRatio.DarkCommando
-      : SkillRatio.GravityCrash
+      ? SkillRatio.Scythe(this.dark) + SkillRatio.DarkCommando
+      : SkillRatio.Scythe(this.dark)
     attackRatio = this.DLBuff.includes('bloodTestament')
       ? attackRatio * (1 + BloodTestamentBuff)
       : attackRatio
@@ -129,7 +112,7 @@ export default class GravityCrash extends Vue {
       (this.DLBuff.includes('darkCommando') ? 2 : 1)
 
     const needMA = calcNeedStats(
-      this.monsterHP,
+      this.monster.hp * this.monster.gaugeNum,
       monsterDef,
       this.monster.darkR,
       attackRatio,
@@ -138,6 +121,32 @@ export default class GravityCrash extends Vue {
     )
 
     return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
+  }
+
+  get resDark() {
+    let attackRatio = this.DLBuff.includes('darkCommando')
+      ? SkillRatio.Scythe(this.dark) + SkillRatio.DarkCommando
+      : SkillRatio.Scythe(this.dark)
+    attackRatio = this.DLBuff.includes('bloodTestament')
+      ? attackRatio * (1 + BloodTestamentBuff)
+      : attackRatio
+    const constStats = 49
+    const monsterDef =
+      calcMonsterDef(this.monster, 'magic') *
+      (this.DLBuff.includes('darkCommando') ? 2 : 1)
+
+    return Math.ceil(
+      (calcNeedStats(
+        this.monster.hp * this.monster.gaugeNum,
+        monsterDef,
+        this.monster.darkR,
+        this.buffedMA - constStats,
+        attackRatio,
+        0
+      ) *
+        100) /
+        30
+    )
   }
 }
 </script>

@@ -1,7 +1,12 @@
 <template>
   <v-container>
     <h1>Celestial Strike</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <boss-monster-panel
+      v-if="mode === 'boss'"
+      :damage="damage"
+      :monster.sync="monster"
+    ></boss-monster-panel>
+    <farming-monster v-else :damage="damage" :monster.sync="monster" />
     <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
@@ -39,10 +44,11 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
+import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { isabelle, requiem } from '~/utils/monsters'
 import {
   calcCelestialStrikeDamage,
   calcDamage,
@@ -51,11 +57,12 @@ import {
   calcMABuffRatio
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, MABuffName, LightSkillName } from '~/types'
+import { Monster, BossMonster, MABuffName, LightSkillName } from '~/types'
 
 @Component({
   components: {
     FarmingMonster,
+    BossMonsterPanel,
     MaBuff,
     StatsTextField,
     DamageArea
@@ -64,10 +71,24 @@ import { Monster, MABuffName, LightSkillName } from '~/types'
 export default class CelestialStrike extends Vue {
   ma = 10000
   extraMA = 0
-  monster: Monster = isabelle
+  mode = 'farming'
+  monster: Monster | BossMonster = isabelle
 
   MABuff: MABuffName[] = []
   selectedLightSkills: LightSkillName[] = []
+
+  created() {
+    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
+    if (this.mode === 'boss') {
+      this.monster = requiem
+    }
+  }
+
+  get monsterHP() {
+    return this.mode === 'boss'
+      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
+      : this.monster.hp
+  }
 
   lightSkills = [
     {
@@ -124,7 +145,7 @@ export default class CelestialStrike extends Vue {
 
   get resMA() {
     const needMA = calcNeedStats(
-      this.monster.hp,
+      this.monsterHP,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.lightR,
       SkillRatio.CelestialStrike(this.selectedLightSkills.length),
