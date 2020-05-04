@@ -2,7 +2,6 @@
   <v-container>
     <h1>Scythe</h1>
     <boss-monster-panel :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
 
     <v-row>
       <v-col cols="12" md="6">
