@@ -7,7 +7,6 @@
       :monster.sync="monster"
     ></boss-monster-panel>
     <farming-monster v-else :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <ma-buff :buff.sync="MABuff" />
@@ -47,7 +46,6 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { isabelle, requiem } from '~/utils/monsters'
 import {
   calcCelestialStrikeDamage,
@@ -64,8 +62,7 @@ import { Monster, BossMonster, MABuffName, LightSkillName } from '~/types'
     FarmingMonster,
     BossMonsterPanel,
     MaBuff,
-    StatsTextField,
-    DamageArea
+    StatsTextField
   }
 })
 export default class CelestialStrike extends Vue {

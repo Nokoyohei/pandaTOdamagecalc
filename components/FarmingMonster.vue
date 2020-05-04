@@ -18,6 +18,7 @@
           </v-card>
         </v-tabs-items>
       </v-container>
+      <damage-area :damage="damage" />
     </v-layout>
   </div>
 </template>
@@ -27,12 +28,14 @@ import { Component, Vue, Prop, PropSync } from 'nuxt-property-decorator'
 import { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
 import ChartLine from '~/components/ChartLine.vue'
+import DamageArea from '~/components/DamageArea.vue'
 import { isabelle, toilet, little, straw } from '~/utils/monsters'
 import { Monster } from '~/types'
 
 @Component({
   components: {
-    ChartLine
+    ChartLine,
+    DamageArea
   }
 })
 export default class FarmingMonster extends Vue {

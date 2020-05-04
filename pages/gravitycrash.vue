@@ -7,7 +7,6 @@
       :monster.sync="monster"
     ></boss-monster-panel>
     <farming-monster v-else :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
 
     <v-row>
       <v-col cols="12" md="6">
@@ -34,7 +33,6 @@ import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { isabelle, requiem } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
@@ -55,8 +53,7 @@ import { Monster, BossMonster, MABuffName, DLBuffName } from '~/types'
     BossMonsterPanel,
     DarkLoadBuff,
     MaBuff,
-    StatsTextField,
-    DamageArea
+    StatsTextField
   }
 })
 export default class GravityCrash extends Vue {

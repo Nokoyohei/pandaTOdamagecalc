@@ -2,7 +2,6 @@
   <v-container>
     <h1>Fan of Knives</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <da-buff :buff.sync="DABuff" />
@@ -30,7 +29,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import DaBuff from '~/components/DABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcFanOfKnicesDamage,
@@ -47,8 +45,7 @@ import { Monster, DABuffName } from '~/types'
   components: {
     FarmingMonster,
     DaBuff,
-    StatsTextField,
-    DamageArea
+    StatsTextField
   }
 })
 export default class FanOfKnives extends Vue {

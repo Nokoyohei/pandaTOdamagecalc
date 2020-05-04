@@ -2,7 +2,6 @@
   <v-container>
     <h1>Shooting Spree</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <ac-buff :buff.sync="ACBuff" />
@@ -30,7 +29,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import AcBuff from '~/components/ACBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcShootingSpreeDamage,
@@ -47,8 +45,7 @@ import { Monster, ACBuffName } from '~/types'
   components: {
     FarmingMonster,
     AcBuff,
-    StatsTextField,
-    DamageArea
+    StatsTextField
   }
 })
 export default class ShootingSpree extends Vue {

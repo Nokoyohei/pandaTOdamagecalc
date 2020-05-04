@@ -2,7 +2,6 @@
   <v-container>
     <h1>Earthquake Blade</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <ap-buff :buff.sync="APBuff" />
@@ -30,7 +29,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { isabelle } from '~/utils/monsters'
 import {
   calcEarthquakeBladeDamage,
@@ -46,8 +44,7 @@ import { Monster, APBuffName } from '~/types'
   components: {
     FarmingMonster,
     ApBuff,
-    StatsTextField,
-    DamageArea
+    StatsTextField
   }
 })
 export default class EarthquakeBlade extends Vue {
