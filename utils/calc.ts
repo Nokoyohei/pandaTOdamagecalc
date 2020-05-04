@@ -1,5 +1,5 @@
 import BuffRatio from '~/utils/buffRatio'
-import { Monster } from '~/types'
+import { Monster, DebuffName, BossMonster } from '~/types'
 import SkillRatio from '~/utils/skillRatio'
 
 // like python's np.linspace
@@ -33,6 +33,7 @@ export const calcElectroAttackDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.ElectroAttack)
 export const calcScytheDamage = (ma: number, dark: number) =>
   Math.ceil((ma - 49) * SkillRatio.Scythe(dark))
+export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
 
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
@@ -41,6 +42,8 @@ export const calcEarthquakeBladeDamage = (ap: number, soil: number) =>
   Math.ceil(ap * SkillRatio.EarthquakeBlade(soil))
 export const calcChampionsBladeDamage = (ap: number, fire: number) =>
   Math.ceil(ap * SkillRatio.ChampionsBlade(fire))
+export const calcFlamingFistDamage = (ap: number, fire: number, ma: number) =>
+  Math.ceil((ap * SkillRatio.FlamingFist(fire) * ma) / 100)
 
 export const calcFanOfKnicesDamage = (da: number, throwAp: number) =>
   Math.ceil((da + throwAp / 10) * SkillRatio.FanOfKnives)
@@ -48,6 +51,18 @@ export const calcShootingSpreeDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.ShootingSpree)
 export const calcBerserkDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.Berserk)
+
+// Calculate the debuffed monster's
+export const calcDebuffedMonster = (
+  monster: Monster | BossMonster,
+  debuff: DebuffName[]
+) => {
+  const debuffedMonster = { ...monster }
+  if (debuff.includes('RaionsSpace')) {
+    debuffedMonster.fireR = debuffedMonster.fireR > 150 ? 100 : 1
+  }
+  return debuffedMonster
+}
 
 // Calculate the monster's effective defense
 export const calcMonsterDef = (

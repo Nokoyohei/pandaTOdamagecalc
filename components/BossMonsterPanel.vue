@@ -22,6 +22,25 @@
           </v-card>
         </v-tabs-items>
       </v-container>
+      <damage-area :damage="damage" />
+      <span v-if="_debuff"
+        >debuff:
+        <v-btn-toggle
+          v-model="_debuff"
+          multiple
+          borderless
+          background-color="black"
+        >
+          <v-tooltip v-for="skill in debuffSkillsDef" :key="skill.name" bottom>
+            <template #activator="{on}">
+              <v-btn :value="skill.value" v-on="on">
+                <img :src="skill.img" />
+              </v-btn>
+            </template>
+            <span>{{ skill.name }}</span>
+          </v-tooltip>
+        </v-btn-toggle>
+      </span>
     </v-layout>
   </div>
 </template>
@@ -30,6 +49,7 @@
 import { Component, Vue, Prop, PropSync } from 'nuxt-property-decorator'
 import { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
+import DamageArea from '~/components/DamageArea.vue'
 import ChartLine from '~/components/ChartLine.vue'
 import {
   requiem,
@@ -41,11 +61,12 @@ import {
   chronos,
   kevin
 } from '~/utils/monsters'
-import { BossMonster } from '~/types'
+import { BossMonster, DebuffName, skillPanel } from '~/types'
 
 @Component({
   components: {
-    ChartLine
+    ChartLine,
+    DamageArea
   }
 })
 export default class BossMonsterPanel extends Vue {
@@ -54,6 +75,12 @@ export default class BossMonsterPanel extends Vue {
 
   @PropSync('monster', { required: true })
   _monster!: BossMonster
+
+  @PropSync('debuff')
+  _debuff?: DebuffName[]
+
+  @Prop()
+  debuffSkillsDef?: skillPanel[]
 
   datanum = 100
   tab = 0
