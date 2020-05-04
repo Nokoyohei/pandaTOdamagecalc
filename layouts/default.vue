@@ -175,12 +175,23 @@ export default class DefaultLayout extends Vue {
     {
       imgsrc: require('~/static/attacktype.jpg'),
       title: 'ATTACK TYPE',
-      skills: []
+      skills: [
+        {
+          imgsrc: require('~/static/flamingfist.gif'),
+          title: 'FLAMING FIST',
+          to: '/flamingfist'
+        }
+      ]
     },
     {
       imgsrc: require('~/static/magictype.jpg'),
       title: 'MAGIC TYPE',
       skills: [
+        {
+          imgsrc: require('~/static/sr.gif'),
+          title: 'MAGICAL SOUL',
+          to: '/magicalsoul'
+        },
         {
           imgsrc: require('~/static/hellfulks.gif'),
           title: 'SCYTHE',

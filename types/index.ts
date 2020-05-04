@@ -63,3 +63,10 @@ export type BlessingSkillName =
   | 'GnomeBlessing'
   | 'UndineBlessing'
   | 'SylphBlessing'
+export type DebuffName = 'ShieldBreaker' | 'RaionsSpace'
+
+export type skillPanel = {
+  name: string
+  value: string
+  img: NodeRequire
+}

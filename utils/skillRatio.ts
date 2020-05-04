@@ -6,6 +6,7 @@ const Scythe = (attr: number) => 55 + (30 * attr) / 100
 const FullHouse = 800 / 100
 const EarthquakeBlade = (attr: number) => 190 / 100 + (attr * 2) / 100
 const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
+const FlamingFist = (attr: number) => 40 / 100 + attr / 100
 const FanOfKnives = 800 / 10
 const ShootingSpree = 400 / 100
 const Berserk = 550 / 100
@@ -22,6 +23,7 @@ export default {
   FullHouse,
   EarthquakeBlade,
   ChampionsBlade,
+  FlamingFist,
   FanOfKnives,
   ShootingSpree,
   Berserk,
