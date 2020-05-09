@@ -106,6 +106,16 @@ export default class DefaultLayout extends Vue {
       title: 'MAGIC TYPE',
       skills: [
         {
+          imgsrc: require('~/static/earthquake.gif'),
+          title: 'CLEAVING TERRA',
+          to: '/cleavingterra'
+        },
+        {
+          imgsrc: require('~/static/salamanderBlessing.gif'),
+          title: 'BLESSINGS',
+          to: '/blessing'
+        },
+        {
           imgsrc: require('~/static/hardgravity.gif'),
           title: 'GRAVITY CRASH',
           to: '/gravitycrash'

@@ -1,8 +1,6 @@
 <template>
   <v-container>
     <h1>Blessings</h1>
-    <p>{{ resAC }}</p>
-    <p>{{ blessingNum }}</p>
     <farming-monster :damage="damage" :monster.sync="monster" />
     <damage-area :damage="damage" />
     <p class="text-center">Blessings</p>
@@ -144,10 +142,6 @@ export default class Blessing extends Vue {
       )
     })
     return damage
-  }
-
-  get blessingNum() {
-    return this.selectedBlessingSkills.length
   }
 
   get needStats() {

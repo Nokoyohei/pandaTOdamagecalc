@@ -11,7 +11,7 @@ const Berserk = 550 / 100
 const Blessing = 300 / 20
 const WindBlade = 700 / 10
 const ElectroAttack = 800 / 20
-const CleavingTerra = 650 / 15
+const CleavingTerra = 650 / 10
 
 export default {
   DarkCommando,

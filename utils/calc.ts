@@ -25,6 +25,8 @@ export const calcCelestialStrikeDamage = (ma: number, skillNum: number) =>
   Math.ceil((ma - 25) * SkillRatio.CelestialStrike(skillNum))
 export const calcBlessingDamage = (ac: number, lk: number) =>
   Math.ceil(ac + lk) * SkillRatio.Blessing
+export const calcCleavingTerraDamage = (ma: number) =>
+  Math.ceil((ma - 25) * SkillRatio.CleavingTerra)
 
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
