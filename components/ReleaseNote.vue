@@ -35,6 +35,16 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2020/05/10',
+      texts: [
+        '1. Added following skills',
+        'WindBlade/CleavingTerra/ElectroAttack/Blessings',
+        '2. Added Boss contents(but it is not yet implemented because there is not enough verification on the phenomenon that damage increases greatly when a certain amount of damage is dealt)',
+        '3. Added following skills because of Boss contents implemented',
+        'FlamingFist/Scythe/MagicalSoul/GravityCrash(for boss)/CelestialStrike(for boss)'
+      ]
+    },
+    {
       date: '2020/05/01',
       texts: [
         '1. Added Celestial Strike skill',

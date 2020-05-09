@@ -3,9 +3,9 @@
     <v-list-item two-line class="text-left">
       <v-list-item-content>
         <div class="subtitle-2 mb-4 blue-grey--text">{{ date }}</div>
-        <v-list-item-title v-for="text in [texts].flat()" :key="text">{{
-          text
-        }}</v-list-item-title>
+        <v-list-item-title v-for="text in [texts].flat()" :key="text">
+          <p class="text-wrap">{{ text }}</p></v-list-item-title
+        >
       </v-list-item-content>
     </v-list-item>
     <v-divider></v-divider>
