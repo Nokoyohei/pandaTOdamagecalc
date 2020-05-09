@@ -25,7 +25,7 @@
               >
             </template>
             <div>Enter the extra stats like set effect</div>
-            <div>set effect, star power, scroll, etc. do not apply buffed</div>
+            <div>star power, scroll, etc. do not apply buffed</div>
           </v-tooltip>
         </template>
       </v-text-field>

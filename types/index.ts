@@ -16,6 +16,13 @@ export interface Monster {
 }
 export type attribute = keyof Monster
 
+export interface Skill {
+  value: number
+  name: string
+  attr: attribute
+  img: NodeRequire
+}
+
 export type APBuffName = 'pumpingHeart' | 'adrenaline'
 export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye'
 export type LKBuffName = 'luckySeven' | 'auraOfLuck'
@@ -31,3 +38,9 @@ export type LightSkillName =
   | 'CatastropheHeal'
   | 'HeartsGrace'
   | 'SealingLight'
+export type BlessingSkillName =
+  | 'SalamanderBlessing'
+  | 'RaionBlessing'
+  | 'GnomeBlessing'
+  | 'UndineBlessing'
+  | 'SylphBlessing'

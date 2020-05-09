@@ -8,6 +8,10 @@ const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
 const FanOfKnives = 800 / 10
 const ShootingSpree = 400 / 100
 const Berserk = 550 / 100
+const Blessing = 300 / 20
+const WindBlade = 700 / 10
+const ElectroAttack = 800 / 20
+const CleavingTerra = 650 / 15
 
 export default {
   DarkCommando,
@@ -18,5 +22,9 @@ export default {
   ChampionsBlade,
   FanOfKnives,
   ShootingSpree,
-  Berserk
+  Berserk,
+  Blessing,
+  WindBlade,
+  ElectroAttack,
+  CleavingTerra
 }
