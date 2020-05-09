@@ -2,7 +2,6 @@
   <v-container>
     <h1>Wind Blade</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
     <v-row>
       <v-col cols="12" md="6">
         <ma-buff :buff.sync="MABuff" />

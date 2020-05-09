@@ -2,7 +2,6 @@
   <v-container>
     <h1>Blessings</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
-    <damage-area :damage="damage" />
     <p class="text-center">Blessings</p>
     <v-layout justify-center>
       <v-btn-toggle
