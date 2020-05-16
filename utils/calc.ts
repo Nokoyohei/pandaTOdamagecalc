@@ -52,6 +52,27 @@ export const calcShootingSpreeDamage = (gunAP: number) =>
 export const calcBerserkDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.Berserk)
 
+// In Trickster, there is a spec that deals 2^32/100 damage for every 2^32 damage
+// if the resistance *idealDamage exceeds 2^31, with no resistance or defense
+// It's probably an overflow measure, but it feels to me like it's being handled the wrong way
+export const calcExtraDamage = (
+  idealDamage: number,
+  resistance: number,
+  extraMultiplier: number = 1
+) => {
+  const extraDamageNum =
+    resistance >= 100 ? 1 : (idealDamage * resistance - 2 ** 31) / 2 ** 32
+
+  let extraDamage: number = 0
+  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
+  for (let i = 0; i < extraDamageNum; i++) {
+    if (extraDamage + EXTRA_DAMAGE >= idealDamage * extraMultiplier) break
+    extraDamage += EXTRA_DAMAGE
+  }
+
+  return extraDamage
+}
+
 // Calculate the debuffed monster's
 export const calcDebuffedMonster = (
   monster: Monster | BossMonster,
@@ -84,12 +105,18 @@ export const calcMonsterDef = (
 export const calcDamage = (
   monsterDef: number,
   monsterResist: number,
-  idealDamage: number
+  idealDamage: number,
+  extraMultiplier = 1
 ) => {
-  const damage = Math.floor(
-    ((100 - monsterResist) / 100) * (idealDamage - monsterDef)
+  const extraDamage = calcExtraDamage(
+    idealDamage,
+    monsterResist,
+    extraMultiplier
   )
-  return Math.floor(damage < 0 ? 0 : damage) + 1
+  const damage = Math.floor(
+    ((100 - monsterResist) / 100) * (idealDamage * extraMultiplier - monsterDef)
+  )
+  return Math.floor(damage + extraDamage < 0 ? 0 : damage + extraDamage) + 1
 }
 
 // Calculate the missing status
@@ -101,6 +128,8 @@ export const calcDamage = (
     attackRatio: skill magnification -> skillRatio 
     nowStats: Status when you deal current damage
     constStats: Last Subtract Status. For example, GravityCrash's 49
+    extraMultiplier: it is a multiplier for skills that multiply directly by IdealDamage. 
+                     Currently only BloodTestement is available
 */
 /*
   logic: e.g. gravity crash ; x -> needed stats what we know
@@ -115,11 +144,44 @@ export const calcNeedStats = (
   monsterResist: number,
   attackRatio: number,
   nowStats: number,
-  constStats = 49
+  constStats = 49,
+  extraMultiplier = 1
 ) => {
+  // If there is no overflow when calculating damage in Trickster
   const resistance = (100 - monsterResist) / 100
+  const idealDamage = monsterHp / resistance + monsterDef
+  if ((idealDamage / extraMultiplier) * monsterResist <= 2 ** 31) {
+    return idealDamage / extraMultiplier / attackRatio + constStats - nowStats
+  }
+
+  // If there is overflow when calculating damage in Trickster
+  const extraDamage = calcExtraDamage(monsterHp, monsterResist, extraMultiplier)
+  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
+  const calcIdealDamage = (extraNum: number) =>
+    (extraNum * 2 ** 32 + 2 ** 31) / monsterResist
+  const damage = (idealDamage: number) =>
+    (idealDamage * extraMultiplier - monsterDef) * resistance
+  let extraDamageNum = extraDamage / EXTRA_DAMAGE
+
+  // If the damage from the attack + overFlowDamage isn't enough to defeat monster,
+  // you'll need to strengthen your attack until the next overFlowDamage occurs.
+  if (
+    damage(calcIdealDamage(extraDamage / EXTRA_DAMAGE)) * extraMultiplier +
+      extraDamageNum * EXTRA_DAMAGE <
+    monsterHp
+  )
+    extraDamageNum++
+
+  const resHp =
+    extraDamageNum * EXTRA_DAMAGE * extraMultiplier <= monsterHp
+      ? damage(calcIdealDamage(extraDamageNum - 1))
+      : extraDamageNum * EXTRA_DAMAGE * extraMultiplier * resistance +
+        monsterDef
+
   return (
-    (monsterHp / resistance + monsterDef) / attackRatio + constStats - nowStats
+    (resHp / extraMultiplier / resistance + monsterDef) / attackRatio +
+    constStats -
+    nowStats
   )
 }
 
