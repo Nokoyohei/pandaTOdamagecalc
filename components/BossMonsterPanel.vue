@@ -1,7 +1,12 @@
 <template>
   <div>
     <v-layout column justify-center align-center>
-      <v-tabs v-model="tab" fixed-tabs @change="changeSelectedMonster">
+      <v-tabs
+        v-model="tab"
+        fixed-tabs
+        center-active
+        @change="changeSelectedMonster"
+      >
         <v-tab> Requiem Apocrypha </v-tab>
         <v-tab> Flashire Snake </v-tab>
         <v-tab> Easter Monster </v-tab>
