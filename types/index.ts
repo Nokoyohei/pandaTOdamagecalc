@@ -11,7 +11,7 @@ export interface Monster {
   lightR: number
   darkR: number
   noPropR: number
-  phisicalR: number
+  physicalR: number
   gunR: number
 }
 export type attribute = keyof Monster
@@ -37,7 +37,7 @@ export interface BossMonster {
   lightR: number
   darkR: number
   noPropR: number
-  phisicalR: number
+  physicalR: number
   gunR: number
   gaugeNum: number
 }

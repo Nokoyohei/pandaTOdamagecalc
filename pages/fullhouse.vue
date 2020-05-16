@@ -102,7 +102,7 @@ export default class FullHouse extends Vue {
   get damage() {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       calcFullHouseDamage(this.buffedAP, this.buffedLK, this.buffedHV)
     )
   }
@@ -111,7 +111,7 @@ export default class FullHouse extends Vue {
     return calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       SkillRatio.FullHouse,
       this.buffedAP + (this.buffedLK + this.buffedHV) * 8,
       0

@@ -66,7 +66,7 @@ export default class ChampionsBlade extends Vue {
   get damage() {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       calcChampionsBladeDamage(this.buffedAP, this.fire)
     )
   }
@@ -75,7 +75,7 @@ export default class ChampionsBlade extends Vue {
     const needAP = calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       SkillRatio.ChampionsBlade(this.fire),
       this.buffedAP,
       0
@@ -89,7 +89,7 @@ export default class ChampionsBlade extends Vue {
       calcNeedStats(
         this.monster.hp,
         calcMonsterDef(this.monster, 'physical'),
-        this.monster.phisicalR,
+        this.monster.physicalR,
         this.buffedAP,
         SkillRatio.ChampionsBlade(this.fire),
         0

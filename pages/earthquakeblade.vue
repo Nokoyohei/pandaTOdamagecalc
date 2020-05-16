@@ -65,7 +65,7 @@ export default class EarthquakeBlade extends Vue {
   get damage() {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       calcEarthquakeBladeDamage(this.buffedAP, this.soil)
     )
   }
@@ -74,7 +74,7 @@ export default class EarthquakeBlade extends Vue {
     const needAP = calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       SkillRatio.EarthquakeBlade(this.soil),
       this.buffedAP,
       0
@@ -88,7 +88,7 @@ export default class EarthquakeBlade extends Vue {
       calcNeedStats(
         this.monster.hp,
         calcMonsterDef(this.monster, 'physical'),
-        this.monster.phisicalR,
+        this.monster.physicalR,
         this.buffedAP,
         SkillRatio.EarthquakeBlade(this.soil),
         0

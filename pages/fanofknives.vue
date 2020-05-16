@@ -66,7 +66,7 @@ export default class FanOfKnives extends Vue {
   get damage() {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       calcFanOfKnicesDamage(this.buffedDA, this.throwAp)
     )
   }
@@ -75,7 +75,7 @@ export default class FanOfKnives extends Vue {
     const needDA = calcNeedStats(
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
-      this.monster.phisicalR,
+      this.monster.physicalR,
       SkillRatio.FanOfKnives,
       this.buffedDA + this.throwAp / 10,
       0
