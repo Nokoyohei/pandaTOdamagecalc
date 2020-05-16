@@ -114,16 +114,17 @@ export default class GravityCrash extends Vue {
   }
 
   get resMA() {
-    let attackRatio = this.DLBuff.includes('darkCommando')
+    const attackRatio = this.DLBuff.includes('darkCommando')
       ? SkillRatio.GravityCrash + SkillRatio.DarkCommando
       : SkillRatio.GravityCrash
-    attackRatio = this.DLBuff.includes('bloodTestament')
-      ? attackRatio * (1 + BloodTestamentBuff)
-      : attackRatio
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *
       (this.DLBuff.includes('darkCommando') ? 2 : 1)
+
+    const buff = this.DLBuff.includes('bloodTestament')
+      ? 1 + BloodTestamentBuff
+      : 1
 
     const needMA = calcNeedStats(
       this.monsterHP,
@@ -131,7 +132,8 @@ export default class GravityCrash extends Vue {
       this.monster.darkR,
       attackRatio,
       this.buffedMA,
-      constStats
+      constStats,
+      buff
     )
 
     return Math.ceil(needMA / calcMABuffRatio(this.MABuff))

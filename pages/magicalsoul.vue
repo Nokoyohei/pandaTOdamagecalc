@@ -57,9 +57,9 @@ import { BossMonster, APBuffName, MABuffName } from '~/types'
   }
 })
 export default class MagicalSoul extends Vue {
-  ma = 9566
+  ma = 10000
   extraMA = 0
-  ap = 65267
+  ap = 100000
   extraAP = 0
   monster: BossMonster = requiem
 
@@ -81,10 +81,14 @@ export default class MagicalSoul extends Vue {
   }
 
   get damage() {
+    const magicalSoulDamage = calcMagicalSoulDamage(
+      this.buffedAP,
+      this.buffedMA
+    )
     return calcDamage(
       calcMonsterDef(this.monster, 'magic'),
       this.monster.noPropR,
-      calcMagicalSoulDamage(this.buffedAP, this.buffedMA)
+      magicalSoulDamage
     )
   }
 

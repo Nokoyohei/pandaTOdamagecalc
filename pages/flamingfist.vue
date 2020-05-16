@@ -74,11 +74,11 @@ import {
   }
 })
 export default class ChampionsBlade extends Vue {
-  ap = 143939
+  ap = 100000
   extraAP = 0
-  ma = 44998
+  ma = 10000
   extraMA = 0
-  fire = 522
+  fire = 500
   monster: BossMonster = requiem
 
   APBuff: APBuffName[] = []
