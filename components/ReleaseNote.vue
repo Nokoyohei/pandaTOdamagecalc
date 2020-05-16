@@ -35,6 +35,16 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2020/05/17',
+      texts: [
+        "1. We've solved the mysterious damage phenomenon!!!!",
+        'You should be able to calculate the damage accurately, albeit with some error',
+        'Note: the complex formula is not fully simulated and there is a deviation in the calculation of necessary status for some monsters',
+        '2. Added following skills',
+        'StaffOfAgony'
+      ]
+    },
+    {
       date: '2020/05/10',
       texts: [
         '1. Added following skills',

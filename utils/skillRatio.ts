@@ -3,6 +3,7 @@ const GravityCrash = 1200 / 10
 const CelestialStrike = (skillNum: number) =>
   (950 / 10) * (1.5 + 0.05 * skillNum)
 const Scythe = (attr: number) => 55 + (30 * attr) / 100
+const StaffOfAgony = (attr: number) => 85 + (15 * attr) / 100
 const FullHouse = 800 / 100
 const EarthquakeBlade = (attr: number) => 190 / 100 + (attr * 2) / 100
 const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
@@ -20,6 +21,7 @@ export default {
   GravityCrash,
   CelestialStrike,
   Scythe,
+  StaffOfAgony,
   FullHouse,
   EarthquakeBlade,
   ChampionsBlade,

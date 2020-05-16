@@ -198,6 +198,11 @@ export default class DefaultLayout extends Vue {
           to: '/scythe'
         },
         {
+          imgsrc: require('~/static/maristrident.gif'),
+          title: 'STAFF OF AGONY',
+          to: '/staffofagony'
+        },
+        {
           imgsrc: require('~/static/hardgravity.gif'),
           title: 'GRAVITY CRASH',
           to: '/gravitycrash?mode=boss'
