@@ -13,25 +13,25 @@ const isabelle: Monster = {
   lightR: 84,
   darkR: 78,
   noPropR: 78,
-  gunR: 60,
-  phisicalR: 60
+  physicalR: 60,
+  gunR: 60
 }
 
 const little: Monster = {
-  hp: 450000,
-  dp: 75000,
+  hp: 500000,
+  dp: 65000,
   md: 15000,
   hv: 1500,
   fireR: 90,
   waterR: 90,
   windR: 90,
-  earthR: 99,
+  earthR: 90,
   elecR: 90,
   lightR: 90,
   darkR: 90,
   noPropR: 90,
-  gunR: 75,
-  phisicalR: 80
+  physicalR: 80,
+  gunR: 75
 }
 
 const toilet: Monster = {
@@ -47,8 +47,8 @@ const toilet: Monster = {
   lightR: 90,
   darkR: 90,
   noPropR: 90,
-  gunR: 75,
-  phisicalR: 80
+  physicalR: 80,
+  gunR: 75
 }
 
 const straw: Monster = {
@@ -64,8 +64,8 @@ const straw: Monster = {
   lightR: 80,
   darkR: 85,
   noPropR: 90,
-  gunR: 80,
-  phisicalR: 80
+  physicalR: 80,
+  gunR: 80
 }
 
 const requiem: BossMonster = {
@@ -82,8 +82,8 @@ const requiem: BossMonster = {
   lightR: 40,
   darkR: 40,
   noPropR: 40,
+  physicalR: 90,
   gunR: 90,
-  phisicalR: 90,
   gaugeNum: 5
 }
 
@@ -101,16 +101,16 @@ const snake: BossMonster = {
   lightR: 40,
   darkR: 60,
   noPropR: 40,
+  physicalR: 95,
   gunR: 95,
-  phisicalR: 95,
   gaugeNum: 5
 }
 
 const lucia: BossMonster = {
   hp: 999999,
   dp: 99999,
-  md: 8000,
-  hv: 3000,
+  md: 7000,
+  hv: 2500,
   da: 3000,
   fireR: 99,
   waterR: 70,
@@ -120,8 +120,8 @@ const lucia: BossMonster = {
   lightR: 50,
   darkR: 60,
   noPropR: 65,
+  physicalR: 97,
   gunR: 97,
-  phisicalR: 97,
   gaugeNum: 5
 }
 
@@ -139,8 +139,8 @@ const mong: BossMonster = {
   lightR: 50,
   darkR: 95,
   noPropR: 75,
+  physicalR: 99,
   gunR: 99,
-  phisicalR: 99,
   gaugeNum: 5
 }
 
@@ -156,10 +156,10 @@ const hecate: BossMonster = {
   earthR: 70,
   elecR: 70,
   lightR: 50,
-  darkR: 80,
+  darkR: 70,
   noPropR: 80,
+  physicalR: 99,
   gunR: 99,
-  phisicalR: 99,
   gaugeNum: 5
 }
 
@@ -177,8 +177,8 @@ const janus: BossMonster = {
   lightR: 50,
   darkR: 80,
   noPropR: 65,
+  physicalR: 20,
   gunR: 1,
-  phisicalR: 20,
   gaugeNum: 5
 }
 
@@ -196,8 +196,8 @@ const chronos: BossMonster = {
   lightR: 130,
   darkR: 130,
   noPropR: 60,
+  physicalR: 5,
   gunR: 1,
-  phisicalR: 5,
   gaugeNum: 5
 }
 
@@ -215,8 +215,8 @@ const kevin: BossMonster = {
   lightR: 50,
   darkR: 70,
   noPropR: 100,
+  physicalR: 1,
   gunR: 1,
-  phisicalR: 1,
   gaugeNum: 5
 }
 
