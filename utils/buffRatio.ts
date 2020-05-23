@@ -10,6 +10,7 @@ const secondAnniversaryBuff = 0.2
 const GunBoosterBuff = 0.7
 const BullsEyeBuff = 0.7
 const EagleEyeBuff = 0.5
+const PrecisePitch = 6
 
 export default {
   MistOfManaBuff,
@@ -23,5 +24,6 @@ export default {
   secondAnniversaryBuff,
   GunBoosterBuff,
   BullsEyeBuff,
-  EagleEyeBuff
+  EagleEyeBuff,
+  PrecisePitch
 }

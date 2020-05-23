@@ -53,6 +53,14 @@ export const calcShootingSpreeDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.ShootingSpree)
 export const calcBerserkDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.Berserk)
+export const calcChainOfKnivesDamage = (da: number, throwAp: number) =>
+  Math.ceil((da * 16 + throwAp * 6) * SkillRatio.ChainOfKnives)
+export const calcPoisonAssaultDamage = (da: number, throwAp: number) =>
+  Math.ceil(da * 16 * SkillRatio.PoisonAssault) + throwAp
+export const calcPoisonDamage = (da: number, throwAp: number) =>
+  Math.ceil((da * 16 + throwAp) * 0.312) * SkillRatio.PoisonAssault
+export const calcSuddenAttackDamage = (ap: number, da: number, lk: number) =>
+  Math.ceil((da + lk) * 16 + ap) * SkillRatio.SuddenAttack
 
 // In Trickster, there is a spec that deals 2^32/100 damage for every 2^32 damage
 // if the resistance *idealDamage exceeds 2^31, with no resistance or defense
@@ -83,6 +91,9 @@ export const calcDebuffedMonster = (
   const debuffedMonster = { ...monster }
   if (debuff.includes('RaionsSpace')) {
     debuffedMonster.fireR = debuffedMonster.fireR > 150 ? 100 : 1
+  }
+  if (debuff.includes('ShieldBreaker')) {
+    debuffedMonster.physicalR = 0
   }
   return debuffedMonster
 }
@@ -151,6 +162,7 @@ export const calcNeedStats = (
 ) => {
   // If there is no overflow when calculating damage in Trickster
   const resistance = (100 - monsterResist) / 100
+  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
   const idealDamage = monsterHp / resistance + monsterDef
   if ((idealDamage / extraMultiplier) * monsterResist <= 2 ** 31) {
     return idealDamage / extraMultiplier / attackRatio + constStats - nowStats
@@ -158,7 +170,6 @@ export const calcNeedStats = (
 
   // If there is overflow when calculating damage in Trickster
   const extraDamage = calcExtraDamage(monsterHp, monsterResist, extraMultiplier)
-  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
   const calcIdealDamage = (extraNum: number) =>
     (extraNum * 2 ** 32 + 2 ** 31) / monsterResist
   const damage = (idealDamage: number) =>
@@ -218,6 +229,13 @@ export const calcDABuffRatio = (
   if (DABuff.includes('sixthSense')) buffRatio += BuffRatio.SixthSenseBuff
   if (DABuff.includes('secondAnniversary'))
     buffRatio += BuffRatio.secondAnniversaryBuff
+  return buffRatio
+}
+
+export const calcThrowBuffRatio = (ThrowBuff: 'precisePitch'[]) => {
+  let buffRatio = 1
+
+  if (ThrowBuff.includes('precisePitch')) buffRatio = BuffRatio.PrecisePitch
   return buffRatio
 }
 

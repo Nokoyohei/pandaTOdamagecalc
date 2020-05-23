@@ -217,7 +217,23 @@ export default class DefaultLayout extends Vue {
     {
       imgsrc: require('~/static/sensetype.jpg'),
       title: 'SENSE TYPE',
-      skills: []
+      skills: [
+        {
+          imgsrc: require('~/static/chainofknives.gif'),
+          title: 'CHAIN OF KNIVES',
+          to: '/chainofknives'
+        },
+        {
+          imgsrc: require('~/static/suddenattack.gif'),
+          title: 'SUDDEN ATTACK',
+          to: '/suddenattack'
+        },
+        {
+          imgsrc: require('~/static/poison.gif'),
+          title: 'POISON ASSAULT',
+          to: '/poisonassault'
+        }
+      ]
     },
     {
       imgsrc: require('~/static/charmtype.jpg'),

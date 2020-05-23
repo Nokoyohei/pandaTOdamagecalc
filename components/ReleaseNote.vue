@@ -35,6 +35,14 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2020/05/24',
+      texts: [
+        '1. Added following skills to boss tab',
+        'ChainOfKnives/SuddenAttack/PoisonAssault',
+        'Note: Poison Assault is only implemented for poison damage. The unpoisoned damage is about 70% of Chain of Knives'
+      ]
+    },
+    {
       date: '2020/05/17',
       texts: [
         "1. We've solved the mysterious damage phenomenon!!!!",
