@@ -177,6 +177,11 @@ export default class DefaultLayout extends Vue {
       title: 'ATTACK TYPE',
       skills: [
         {
+          imgsrc: require('~/static/earthquakeblade.gif'),
+          title: 'EARTHQUAKE BLADE',
+          to: '/earthquakeblade?mode=boss'
+        },
+        {
           imgsrc: require('~/static/flamingfist.gif'),
           title: 'FLAMING FIST',
           to: '/flamingfist'

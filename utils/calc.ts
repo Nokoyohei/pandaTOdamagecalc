@@ -89,12 +89,17 @@ export const calcDebuffedMonster = (
   monster: Monster | BossMonster,
   debuff: DebuffName[]
 ) => {
-  const debuffedMonster = { ...monster }
+  const debuffedMonster = { ...monster } as BossMonster
   if (debuff.includes('RaionsSpace')) {
     debuffedMonster.fireR = debuffedMonster.fireR > 150 ? 100 : 1
   }
   if (debuff.includes('ShieldBreaker')) {
-    debuffedMonster.physicalR = 0
+    debuffedMonster.physicalR =
+      debuffedMonster.physicalR - (20 + debuffedMonster.da * 0.6) / 3
+    debuffedMonster.physicalR =
+      debuffedMonster.physicalR < 0
+        ? monster.physicalR * 0.2
+        : debuffedMonster.physicalR
   }
   return debuffedMonster
 }

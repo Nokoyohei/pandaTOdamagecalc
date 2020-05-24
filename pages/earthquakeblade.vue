@@ -1,7 +1,14 @@
 <template>
   <v-container>
     <h1>Earthquake Blade</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <boss-monster-panel
+      v-if="mode === 'boss'"
+      :damage="damage"
+      :monster.sync="monster"
+      :debuff-skills-def="debuffSkillsDef"
+      :debuff.sync="debuffSkills"
+    ></boss-monster-panel>
+    <farming-monster v-else :damage="damage" :monster.sync="monster" />
     <v-row>
       <v-col cols="12" md="6">
         <ap-buff :buff.sync="APBuff" />
@@ -27,33 +34,71 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
+import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle } from '~/utils/monsters'
+import { isabelle, requiem } from '~/utils/monsters'
 import {
   calcEarthquakeBladeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcAPBuffRatio
+  calcAPBuffRatio,
+  calcDebuffedMonster
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, APBuffName } from '~/types'
+import {
+  Monster,
+  BossMonster,
+  APBuffName,
+  DebuffName,
+  skillPanel
+} from '~/types'
 
 @Component({
   components: {
     FarmingMonster,
+    BossMonsterPanel,
     ApBuff,
     StatsTextField
   }
 })
 export default class EarthquakeBlade extends Vue {
-  ap = 100000
+  ap = 446044
   extraAP = 0
-  soil = 1000
+  soil = 1100
+  mode = 'farming'
   monster: Monster = isabelle
 
   APBuff: APBuffName[] = []
+  debuffSkills: DebuffName[] = []
+
+  debuffSkillsDef: skillPanel[] = [
+    {
+      value: 'ShieldBreaker',
+      name: 'Shield Breaker',
+      img: require('~/static/barrier_break.gif')
+    }
+  ]
+
+  created() {
+    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
+    if (this.mode === 'boss') {
+      this.monster = requiem
+    }
+  }
+
+  get monsterHP() {
+    return this.mode === 'boss'
+      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
+      : this.monster.hp
+  }
+
+  get debuffedMonster() {
+    return this.mode === 'boss'
+      ? calcDebuffedMonster(this.monster as BossMonster, this.debuffSkills)
+      : this.monster
+  }
 
   get buffedAP() {
     return (
@@ -64,17 +109,17 @@ export default class EarthquakeBlade extends Vue {
 
   get damage() {
     return calcDamage(
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
+      calcMonsterDef(this.debuffedMonster, 'physical'),
+      this.debuffedMonster.physicalR,
       calcEarthquakeBladeDamage(this.buffedAP, this.soil)
     )
   }
 
   get resAP() {
     const needAP = calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
+      this.monsterHP,
+      calcMonsterDef(this.debuffedMonster, 'physical'),
+      this.debuffedMonster.physicalR,
       SkillRatio.EarthquakeBlade(this.soil),
       this.buffedAP,
       0
@@ -86,9 +131,9 @@ export default class EarthquakeBlade extends Vue {
   get resSoil() {
     return Math.ceil(
       calcNeedStats(
-        this.monster.hp,
-        calcMonsterDef(this.monster, 'physical'),
-        this.monster.physicalR,
+        this.monsterHP,
+        calcMonsterDef(this.debuffedMonster, 'physical'),
+        this.debuffedMonster.physicalR,
         this.buffedAP,
         SkillRatio.EarthquakeBlade(this.soil),
         0
