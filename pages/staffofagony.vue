@@ -56,9 +56,9 @@ import { BossMonster, MABuffName, DLBuffName } from '~/types'
   }
 })
 export default class StaffOfAgony extends Vue {
-  ma = 41181
+  ma = 10000
   extraMA = 0
-  dark = 2589
+  dark = 1000
   monster: BossMonster = requiem
 
   MABuff: MABuffName[] = []

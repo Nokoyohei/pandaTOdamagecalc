@@ -72,11 +72,12 @@ export const calcExtraDamage = (
 ) => {
   const extraDamageNum =
     resistance >= 100 ? 1 : (idealDamage * resistance - 2 ** 31) / 2 ** 32
-
   let extraDamage: number = 0
   const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
   for (let i = 0; i < extraDamageNum; i++) {
-    if (extraDamage + EXTRA_DAMAGE >= idealDamage * extraMultiplier) break
+    // first extra damage is special case
+    if (i !== 0 && extraDamage + EXTRA_DAMAGE >= idealDamage * extraMultiplier)
+      break
     extraDamage += EXTRA_DAMAGE
   }
 
@@ -162,14 +163,14 @@ export const calcNeedStats = (
 ) => {
   // If there is no overflow when calculating damage in Trickster
   const resistance = (100 - monsterResist) / 100
-  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
   const idealDamage = monsterHp / resistance + monsterDef
-  if ((idealDamage / extraMultiplier) * monsterResist <= 2 ** 31) {
+  if (idealDamage * extraMultiplier * monsterResist <= 2 ** 31) {
     return idealDamage / extraMultiplier / attackRatio + constStats - nowStats
   }
 
   // If there is overflow when calculating damage in Trickster
   const extraDamage = calcExtraDamage(monsterHp, monsterResist, extraMultiplier)
+  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
   const calcIdealDamage = (extraNum: number) =>
     (extraNum * 2 ** 32 + 2 ** 31) / monsterResist
   const damage = (idealDamage: number) =>
@@ -185,11 +186,16 @@ export const calcNeedStats = (
   )
     extraDamageNum++
 
-  const resHp =
-    extraDamageNum * EXTRA_DAMAGE * extraMultiplier <= monsterHp
-      ? damage(calcIdealDamage(extraDamageNum - 1))
-      : extraDamageNum * EXTRA_DAMAGE * extraMultiplier * resistance +
-        monsterDef
+  // If defeat after one extra damage
+  let resHp = damage(2 ** 31 / monsterResist)
+  // If can not defeat after one extra damage
+  if (extraDamageNum !== 1) {
+    resHp =
+      extraDamageNum * EXTRA_DAMAGE * extraMultiplier <= monsterHp
+        ? damage(calcIdealDamage(extraDamageNum - 1))
+        : extraDamageNum * EXTRA_DAMAGE * extraMultiplier * resistance +
+          monsterDef
+  }
 
   return (
     (resHp / extraMultiplier / resistance + monsterDef) / attackRatio +
