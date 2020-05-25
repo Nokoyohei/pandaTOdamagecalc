@@ -72,8 +72,8 @@ export const calcExtraDamage = (
   resistance: number,
   extraMultiplier: number = 1
 ) => {
-  const extraDamageNum =
-    resistance >= 100 ? 1 : (idealDamage * resistance - 2 ** 31) / 2 ** 32
+  if (resistance >= 100) return 0
+  const extraDamageNum = (idealDamage * resistance - 2 ** 31) / 2 ** 32
   let extraDamage: number = 0
   const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
   for (let i = 0; i < extraDamageNum; i++) {
