@@ -15,6 +15,9 @@
         <v-tab> Janus </v-tab>
         <v-tab> Chronos </v-tab>
         <v-tab> GM Kevin </v-tab>
+        <v-tab> Mad Ray </v-tab>
+        <v-tab> Koiosu </v-tab>
+        <v-tab> Outraged Requiem </v-tab>
       </v-tabs>
       <v-container fluid>
         <v-tabs-items>
@@ -64,7 +67,10 @@ import {
   hecate,
   janus,
   chronos,
-  kevin
+  kevin,
+  madray,
+  koiosu,
+  outraged
 } from '~/utils/monsters'
 import { BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -99,7 +105,10 @@ export default class BossMonsterPanel extends Vue {
       hecate,
       janus,
       chronos,
-      kevin
+      kevin,
+      madray,
+      koiosu,
+      outraged
     ][this.tab]
   }
 

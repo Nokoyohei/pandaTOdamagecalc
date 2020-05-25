@@ -220,6 +220,63 @@ const kevin: BossMonster = {
   gaugeNum: 5
 }
 
+const madray: BossMonster = {
+  hp: 40000000,
+  dp: 60000,
+  md: 4000,
+  hv: 500,
+  da: 5000,
+  fireR: 250,
+  waterR: 80,
+  windR: 80,
+  earthR: 80,
+  elecR: 80,
+  lightR: 40,
+  darkR: 70,
+  noPropR: 40,
+  physicalR: 70,
+  gunR: 70,
+  gaugeNum: 5
+}
+
+const koiosu: BossMonster = {
+  hp: 60000000,
+  dp: 250000,
+  md: 99999,
+  hv: 3000,
+  da: 8000,
+  fireR: 250,
+  waterR: 80,
+  windR: 80,
+  earthR: 80,
+  elecR: 80,
+  lightR: 60,
+  darkR: 70,
+  noPropR: 100,
+  physicalR: 99,
+  gunR: 99,
+  gaugeNum: 5
+}
+
+const outraged: BossMonster = {
+  hp: 60000000,
+  dp: 350000,
+  md: 150000,
+  hv: 4500,
+  da: 15000,
+  fireR: 300,
+  waterR: 80,
+  windR: 80,
+  earthR: 80,
+  elecR: 80,
+  lightR: 60,
+  darkR: 70,
+  noPropR: 100,
+  physicalR: 30,
+  gunR: 15,
+  gaugeNum: 5
+}
+
 export {
   isabelle,
   little,
@@ -232,5 +289,8 @@ export {
   hecate,
   janus,
   chronos,
-  kevin
+  kevin,
+  madray,
+  koiosu,
+  outraged
 }
