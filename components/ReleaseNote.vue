@@ -35,6 +35,15 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2020/05/25',
+      texts: [
+        '1. Added following skills',
+        'RagingStorm/EarthquakeBlade(to Boss)',
+        '2. Added MadRay/Koiosu/OutragedRequiem to boss tab',
+        '3. Fixed the behavior of shield breaker'
+      ]
+    },
+    {
       date: '2020/05/24',
       texts: [
         '1. Added following skills to boss tab',
@@ -102,7 +111,7 @@ export default class ReleaseNote extends Vue {
       texts: 'Added 2nd Anniversary skill'
     },
     {
-      date: '2020/04/29',
+      date: '2020/04/09',
       texts: 'Opened this site as a beta version'
     }
   ]

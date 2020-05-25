@@ -64,9 +64,9 @@ import {
   }
 })
 export default class EarthquakeBlade extends Vue {
-  ap = 446044
+  ap = 100000
   extraAP = 0
-  soil = 1100
+  soil = 1000
   mode = 'farming'
   monster: Monster = isabelle
 
