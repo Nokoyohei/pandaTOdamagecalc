@@ -16,6 +16,7 @@ const ShootingSpree = 400 / 100
 const Berserk = 550 / 100
 const Blessing = 300 / 20
 const WindBlade = 700 / 10
+const RasingStorm = 600 / 10
 const ElectroAttack = 800 / 10
 const CleavingTerra = 650 / 10
 
@@ -37,6 +38,7 @@ export default {
   Berserk,
   Blessing,
   WindBlade,
+  RasingStorm,
   ElectroAttack,
   CleavingTerra
 }

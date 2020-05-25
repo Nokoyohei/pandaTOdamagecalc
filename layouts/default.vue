@@ -116,6 +116,11 @@ export default class DefaultLayout extends Vue {
           to: '/windblade'
         },
         {
+          imgsrc: require('~/static/tempest.gif'),
+          title: 'RAGING STORM',
+          to: '/ragingstorm'
+        },
+        {
           imgsrc: require('~/static/earthquake.gif'),
           title: 'CLEAVING TERRA',
           to: '/cleavingterra'

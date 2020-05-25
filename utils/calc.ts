@@ -29,6 +29,8 @@ export const calcCleavingTerraDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.CleavingTerra)
 export const calcWindBladeDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.WindBlade)
+export const calcRagingStormDamage = (ac: number, ma: number) =>
+  Math.ceil((ac + ma - 49) * SkillRatio.RasingStorm)
 export const calcElectroAttackDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.ElectroAttack)
 export const calcScytheDamage = (ma: number, dark: number) =>
@@ -94,12 +96,9 @@ export const calcDebuffedMonster = (
     debuffedMonster.fireR = debuffedMonster.fireR > 150 ? 100 : 1
   }
   if (debuff.includes('ShieldBreaker')) {
-    debuffedMonster.physicalR =
-      debuffedMonster.physicalR - (20 + debuffedMonster.da * 0.6) / 3
-    debuffedMonster.physicalR =
-      debuffedMonster.physicalR < 0
-        ? monster.physicalR * 0.2
-        : debuffedMonster.physicalR
+    debuffedMonster.physicalR = monster.physicalR - 80
+    debuffedMonster.hv = monster.hv * 0.72
+    debuffedMonster.dp = monster.dp * 0.72
   }
   return debuffedMonster
 }
