@@ -4,20 +4,25 @@
       <v-tabs
         v-model="tab"
         fixed-tabs
+        centered
         center-active
+        background-color="#424242"
+        hide-slider
+        icons-and-text
         @change="changeSelectedMonster"
       >
-        <v-tab> Requiem Apocrypha </v-tab>
-        <v-tab> Flashire Snake </v-tab>
-        <v-tab> Easter Monster </v-tab>
-        <v-tab> Master Mong </v-tab>
-        <v-tab> Hecate </v-tab>
-        <v-tab> Janus </v-tab>
-        <v-tab> Chronos </v-tab>
-        <v-tab> GM Kevin </v-tab>
-        <v-tab> Mad Ray </v-tab>
-        <v-tab> Koiosu </v-tab>
-        <v-tab> Outraged Requiem </v-tab>
+        <v-tooltip v-for="content in tabContents" :key="content.title" bottom>
+          <template v-slot:activator="{ on }">
+            <v-tab v-on="on">
+              <img
+                :src="content.srcimg"
+                :height="content.height"
+                :alt="content.alt"
+              />
+            </v-tab>
+          </template>
+          {{ content.title }}
+        </v-tooltip>
       </v-tabs>
       <v-container fluid>
         <v-tabs-items>
@@ -30,7 +35,14 @@
           </v-card>
         </v-tabs-items>
       </v-container>
-      <damage-area :damage="damage" />
+      <damage-area v-if="damageAreaMessage.length === 0" :damage="damage" />
+      <damage-area
+        v-for="(mes, i) in damageAreaMessage"
+        v-else
+        :key="mes"
+        :damage="mes"
+        :color="textColor[i]"
+      />
       <span v-if="_debuff"
         >debuff:
         <v-btn-toggle
@@ -84,6 +96,9 @@ export default class BossMonsterPanel extends Vue {
   @Prop({ required: true })
   damage!: number
 
+  @Prop()
+  damageString?: string[] | string
+
   @PropSync('monster', { required: true })
   _monster!: BossMonster
 
@@ -95,6 +110,82 @@ export default class BossMonsterPanel extends Vue {
 
   datanum = 100
   tab = 0
+
+  textColor = ['pink', 'red', 'deep-orange']
+
+  tabContents = [
+    {
+      srcimg: require('~/static/requiem.gif'),
+      height: '160%',
+      title: 'Requiem apocrypha',
+      alt: 'REQUIEM APOCRYPHA'
+    },
+    {
+      srcimg: require('~/static/snake.gif'),
+      height: '140%',
+      title: 'Frashire Snake',
+      alt: 'FRASHIE SNAKE'
+    },
+    {
+      srcimg: require('~/static/lucia.gif'),
+      height: '120%',
+      title: 'Easter Monster',
+      alt: 'EASTER MONSTER'
+    },
+    {
+      srcimg: require('~/static/mong.gif'),
+      height: '120%',
+      title: 'Master Mong',
+      alt: 'MASTER MONG'
+    },
+    {
+      srcimg: require('~/static/hecate.gif'),
+      height: '160%',
+      title: 'Hecate',
+      alt: 'HECATE'
+    },
+    {
+      srcimg: require('~/static/janus.gif'),
+      height: '160%',
+      title: 'janus',
+      alt: 'JANUS'
+    },
+    {
+      srcimg: require('~/static/chronos.gif'),
+      height: '160%',
+      title: 'chronos',
+      alt: 'CHRONOS'
+    },
+    {
+      srcimg: require('~/static/gm_kevin.gif'),
+      height: '120%',
+      title: 'GM Kevin',
+      alt: 'GM KEVIN'
+    },
+    {
+      srcimg: require('~/static/madray.gif'),
+      height: '160%',
+      title: 'Mad Ray',
+      alt: 'MAD RAY'
+    },
+    {
+      srcimg: require('~/static/koiosu.gif'),
+      height: '160%',
+      title: 'Koiosu',
+      alt: 'KOIOSU'
+    },
+    {
+      srcimg: require('~/static/outraged.gif'),
+      height: '200%',
+      title: 'Outraged Requiem',
+      alt: 'OUTRAGED REQUIEM'
+    }
+  ]
+
+  get damageAreaMessage() {
+    if (this.damageString == null) return []
+    return [this.damageString].flat()
+  }
 
   changeSelectedMonster() {
     this._monster = [
@@ -211,3 +302,9 @@ export default class BossMonsterPanel extends Vue {
   }
 }
 </script>
+<style scoped>
+.v-tab--active {
+  background: #616161;
+  border-top: solid 2px #90caf9;
+}
+</style>

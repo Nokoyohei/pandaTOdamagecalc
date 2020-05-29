@@ -4,13 +4,25 @@
       <v-tabs
         v-model="tab"
         fixed-tabs
+        centered
         center-active
+        background-color="#424242"
+        hide-slider
+        icons-and-text
         @change="changeSelectedMonster"
       >
-        <v-tab> Chaotic Isabelle </v-tab>
-        <v-tab> Mermaid little </v-tab>
-        <v-tab> Haunted Toilet </v-tab>
-        <v-tab> Haunted Straw </v-tab>
+        <v-tooltip v-for="content in tabContents" :key="content.title" bottom>
+          <template v-slot:activator="{ on }">
+            <v-tab v-on="on">
+              <img
+                :src="content.srcimg"
+                :height="content.height"
+                :alt="content.alt"
+              />
+            </v-tab>
+          </template>
+          {{ content.title }}
+        </v-tooltip>
       </v-tabs>
       <v-container fluid>
         <v-tabs-items>
@@ -52,6 +64,33 @@ export default class FarmingMonster extends Vue {
 
   datanum = 100
   tab = 0
+
+  tabContents = [
+    {
+      srcimg: require('~/static/isabelle.gif'),
+      height: '120%',
+      title: 'Chaotic Isabelle',
+      alt: 'CHAOTIC ISABELLE'
+    },
+    {
+      srcimg: require('~/static/little.gif'),
+      height: '120%',
+      title: 'Mermaid Little',
+      alt: 'MERMAID LITTLE'
+    },
+    {
+      srcimg: require('~/static/mac.gif'),
+      height: '120%',
+      title: 'Haunted Toilet',
+      alt: 'HAUNTED TOILET'
+    },
+    {
+      srcimg: require('~/static/straw.gif'),
+      height: '120%',
+      title: 'Haunted Straw',
+      alt: 'HAUNTED STRAW'
+    }
+  ]
 
   changeSelectedMonster() {
     this._monster = [isabelle, little, toilet, straw][this.tab]
@@ -142,3 +181,10 @@ export default class FarmingMonster extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.v-tab--active {
+  background: #616161;
+  border-top: solid 2px #90caf9;
+}
+</style>
