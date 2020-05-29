@@ -3,11 +3,11 @@
     <h1>Scythe</h1>
     <boss-monster-panel :damage="damage" :monster.sync="monster" />
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="5" order-md="1">
         <ma-buff :buff.sync="MABuff" />
         <dark-load-buff :buff.sync="DLBuff" />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7" order-md="0">
         <stats-text-field
           :input-stats.sync="ma"
           :need-stats="resMA"

@@ -6,6 +6,10 @@ const Scythe = (attr: number) => 55 + (30 * attr) / 100
 const StaffOfAgony = (attr: number) => 85 + (15 * attr) / 100
 const FullHouse = 800 / 100
 const EarthquakeBlade = (attr: number) => 190 / 100 + (attr * 2) / 100
+const SonicSlash = (attr: number) => 700 / 100 + (attr * 3.5) / 100
+const TidalSlash = (attr: number) => 450 / 100 + (attr * 2.5) / 100
+const TempestStrike = (attr: number) => 280 / 100 + (attr * 5) / 100
+const GaleStrike = (attr: number) => 300 / 100 + (attr * 7) / 100
 const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
 const FlamingFist = (attr: number) => 40 / 100 + attr / 100
 const FanOfKnives = 800 / 10
@@ -28,6 +32,10 @@ export default {
   StaffOfAgony,
   FullHouse,
   EarthquakeBlade,
+  SonicSlash,
+  TidalSlash,
+  TempestStrike,
+  GaleStrike,
   ChampionsBlade,
   FlamingFist,
   FanOfKnives,

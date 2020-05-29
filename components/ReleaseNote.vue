@@ -35,6 +35,14 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2020/05/29',
+      texts: [
+        '1. Added following skills to boss tab',
+        'TidalSlash/SonicSlash/TempestStrike/GaleStrike',
+        '2. Changed the layout slightly'
+      ]
+    },
+    {
       date: '2020/05/25',
       texts: [
         '1. Added following skills',

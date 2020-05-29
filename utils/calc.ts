@@ -44,6 +44,14 @@ export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
 
 export const calcEarthquakeBladeDamage = (ap: number, soil: number) =>
   Math.ceil(ap * SkillRatio.EarthquakeBlade(soil))
+export const calcSonicSlashDamage = (ap: number, water: number) =>
+  Math.ceil(ap * SkillRatio.SonicSlash(water))
+export const calcTidalSlashDamage = (ap: number, water: number) =>
+  Math.ceil(ap * SkillRatio.TidalSlash(water))
+export const calcTempestStrikeDamage = (ap: number, wind: number) =>
+  Math.ceil(ap * SkillRatio.TempestStrike(wind))
+export const calcGaleStrikeDamage = (ap: number, wind: number) =>
+  Math.ceil(ap * SkillRatio.GaleStrike(wind))
 export const calcChampionsBladeDamage = (ap: number, fire: number) =>
   Math.ceil(ap * SkillRatio.ChampionsBlade(fire))
 export const calcFlamingFistDamage = (ap: number, fire: number, ma: number) =>
@@ -208,11 +216,15 @@ export const calcNeedStats = (
   )
 }
 
-export const calcLKBuffRatio = (LKBuff: ('luckySeven' | 'auraOfLuck')[]) => {
+export const calcLKBuffRatio = (
+  LKBuff: ('luckySeven' | 'auraOfLuck' | 'firstAnniversary')[]
+) => {
   let buffRatio = 1
 
   if (LKBuff.includes('luckySeven')) buffRatio += BuffRatio.LuckySevenBuff
   if (LKBuff.includes('auraOfLuck')) buffRatio += BuffRatio.AuraOfLuckBuff
+  if (LKBuff.includes('firstAnniversary'))
+    buffRatio += BuffRatio.FirstdAnniversaryBuff
   return buffRatio
 }
 

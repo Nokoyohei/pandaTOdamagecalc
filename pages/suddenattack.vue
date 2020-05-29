@@ -9,12 +9,12 @@
     />
 
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="5" order-md="1">
         <ap-buff :buff.sync="APBuff" />
         <da-buff :buff.sync="DABuff" />
         <lk-buff :buff.sync="LKBuff" />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7" order-md="0">
         <stats-text-field
           :input-stats.sync="ap"
           :need-stats="resAP"

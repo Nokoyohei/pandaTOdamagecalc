@@ -1,12 +1,15 @@
 <template>
   <v-container>
-    <h1>Magical Soul</h1>
-    <boss-monster-panel :damage="damage" :monster.sync="monster" />
-
+    <h1>Sonic Slash</h1>
+    <boss-monster-panel
+      :damage="damage"
+      :monster.sync="monster"
+      :debuff-skills-def="debuffSkillsDef"
+      :debuff.sync="debuffSkills"
+    ></boss-monster-panel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <ap-buff :buff.sync="APBuff" />
-        <ma-buff :buff.sync="MABuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
@@ -17,11 +20,9 @@
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="ma"
-          :need-stats="resMA"
-          :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
-          label="MA"
+          :input-stats.sync="water"
+          :need-stats="resWater"
+          label="Water Attr"
         />
       </v-col>
     </v-row>
@@ -32,39 +33,46 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
-import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { requiem } from '~/utils/monsters'
 import {
-  calcMagicalSoulDamage,
+  calcSonicSlashDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
-  calcMABuffRatio
+  calcDebuffedMonster
 } from '~/utils/calc'
-
-import { BossMonster, APBuffName, MABuffName } from '~/types'
+import SkillRatio from '~/utils/skillRatio'
+import { BossMonster, APBuffName, DebuffName, skillPanel } from '~/types'
 
 @Component({
   components: {
     BossMonsterPanel,
     ApBuff,
-    MaBuff,
-    StatsTextField,
-    DamageArea
+    StatsTextField
   }
 })
-export default class MagicalSoul extends Vue {
-  ma = 10000
-  extraMA = 0
+export default class SonicSlash extends Vue {
   ap = 100000
   extraAP = 0
+  water = 1000
   monster: BossMonster = requiem
 
-  MABuff: MABuffName[] = []
   APBuff: APBuffName[] = []
+  debuffSkills: DebuffName[] = []
+
+  debuffSkillsDef: skillPanel[] = [
+    {
+      value: 'ShieldBreaker',
+      name: 'Shield Breaker',
+      img: require('~/static/barrier_break.gif')
+    }
+  ]
+
+  get debuffedMonster() {
+    return calcDebuffedMonster(this.monster, this.debuffSkills)
+  }
 
   get buffedAP() {
     return (
@@ -73,31 +81,20 @@ export default class MagicalSoul extends Vue {
     )
   }
 
-  get buffedMA() {
-    return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
-    )
-  }
-
   get damage() {
-    const magicalSoulDamage = calcMagicalSoulDamage(
-      this.buffedAP,
-      this.buffedMA
-    )
     return calcDamage(
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.noPropR,
-      magicalSoulDamage
+      calcMonsterDef(this.debuffedMonster, 'physical'),
+      this.debuffedMonster.physicalR,
+      calcSonicSlashDamage(this.buffedAP, this.water)
     )
   }
 
   get resAP() {
     const needAP = calcNeedStats(
       this.monster.hp * this.monster.gaugeNum,
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.noPropR,
-      this.buffedMA / 100,
+      calcMonsterDef(this.debuffedMonster, 'physical'),
+      this.debuffedMonster.physicalR,
+      SkillRatio.SonicSlash(this.water),
       this.buffedAP,
       0
     )
@@ -105,18 +102,19 @@ export default class MagicalSoul extends Vue {
     return Math.ceil(needAP / calcAPBuffRatio(this.APBuff))
   }
 
-  get resMA() {
-    const needMA =
-      calcNeedStats(
+  get resWater() {
+    return Math.ceil(
+      (calcNeedStats(
         this.monster.hp * this.monster.gaugeNum,
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster.noPropR,
+        calcMonsterDef(this.debuffedMonster, 'physical'),
+        this.debuffedMonster.physicalR,
         this.buffedAP,
-        this.buffedMA / 100,
+        SkillRatio.SonicSlash(this.water),
         0
-      ) * 100
-
-    return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
+      ) *
+        100) /
+        3.5
+    )
   }
 }
 </script>

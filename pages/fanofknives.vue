@@ -3,10 +3,10 @@
     <h1>Fan of Knives</h1>
     <farming-monster :damage="damage" :monster.sync="monster" />
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="5" order-md="1">
         <da-buff :buff.sync="DABuff" />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7" order-md="0">
         <stats-text-field
           :input-stats.sync="da"
           :need-stats="resDA"

@@ -187,6 +187,26 @@ export default class DefaultLayout extends Vue {
           to: '/earthquakeblade?mode=boss'
         },
         {
+          imgsrc: require('~/static/tidalslash.gif'),
+          title: 'TIDAL SLASH',
+          to: '/tidalslash'
+        },
+        {
+          imgsrc: require('~/static/sonicslash.gif'),
+          title: 'SONIC SLASH',
+          to: '/sonicslash'
+        },
+        {
+          imgsrc: require('~/static/tempeststrike.gif'),
+          title: 'TEMPEST STRIKE',
+          to: '/tempeststrike'
+        },
+        {
+          imgsrc: require('~/static/galestrike.gif'),
+          title: 'GALE STRIKE',
+          to: '/galestrike'
+        },
+        {
           imgsrc: require('~/static/flamingfist.gif'),
           title: 'FLAMING FIST',
           to: '/flamingfist'

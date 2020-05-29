@@ -44,7 +44,7 @@ export interface BossMonster {
 
 export type APBuffName = 'pumpingHeart' | 'adrenaline'
 export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye'
-export type LKBuffName = 'luckySeven' | 'auraOfLuck'
+export type LKBuffName = 'luckySeven' | 'auraOfLuck' | 'firstAnniversary'
 export type ThrowBuffName = 'precisePitch'
 export type DABuffName = 'sixthSense' | 'secondAnniversary'
 export type MABuffName = 'mistOfMana'

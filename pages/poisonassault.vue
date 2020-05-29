@@ -1,15 +1,14 @@
 <template>
   <v-container>
     <h1>Poison Assault (Only Poison Damage)</h1>
-    <p>{{ poison }}</p>
     <boss-monster-panel :damage="damage" :monster.sync="monster" />
 
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="5" order-md="1">
         <da-buff :buff.sync="DABuff" />
         <throw-buff :buff.sync="ThrowBuff" />
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="7" order-md="0">
         <stats-text-field
           :input-stats.sync="da"
           :need-stats="resDA"

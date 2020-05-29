@@ -16,6 +16,14 @@
         </template>
       </v-switch>
     </v-col>
+    <v-col cols="12" md="8">
+      <v-switch v-model="_buff" value="firstAnniversary">
+        <template #label>
+          <img src="~/static/1stanniv.gif" />
+          1st Anniversary
+        </template>
+      </v-switch>
+    </v-col>
   </v-row>
 </template>
 

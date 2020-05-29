@@ -4,6 +4,7 @@ const PumpingHeartBuff = 0.3
 const AdrenalineBuff = 0.3
 const LuckySevenBuff = 0.5
 const AuraOfLuckBuff = 0.4
+const FirstdAnniversaryBuff = 0.1
 const DodgeMasterBuff = 0.45
 const SixthSenseBuff = 0.55
 const secondAnniversaryBuff = 0.2
@@ -19,6 +20,7 @@ export default {
   AdrenalineBuff,
   LuckySevenBuff,
   AuraOfLuckBuff,
+  FirstdAnniversaryBuff,
   DodgeMasterBuff,
   SixthSenseBuff,
   secondAnniversaryBuff,
