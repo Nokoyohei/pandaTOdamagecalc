@@ -38,7 +38,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ['nuxt-webfontloader'],
+  modules: ['nuxt-webfontloader', '@nuxtjs/google-analytics'],
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
@@ -47,6 +47,9 @@ export default {
     google: {
       families: ['Jacques+Francois+Shadow']
     }
+  },
+  googleAnalytics: {
+    id: 'UA-168008891-1'
   },
   generate: {
     fallback: true
