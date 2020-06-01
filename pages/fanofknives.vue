@@ -5,6 +5,7 @@
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <da-buff :buff.sync="DABuff" />
+        <throw-buff :buff.sync="ThrowBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
@@ -28,6 +29,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import DaBuff from '~/components/DABuff.vue'
+import ThrowBuff from '~/components/ThrowBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import { isabelle } from '~/utils/monsters'
 import {
@@ -35,16 +37,18 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
+  calcThrowBuffRatio,
   calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster, DABuffName } from '~/types'
+import { Monster, DABuffName, ThrowBuffName } from '~/types'
 
 @Component({
   components: {
     FarmingMonster,
     DaBuff,
+    ThrowBuff,
     StatsTextField
   }
 })
@@ -55,6 +59,7 @@ export default class FanOfKnives extends Vue {
   monster: Monster = isabelle
 
   DABuff: DABuffName[] = []
+  ThrowBuff: ThrowBuffName[] = []
 
   get buffedDA() {
     return (
@@ -63,11 +68,15 @@ export default class FanOfKnives extends Vue {
     )
   }
 
+  get buffedThrowAP() {
+    return this.throwAp * calcThrowBuffRatio(this.ThrowBuff)
+  }
+
   get damage() {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      calcFanOfKnicesDamage(this.buffedDA, this.throwAp)
+      calcFanOfKnicesDamage(this.buffedDA, this.buffedThrowAP)
     )
   }
 
@@ -77,7 +86,7 @@ export default class FanOfKnives extends Vue {
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
       SkillRatio.FanOfKnives,
-      this.buffedDA + this.throwAp / 10,
+      this.buffedDA + this.buffedThrowAP / 10,
       0
     )
 
