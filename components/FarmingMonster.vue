@@ -46,7 +46,7 @@ import { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
 import ChartLine from '~/components/ChartLine.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle, toilet, little, straw } from '~/utils/monsters'
+import { isabelle, toilet, little, straw, shadow } from '~/utils/monsters'
 import { Monster } from '~/types'
 
 @Component({
@@ -89,11 +89,17 @@ export default class FarmingMonster extends Vue {
       height: '120%',
       title: 'Haunted Straw',
       alt: 'HAUNTED STRAW'
+    },
+    {
+      srcimg: require('~/static/shadow.gif'),
+      height: '120%',
+      title: 'Picture Ghost',
+      alt: 'PICTURE GHOST'
     }
   ]
 
   changeSelectedMonster() {
-    this._monster = [isabelle, little, toilet, straw][this.tab]
+    this._monster = [isabelle, little, toilet, straw, shadow][this.tab]
   }
 
   // Limit the drawing range to 0-monster.hp*1.2 so that the drawing of the graph is not corrupted

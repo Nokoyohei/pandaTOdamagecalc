@@ -82,7 +82,8 @@ import {
   kevin,
   madray,
   koiosu,
-  outraged
+  outraged,
+  ed
 } from '~/utils/monsters'
 import { BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -179,6 +180,12 @@ export default class BossMonsterPanel extends Vue {
       height: '200%',
       title: 'Outraged Requiem',
       alt: 'OUTRAGED REQUIEM'
+    },
+    {
+      srcimg: require('~/static/ed.gif'),
+      height: '140%',
+      title: 'Ed',
+      alt: 'ED'
     }
   ]
 
@@ -199,7 +206,8 @@ export default class BossMonsterPanel extends Vue {
       kevin,
       madray,
       koiosu,
-      outraged
+      outraged,
+      ed
     ][this.tab]
   }
 

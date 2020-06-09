@@ -18,14 +18,14 @@ const isabelle: Monster = {
 }
 
 const little: Monster = {
-  hp: 500000,
-  dp: 65000,
-  md: 15000,
+  hp: 450000,
+  dp: 75000,
+  md: 12000,
   hv: 1500,
   fireR: 90,
   waterR: 90,
   windR: 90,
-  earthR: 90,
+  earthR: 99,
   elecR: 90,
   lightR: 90,
   darkR: 90,
@@ -52,10 +52,27 @@ const toilet: Monster = {
 }
 
 const straw: Monster = {
-  hp: 1400000,
+  hp: 1500000,
   dp: 200000,
   md: 32000,
   hv: 4000,
+  fireR: 105,
+  waterR: 90,
+  windR: 80,
+  earthR: 105,
+  elecR: 90,
+  lightR: 80,
+  darkR: 85,
+  noPropR: 90,
+  physicalR: 80,
+  gunR: 80
+}
+
+const shadow: Monster = {
+  hp: 2200000,
+  dp: 300000,
+  md: 40000,
+  hv: 6500,
   fireR: 105,
   waterR: 90,
   windR: 80,
@@ -213,7 +230,7 @@ const kevin: BossMonster = {
   earthR: 60,
   elecR: 50,
   lightR: 50,
-  darkR: 70,
+  darkR: 65,
   noPropR: 100,
   physicalR: 1,
   gunR: 1,
@@ -277,11 +294,31 @@ const outraged: BossMonster = {
   gaugeNum: 5
 }
 
+const ed: BossMonster = {
+  hp: 200000000,
+  dp: 700000,
+  md: 400000,
+  hv: 12000,
+  da: 35000,
+  fireR: 250,
+  waterR: 80,
+  windR: 80,
+  earthR: 60,
+  elecR: 50,
+  lightR: 50,
+  darkR: 65,
+  noPropR: 100,
+  physicalR: 1,
+  gunR: 1,
+  gaugeNum: 5
+}
+
 export {
   isabelle,
   little,
   toilet,
   straw,
+  shadow,
   requiem,
   snake,
   lucia,
@@ -292,5 +329,6 @@ export {
   kevin,
   madray,
   koiosu,
-  outraged
+  outraged,
+  ed
 }
