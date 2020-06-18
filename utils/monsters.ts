@@ -1,7 +1,7 @@
 import { Monster, BossMonster } from '~/types'
 
 const isabelle: Monster = {
-  hp: 180000,
+  hp: 150000,
   dp: 11000,
   md: 3600,
   hv: 250,
@@ -18,7 +18,7 @@ const isabelle: Monster = {
 }
 
 const little: Monster = {
-  hp: 450000,
+  hp: 350000,
   dp: 75000,
   md: 12000,
   hv: 1500,
@@ -57,10 +57,10 @@ const straw: Monster = {
   md: 32000,
   hv: 4000,
   fireR: 105,
-  waterR: 90,
-  windR: 80,
+  waterR: 95,
+  windR: 85,
   earthR: 105,
-  elecR: 90,
+  elecR: 95,
   lightR: 80,
   darkR: 85,
   noPropR: 90,
@@ -69,27 +69,27 @@ const straw: Monster = {
 }
 
 const shadow: Monster = {
-  hp: 2200000,
+  hp: 2300000,
   dp: 300000,
   md: 40000,
   hv: 6500,
   fireR: 105,
-  waterR: 90,
-  windR: 80,
+  waterR: 95,
+  windR: 85,
   earthR: 105,
-  elecR: 90,
+  elecR: 95,
   lightR: 80,
   darkR: 85,
   noPropR: 90,
   physicalR: 80,
-  gunR: 80
+  gunR: 85
 }
 
 const requiem: BossMonster = {
   hp: 800000,
   dp: 60000,
   md: 3900,
-  hv: 450,
+  hv: 400,
   da: 3000,
   fireR: 80,
   waterR: 80,
@@ -108,7 +108,7 @@ const snake: BossMonster = {
   hp: 999999,
   dp: 70000,
   md: 4370,
-  hv: 600,
+  hv: 550,
   da: 999,
   fireR: 90,
   waterR: 90,
