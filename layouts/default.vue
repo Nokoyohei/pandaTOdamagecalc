@@ -171,6 +171,11 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/fullhouse.gif'),
           title: 'FULL HOUSE',
           to: '/fullhouse'
+        },
+        {
+          imgsrc: require('~/static/sharpscream.gif'),
+          title: 'SHARP SCREAM',
+          to: '/sharpscream'
         }
       ]
     }
@@ -262,13 +267,39 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/poison.gif'),
           title: 'POISON ASSAULT',
           to: '/poisonassault'
+        },
+        {
+          imgsrc: require('~/static/fotune_hit.gif'),
+          title: 'LUCKY FIST',
+          to: '/luckyfist'
+        },
+        {
+          imgsrc: require('~/static/power_shot.gif'),
+          title: 'POWER SHOT',
+          to: '/powershot'
+        },
+        {
+          imgsrc: require('~/static/quick_shot.gif'),
+          title: 'DOUBLE SHOT',
+          to: '/doubleshot'
         }
       ]
     },
     {
       imgsrc: require('~/static/charmtype.jpg'),
       title: 'CHARM TYPE',
-      skills: []
+      skills: [
+        {
+          imgsrc: require('~/static/jazzcombo.gif'),
+          title: '2 HIT COMBO',
+          to: '/2hitcombo'
+        },
+        {
+          imgsrc: require('~/static/one_pair.gif'),
+          title: 'ONE PAIR',
+          to: '/onepair'
+        }
+      ]
     }
   ]
 
