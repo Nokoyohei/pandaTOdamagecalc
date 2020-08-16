@@ -267,6 +267,11 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/poison.gif'),
           title: 'POISON ASSAULT',
           to: '/poisonassault'
+        },
+        {
+          imgsrc: require('~/static/fotune_hit.gif'),
+          title: 'LUCKY FIST',
+          to: '/luckyfist'
         }
       ]
     },

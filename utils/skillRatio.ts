@@ -17,6 +17,7 @@ const ChainOfKnives = 950 / 100
 const SuddenAttack = 1100 / 100
 const PoisonAssault = 700 / 100
 const ShootingSpree = 400 / 100
+const LuckyFist = 380 / 1000
 const Berserk = 550 / 100
 const Blessing = 250 / 20
 const WindBlade = 700 / 10
@@ -45,6 +46,7 @@ export default {
   PoisonAssault,
   ShootingSpree,
   Berserk,
+  LuckyFist,
   Blessing,
   WindBlade,
   RasingStorm,

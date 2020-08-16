@@ -73,6 +73,8 @@ export const calcPoisonDamage = (da: number, throwAp: number) =>
   Math.ceil((da * 16 + throwAp) * 0.312) * SkillRatio.PoisonAssault
 export const calcSuddenAttackDamage = (ap: number, da: number, lk: number) =>
   Math.ceil((da + lk) * 16 + ap) * SkillRatio.SuddenAttack
+export const calcLuckyFistDamage = (enemyHp: number, lk: number) =>
+  Math.ceil(enemyHp + lk * 80) * SkillRatio.LuckyFist
 
 // In Trickster, there is a spec that deals 2^32/100 damage for every 2^32 damage
 // if the resistance *idealDamage exceeds 2^31, with no resistance or defense
