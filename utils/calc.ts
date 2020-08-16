@@ -41,6 +41,8 @@ export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
 
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
+export const calcSharpScreamDamage = (ap: number, hv: number) =>
+  Math.ceil((ap + hv * 16) * SkillRatio.SharpScream)
 
 export const calcEarthquakeBladeDamage = (ap: number, soil: number) =>
   Math.ceil(ap * SkillRatio.EarthquakeBlade(soil))

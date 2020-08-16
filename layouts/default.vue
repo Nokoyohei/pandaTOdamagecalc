@@ -171,6 +171,11 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/fullhouse.gif'),
           title: 'FULL HOUSE',
           to: '/fullhouse'
+        },
+        {
+          imgsrc: require('~/static/sharpscream.gif'),
+          title: 'SHARP SCREAM',
+          to: '/sharpscream'
         }
       ]
     }

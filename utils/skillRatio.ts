@@ -23,6 +23,7 @@ const WindBlade = 700 / 10
 const RasingStorm = 600 / 10
 const ElectroAttack = 800 / 10
 const CleavingTerra = 650 / 10
+const SharpScream = (640 / 200) * 1.5
 
 export default {
   DarkCommando,
@@ -48,5 +49,6 @@ export default {
   WindBlade,
   RasingStorm,
   ElectroAttack,
-  CleavingTerra
+  CleavingTerra,
+  SharpScream
 }
