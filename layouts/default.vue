@@ -272,6 +272,16 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/fotune_hit.gif'),
           title: 'LUCKY FIST',
           to: '/luckyfist'
+        },
+        {
+          imgsrc: require('~/static/power_shot.gif'),
+          title: 'POWER SHOT',
+          to: '/powershot'
+        },
+        {
+          imgsrc: require('~/static/quick_shot.gif'),
+          title: 'DOUBLE SHOT',
+          to: '/doubleshot'
         }
       ]
     },

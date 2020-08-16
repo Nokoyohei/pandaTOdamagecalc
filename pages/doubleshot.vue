@@ -2,7 +2,7 @@
   <v-container>
     <h1>Double Shot</h1>
     <boss-monster-panel
-      :damage="damage * 2"
+      :damage="damage"
       :damage-string="`${damage.toLocaleString()} * 2`"
       :monster.sync="monster"
       :debuff-skills-def="debuffSkillsDef"
