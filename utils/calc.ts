@@ -89,6 +89,10 @@ export const calcSuddenAttackDamage = (ap: number, da: number, lk: number) =>
   Math.ceil((da + lk) * 16 + ap) * SkillRatio.SuddenAttack
 export const calcLuckyFistDamage = (enemyHp: number, lk: number) =>
   Math.ceil(enemyHp + lk * 80) * SkillRatio.LuckyFist
+export const calcPowerShotDamage = (gunAP: number) =>
+  Math.ceil((gunAP - 48 * 20) * SkillRatio.PowerShot)
+export const calcDoubleShotDamage = (gunAP: number) =>
+  Math.ceil((gunAP - 48 * 20) * SkillRatio.DoubleShot)
 
 // In Trickster, there is a spec that deals 2^32/100 damage for every 2^32 damage
 // if the resistance *idealDamage exceeds 2^31, with no resistance or defense
@@ -123,7 +127,7 @@ export const calcDebuffedMonster = (
   }
   if (debuff.includes('ShieldBreaker')) {
     debuffedMonster.physicalR = monster.physicalR - 80
-    debuffedMonster.hv = monster.hv * 0.72
+    debuffedMonster.gunR = monster.gunR - 80
     debuffedMonster.dp = monster.dp * 0.72
   }
   return debuffedMonster

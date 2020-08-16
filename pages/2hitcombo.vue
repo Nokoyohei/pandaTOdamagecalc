@@ -4,8 +4,8 @@
     <boss-monster-panel
       :damage="fisrtHitDamage + secondHitDamage"
       :damage-string="[
-        `1st hit:${fisrtHitDamage.toLocaleString()}`,
-        `2nd hit:${secondHitDamage.toLocaleString()}`
+        `1st hit: ${fisrtHitDamage.toLocaleString()}`,
+        `2nd hit: ${secondHitDamage.toLocaleString()}`
       ]"
       :monster.sync="monster"
       :debuff-skills-def="debuffSkillsDef"
