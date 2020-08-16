@@ -43,6 +43,20 @@ export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
 export const calcSharpScreamDamage = (ap: number, hv: number) =>
   Math.ceil((ap + hv * 16) * SkillRatio.SharpScream)
+export const calcFirstHitComboDamage = (ap: number) =>
+  Math.ceil(ap * (11 * 0.6 + 3) * SkillRatio.FirstHitCombo)
+export const calcSecondHitComboDamage = (ap: number, hv: number) =>
+  Math.ceil((ap + hv * 16) * (11 * 0.6 + 3) * SkillRatio.SecondHitCombo)
+export const calcOnePairDamage = (
+  ap: number,
+  hv: number,
+  isLadyLuck?: boolean
+) => {
+  const onePairDamage = Math.ceil((ap + hv * 8) * SkillRatio.OnePair)
+  return isLadyLuck
+    ? onePairDamage + onePairDamage * SkillRatio.LadyLuck
+    : onePairDamage
+}
 
 export const calcEarthquakeBladeDamage = (ap: number, soil: number) =>
   Math.ceil(ap * SkillRatio.EarthquakeBlade(soil))

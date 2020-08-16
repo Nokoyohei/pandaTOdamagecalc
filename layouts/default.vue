@@ -278,7 +278,18 @@ export default class DefaultLayout extends Vue {
     {
       imgsrc: require('~/static/charmtype.jpg'),
       title: 'CHARM TYPE',
-      skills: []
+      skills: [
+        {
+          imgsrc: require('~/static/jazzcombo.gif'),
+          title: '2 HIT COMBO',
+          to: '/2hitcombo'
+        },
+        {
+          imgsrc: require('~/static/one_pair.gif'),
+          title: 'ONE PAIR',
+          to: '/onepair'
+        }
+      ]
     }
   ]
 
