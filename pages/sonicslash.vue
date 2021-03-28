@@ -2,11 +2,11 @@
   <v-container>
     <h1>Sonic Slash</h1>
     <boss-monster-panel
+      v-if="mode === 'boss'"
       :damage="damage"
       :monster.sync="monster"
-      :debuff-skills-def="debuffSkillsDef"
-      :debuff.sync="debuffSkills"
     ></boss-monster-panel>
+    <farming-monster v-else :damage="damage" :monster.sync="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <ap-buff :buff.sync="APBuff" />
@@ -31,10 +31,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { requiem } from '~/utils/monsters'
+import { isabelle, requiem } from '~/utils/monsters'
 import {
   calcSonicSlashDamage,
   calcDamage,
@@ -44,10 +45,17 @@ import {
   calcDebuffedMonster
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { BossMonster, APBuffName, DebuffName, skillPanel } from '~/types'
+import {
+  BossMonster,
+  Monster,
+  APBuffName,
+  DebuffName,
+  skillPanel
+} from '~/types'
 
 @Component({
   components: {
+    FarmingMonster,
     BossMonsterPanel,
     ApBuff,
     StatsTextField
@@ -57,7 +65,8 @@ export default class SonicSlash extends Vue {
   ap = 100000
   extraAP = 0
   water = 1000
-  monster: BossMonster = requiem
+  mode = 'farming'
+  monster: Monster | BossMonster = isabelle
 
   APBuff: APBuffName[] = []
   debuffSkills: DebuffName[] = []
@@ -69,6 +78,19 @@ export default class SonicSlash extends Vue {
       img: require('~/static/barrier_break.gif')
     }
   ]
+
+  created() {
+    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
+    if (this.mode === 'boss') {
+      this.monster = requiem
+    }
+  }
+
+  get monsterHP() {
+    return this.mode === 'boss'
+      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
+      : this.monster.hp
+  }
 
   get debuffedMonster() {
     return calcDebuffedMonster(this.monster, this.debuffSkills)
@@ -91,7 +113,7 @@ export default class SonicSlash extends Vue {
 
   get resAP() {
     const needAP = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
       SkillRatio.SonicSlash(this.water),
@@ -105,7 +127,7 @@ export default class SonicSlash extends Vue {
   get resWater() {
     return Math.ceil(
       (calcNeedStats(
-        this.monster.hp * this.monster.gaugeNum,
+        this.monsterHP,
         calcMonsterDef(this.debuffedMonster, 'physical'),
         this.debuffedMonster.physicalR,
         this.buffedAP,

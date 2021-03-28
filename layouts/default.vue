@@ -98,6 +98,16 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/championsblade.gif'),
           title: "CHAMPION'S BLADE",
           to: '/championsblade'
+        },
+        {
+          imgsrc: require('~/static/tidalslash.gif'),
+          title: 'TIDAL SLASH',
+          to: '/tidalslash'
+        },
+        {
+          imgsrc: require('~/static/sonicslash.gif'),
+          title: 'SONIC SLASH',
+          to: '/sonicslash'
         }
       ]
     },
@@ -194,12 +204,12 @@ export default class DefaultLayout extends Vue {
         {
           imgsrc: require('~/static/tidalslash.gif'),
           title: 'TIDAL SLASH',
-          to: '/tidalslash'
+          to: '/tidalslash?mode=boss'
         },
         {
           imgsrc: require('~/static/sonicslash.gif'),
           title: 'SONIC SLASH',
-          to: '/sonicslash'
+          to: '/sonicslash?mode=boss'
         },
         {
           imgsrc: require('~/static/tempeststrike.gif'),
