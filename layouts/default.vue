@@ -204,12 +204,12 @@ export default class DefaultLayout extends Vue {
         {
           imgsrc: require('~/static/tidalslash.gif'),
           title: 'TIDAL SLASH',
-          to: '/tidalslash'
+          to: '/tidalslash?mode=boss'
         },
         {
           imgsrc: require('~/static/sonicslash.gif'),
           title: 'SONIC SLASH',
-          to: '/sonicslash'
+          to: '/sonicslash?mode=boss'
         },
         {
           imgsrc: require('~/static/tempeststrike.gif'),
