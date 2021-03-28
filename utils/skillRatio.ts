@@ -14,7 +14,7 @@ const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
 const FlamingFist = (attr: number) => 40 / 100 + attr / 100
 const FanOfKnives = 800 / 10
 const ChainOfKnives = 950 / 100
-const SuddenAttack = 1250 / 100
+const SuddenAttack = 1600 / 100
 const PoisonAssault = 800 / 100
 const LuckyFist = 380 / 1000
 const ShootingSpree = 400 / 100
@@ -22,7 +22,7 @@ const Berserk = 550 / 100
 const PowerShot = 800 / 100
 const DoubleShot = 1000 / 100
 const Blessing = 250 / 20
-const WindBlade = 700 / 10
+const WindBlade = 850 / 10
 const RasingStorm = 600 / 10
 const ElectroAttack = 800 / 10
 const CleavingTerra = 650 / 10
