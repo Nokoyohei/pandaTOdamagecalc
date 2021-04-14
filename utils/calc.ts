@@ -23,8 +23,8 @@ export const calcGravityCrashDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.GravityCrash)
 export const calcCelestialStrikeDamage = (ma: number, skillNum: number) =>
   Math.ceil((ma - 25) * SkillRatio.CelestialStrike(skillNum))
-export const calcBlessingDamage = (ac: number, lk: number) =>
-  Math.ceil(ac + lk) * SkillRatio.Blessing
+export const calcBlessingDamage = (ac: number, lk: number, ratio: number) =>
+  Math.ceil(ac + lk) * ratio
 export const calcCleavingTerraDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.CleavingTerra)
 export const calcWindBladeDamage = (ma: number) =>
@@ -38,6 +38,14 @@ export const calcScytheDamage = (ma: number, dark: number) =>
 export const calcStaffOfAgony = (ma: number, dark: number) =>
   Math.ceil((ma - 49) * SkillRatio.StaffOfAgony(dark))
 export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
+export const calcStaffOfThunderDamage = (ma: number) =>
+  Math.ceil((ma - 25) * SkillRatio.StaffOfThunder)
+export const calcDeadlyFenDamage = (ma: number, lk: number) =>
+  Math.ceil((ma + lk - 25) * SkillRatio.DeadlyFen)
+export const calcTornadoBlastDamage = (ma: number) =>
+  Math.ceil((ma - 49) * SkillRatio.TornadoBlast)
+export const calcEarthquakeDamage = (ma: number) =>
+  Math.ceil((ma - 25) * SkillRatio.Earthquake)
 
 export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
   Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
