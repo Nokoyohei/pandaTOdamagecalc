@@ -56,13 +56,14 @@ import { isabelle } from '~/utils/monsters'
 import {
   calcBlessingDamage,
   calcDamage,
-  calcNeedStats,
+  // calcNeedStats,
   calcMonsterDef,
   calcLKBuffRatio,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+// import SkillRatio from '~/utils/skillRatio'
 import { Monster, ACBuffName, LKBuffName, Skill } from '~/types'
+import skillRatio from '~/utils/skillRatio'
 
 @Component({
   components: {
@@ -89,30 +90,35 @@ export default class Blessing extends Vue {
       value: 0,
       name: "Salamander's Blessing",
       attr: 'fireR',
+      ratio: skillRatio.FireBlessing,
       img: require('~/static/salamanderBlessing.gif')
     },
     {
       value: 1,
       name: "Raion's Blessing",
       attr: 'elecR',
+      ratio: skillRatio.ElecBlessing,
       img: require('~/static/raionBlessing.gif')
     },
     {
       value: 2,
       name: "Gnome's Blessing",
       attr: 'earthR',
+      ratio: skillRatio.EarthBlessing,
       img: require('~/static/gnomeBlessing.gif')
     },
     {
       value: 3,
       name: "Undine's Blessing",
       attr: 'waterR',
+      ratio: skillRatio.WaterBlessing,
       img: require('~/static/undineBlessing.gif')
     },
     {
       value: 4,
       name: "Sylph's Blessing",
       attr: 'windR',
+      ratio: skillRatio.WindBlessing,
       img: require('~/static/sylphBlessing.gif')
     }
   ]
@@ -137,53 +143,57 @@ export default class Blessing extends Vue {
       damage += calcDamage(
         calcMonsterDef(this.monster, 'magic'),
         this.monster[this.BlessingSkills[e].attr],
-        calcBlessingDamage(this.buffedAC, this.buffedLK)
+        calcBlessingDamage(
+          this.buffedAC,
+          this.buffedLK,
+          this.BlessingSkills[e].ratio
+        )
       )
     })
     return damage
   }
 
-  get needStats() {
-    let lowestIndex = 0
-    const lowestResist = this.selectedBlessingSkills.reduce(
-      (acc: number, idx: number) => {
-        const monsterResist = this.monster[this.BlessingSkills[idx].attr]
-        if (monsterResist < acc) {
-          acc = monsterResist
-          lowestIndex = idx
-          return acc
-        }
-        return acc
-      },
-      500
-    )
+  // get needStats() {
+  //   let lowestIndex = 0
+  //   const lowestResist = this.selectedBlessingSkills.reduce(
+  //     (acc: number, idx: number) => {
+  //       const monsterResist = this.monster[this.BlessingSkills[idx].attr]
+  //       if (monsterResist < acc) {
+  //         acc = monsterResist
+  //         lowestIndex = idx
+  //         return acc
+  //       }
+  //       return acc
+  //     },
+  //     500
+  //   )
 
-    const resistRatio = this.selectedBlessingSkills.reduce(
-      (acc: number, idx: number) => {
-        if (idx === lowestIndex) return acc
-        const monsterResist = this.monster[this.BlessingSkills[idx].attr]
-        if (monsterResist >= 100) return acc
-        return acc + (100 - monsterResist) / (100 - lowestResist)
-      },
-      1
-    )
+  //   const resistRatio = this.selectedBlessingSkills.reduce(
+  //     (acc: number, idx: number) => {
+  //       if (idx === lowestIndex) return acc
+  //       const monsterResist = this.monster[this.BlessingSkills[idx].attr]
+  //       if (monsterResist >= 100) return acc
+  //       return acc + (100 - monsterResist) / (100 - lowestResist)
+  //     },
+  //     1
+  //   )
 
-    return calcNeedStats(
-      this.monster.hp / resistRatio,
-      calcMonsterDef(this.monster, 'magic'),
-      lowestResist,
-      SkillRatio.Blessing,
-      this.buffedLK + this.buffedAC,
-      0
-    )
-  }
+  //   return calcNeedStats(
+  //     this.monster.hp / resistRatio,
+  //     calcMonsterDef(this.monster, 'magic'),
+  //     lowestResist,
+  //     SkillRatio.Blessing,
+  //     this.buffedLK + this.buffedAC,
+  //     0
+  //   )
+  // }
 
-  get resAC() {
-    return Math.ceil(this.needStats / calcACBuffRatio(this.ACBuff))
-  }
+  // get resAC() {
+  //   return Math.ceil(this.needStats / calcACBuffRatio(this.ACBuff))
+  // }
 
-  get resLK() {
-    return Math.ceil(this.needStats / calcLKBuffRatio(this.LKBuff))
-  }
+  // get resLK() {
+  //   return Math.ceil(this.needStats / calcLKBuffRatio(this.LKBuff))
+  // }
 }
 </script>

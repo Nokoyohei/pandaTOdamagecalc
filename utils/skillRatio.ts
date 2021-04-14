@@ -21,11 +21,19 @@ const ShootingSpree = 400 / 100
 const Berserk = 550 / 100
 const PowerShot = 800 / 100
 const DoubleShot = 1000 / 100
-const Blessing = 250 / 20
-const WindBlade = 850 / 10
-const RasingStorm = 600 / 10
-const ElectroAttack = 800 / 10
-const CleavingTerra = 650 / 10
+const FireBlessing = 900 / 20
+const WaterBlessing = 900 / 20
+const EarthBlessing = 110 / 20
+const ElecBlessing = 110 / 20
+const WindBlessing = 110 / 20
+const WindBlade = 1200 / 10
+const RasingStorm = 700 / 10
+const ElectroAttack = 1150 / 10
+const StaffOfThunder = 1600 / 10
+const DeadlyFen = 1000 / 20
+const Earthquake = 1300 / 10
+const TornadoBlast = 1100 / 10
+const CleavingTerra = 1100 / 10
 const SharpScream = (640 / 200) * 1.5
 const FirstHitCombo = 800 / 300
 const SecondHitCombo = 800 / 400
@@ -55,11 +63,19 @@ export default {
   PowerShot,
   DoubleShot,
   LuckyFist,
-  Blessing,
+  FireBlessing,
+  WaterBlessing,
+  EarthBlessing,
+  ElecBlessing,
+  WindBlessing,
   WindBlade,
   RasingStorm,
   ElectroAttack,
   CleavingTerra,
+  StaffOfThunder,
+  DeadlyFen,
+  TornadoBlast,
+  Earthquake,
   SharpScream,
   FirstHitCombo,
   SecondHitCombo,

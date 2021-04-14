@@ -121,9 +121,19 @@ export default class DefaultLayout extends Vue {
           to: '/electroattack'
         },
         {
+          imgsrc: require('~/static/raizin.gif'),
+          title: 'STAFF OF THUNDER',
+          to: '/staffofthunder'
+        },
+        {
           imgsrc: require('~/static/wind_edgh.gif'),
           title: 'WIND BLADE',
           to: '/windblade'
+        },
+        {
+          imgsrc: require('~/static/tornadoblast.gif'),
+          title: 'TORNADO BLAST',
+          to: '/tornadoblast'
         },
         {
           imgsrc: require('~/static/tempest.gif'),
@@ -134,6 +144,16 @@ export default class DefaultLayout extends Vue {
           imgsrc: require('~/static/earthquake.gif'),
           title: 'CLEAVING TERRA',
           to: '/cleavingterra'
+        },
+        {
+          imgsrc: require('~/static/earthshaker.gif'),
+          title: 'EARTHQUAKE',
+          to: '/earthquake'
+        },
+        {
+          imgsrc: require('~/static/deadlyfen.gif'),
+          title: 'DEADLY FEN',
+          to: '/deadlyfen'
         },
         {
           imgsrc: require('~/static/salamanderBlessing.gif'),

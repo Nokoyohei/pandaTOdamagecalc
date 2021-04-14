@@ -35,10 +35,18 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2021/04/14',
+      texts: [
+        '1. Apply buffed/nerfed skills',
+        '2. Added following skills to farming panel',
+        'StaffofThunder/DeadlyFen/Earthquake/TornadoBlast'
+      ]
+    },
+    {
       date: '2021/03/28',
       texts: [
         '1. Apply buffed skills',
-        '2. Added following skills to farming tab',
+        '2. Added following skills to farming panel',
         'TidalSlash/SonicSlash'
       ]
     },
@@ -67,7 +75,7 @@ export default class ReleaseNote extends Vue {
     {
       date: '2020/05/29',
       texts: [
-        '1. Added following skills to boss tab',
+        '1. Added following skills to boss panel',
         'TidalSlash/SonicSlash/TempestStrike/GaleStrike',
         '2. Changed the layout slightly'
       ]
@@ -77,14 +85,14 @@ export default class ReleaseNote extends Vue {
       texts: [
         '1. Added following skills',
         'RagingStorm/EarthquakeBlade(to Boss)',
-        '2. Added MadRay/Koiosu/OutragedRequiem to boss tab',
+        '2. Added MadRay/Koiosu/OutragedRequiem to boss panel',
         '3. Fixed the behavior of shield breaker'
       ]
     },
     {
       date: '2020/05/24',
       texts: [
-        '1. Added following skills to boss tab',
+        '1. Added following skills to boss panel',
         'ChainOfKnives/SuddenAttack/PoisonAssault',
         'Note: Poison Assault is only implemented for poison damage. The unpoisoned damage is about 70% of Chain of Knives'
       ]
