@@ -12,7 +12,7 @@ const TempestStrike = (attr: number) => 280 / 100 + (attr * 5) / 100
 const GaleStrike = (attr: number) => 300 / 100 + (attr * 7) / 100
 const ChampionsBlade = (attr: number) => 400 / 100 + attr / 100
 const FlamingFist = (attr: number) => 40 / 100 + attr / 100
-const FanOfKnives = 800 / 10
+const FanOfKnives = 1000 / 10
 const ChainOfKnives = 950 / 100
 const SuddenAttack = 1600 / 100
 const PoisonAssault = 800 / 100
@@ -21,20 +21,20 @@ const ShootingSpree = 400 / 100
 const Berserk = 550 / 100
 const PowerShot = 800 / 100
 const DoubleShot = 1000 / 100
-const FireBlessing = 900 / 20
-const WaterBlessing = 900 / 20
-const EarthBlessing = 110 / 20
-const ElecBlessing = 110 / 20
-const WindBlessing = 110 / 20
+const FireBlessing = 1300 / 20
+const WaterBlessing = 1300 / 20
+const EarthBlessing = 65 / 20
+const ElecBlessing = 65 / 20
+const WindBlessing = 65 / 20
 const WindBlade = 1200 / 10
 const RasingStorm = 700 / 10
 const ElectroAttack = 1150 / 10
 const StaffOfThunder = 1600 / 10
 const DeadlyFen = 1000 / 20
-const Earthquake = 1300 / 10
+const Earthquake = 1500 / 10
 const TornadoBlast = 1100 / 10
 const CleavingTerra = 1100 / 10
-const SharpScream = (640 / 200) * 1.5
+const SharpScream = (800 / 200) * 1.5
 const FirstHitCombo = 800 / 300
 const SecondHitCombo = 800 / 400
 const OnePair = 1200 / 100
