@@ -126,6 +126,11 @@ export default class DefaultLayout extends Vue {
           to: '/staffofthunder'
         },
         {
+          imgsrc: require('~/static/electric_bomb.gif'),
+          title: 'TESLA FIELD',
+          to: '/teslafield'
+        },
+        {
           imgsrc: require('~/static/wind_edgh.gif'),
           title: 'WIND BLADE',
           to: '/windblade'

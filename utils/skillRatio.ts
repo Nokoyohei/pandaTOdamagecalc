@@ -30,6 +30,7 @@ const WindBlade = 1200 / 10
 const RasingStorm = 700 / 10
 const ElectroAttack = 1150 / 10
 const StaffOfThunder = 1600 / 10
+const TeslaField = 800 / 10
 const DeadlyFen = 1000 / 20
 const Earthquake = 1500 / 10
 const TornadoBlast = 1100 / 10
@@ -71,6 +72,7 @@ export default {
   WindBlade,
   RasingStorm,
   ElectroAttack,
+  TeslaField,
   CleavingTerra,
   StaffOfThunder,
   DeadlyFen,
