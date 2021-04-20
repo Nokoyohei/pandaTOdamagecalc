@@ -313,6 +313,25 @@ const ed: BossMonster = {
   gaugeNum: 5
 }
 
+const ixion: BossMonster = {
+  hp: 250000000,
+  dp: 750000,
+  md: 450000,
+  hv: 19000,
+  da: 40000,
+  fireR: 250,
+  waterR: 80,
+  windR: 80,
+  earthR: 60,
+  elecR: 50,
+  lightR: 50,
+  darkR: 70,
+  noPropR: 100,
+  physicalR: 1,
+  gunR: 1,
+  gaugeNum: 5
+}
+
 export {
   isabelle,
   little,
@@ -330,5 +349,6 @@ export {
   madray,
   koiosu,
   outraged,
-  ed
+  ed,
+  ixion
 }

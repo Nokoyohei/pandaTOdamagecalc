@@ -8,6 +8,7 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
+          :key="ma"
           :input-stats.sync="ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
@@ -15,6 +16,7 @@
           label="MA"
         />
         <stats-text-field
+          :key="mp"
           :input-stats.sync="mp"
           :need-stats="resMP"
           :extra-stats.sync="extraMP"
@@ -26,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
