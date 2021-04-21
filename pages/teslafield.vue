@@ -8,7 +8,6 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :key="ma"
           :input-stats.sync="ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
@@ -16,7 +15,6 @@
           label="MA"
         />
         <stats-text-field
-          :key="mp"
           :input-stats.sync="mp"
           :need-stats="resMP"
           :extra-stats.sync="extraMP"
