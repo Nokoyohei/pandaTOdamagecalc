@@ -83,7 +83,8 @@ import {
   madray,
   koiosu,
   outraged,
-  ed
+  ed,
+  ixion
 } from '~/utils/monsters'
 import { BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -186,6 +187,12 @@ export default class BossMonsterPanel extends Vue {
       height: '140%',
       title: 'Ed',
       alt: 'ED'
+    },
+    {
+      srcimg: require('~/static/ixion.gif'),
+      height: '140%',
+      title: 'Ixion',
+      alt: 'IXION'
     }
   ]
 
@@ -207,7 +214,8 @@ export default class BossMonsterPanel extends Vue {
       madray,
       koiosu,
       outraged,
-      ed
+      ed,
+      ixion
     ][this.tab]
   }
 

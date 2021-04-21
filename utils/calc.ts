@@ -40,6 +40,8 @@ export const calcStaffOfAgony = (ma: number, dark: number) =>
 export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
 export const calcStaffOfThunderDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.StaffOfThunder)
+export const calcTeslaFieldDamage = (ma: number, mp: number) =>
+  Math.ceil((ma + Math.floor(mp / 120)) * SkillRatio.TeslaField)
 export const calcDeadlyFenDamage = (ma: number, lk: number) =>
   Math.ceil((ma + lk - 25) * SkillRatio.DeadlyFen)
 export const calcTornadoBlastDamage = (ma: number) =>
