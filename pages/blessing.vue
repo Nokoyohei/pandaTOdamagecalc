@@ -21,6 +21,20 @@
         </v-tooltip>
       </v-btn-toggle>
     </v-layout>
+
+    <v-slider
+      v-model="resistance"
+      label="Monster Resistance"
+      thumb-label="always"
+    ></v-slider>
+    <v-slider
+      v-model="power"
+      label="Blessings Power"
+      thumb-label="always"
+      max="1500"
+      min="20"
+      step="10"
+    ></v-slider>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <ac-buff :buff.sync="ACBuff" />
@@ -79,6 +93,8 @@ export default class Blessing extends Vue {
   lk = 10000
   extraAC = 0
   extraLK = 0
+  resistance = 0
+  power = 0
   monster: Monster = isabelle
 
   ACBuff: ACBuffName[] = []
@@ -142,12 +158,8 @@ export default class Blessing extends Vue {
     this.selectedBlessingSkills.forEach((e: number) => {
       damage += calcDamage(
         calcMonsterDef(this.monster, 'magic'),
-        this.monster[this.BlessingSkills[e].attr],
-        calcBlessingDamage(
-          this.buffedAC,
-          this.buffedLK,
-          this.BlessingSkills[e].ratio
-        )
+        this.resistance,
+        calcBlessingDamage(this.buffedAC, this.buffedLK, this.power / 20)
       )
     })
     return damage
