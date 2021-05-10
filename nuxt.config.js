@@ -52,8 +52,8 @@ export default {
     id: 'UA-168008891-1'
   },
   logRocket: {
-    logRocketId: 'eb1rtx/p2dmcalc', // LogRocketのページから取れるID
-    devModeAllowed: false // 開発モードでも取得するか
+    logRocketId: 'eb1rtx/p2dmcalc',
+    devModeAllowed: false
   },
   generate: {
     fallback: true
