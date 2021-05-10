@@ -38,7 +38,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ['nuxt-webfontloader', '@nuxtjs/google-analytics'],
+  modules: ['nuxt-webfontloader', '@nuxtjs/google-analytics', 'nuxt-logrocket'],
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
@@ -50,6 +50,10 @@ export default {
   },
   googleAnalytics: {
     id: 'UA-168008891-1'
+  },
+  logRocket: {
+    logRocketId: 'eb1rtx/p2dmcalc',
+    devModeAllowed: false
   },
   generate: {
     fallback: true
