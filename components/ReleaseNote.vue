@@ -35,6 +35,10 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2021/05/11',
+      texts: ['1. Apply blessings nerf (maybe unstable).']
+    },
+    {
       date: '2021/04/21',
       texts: ['1. Added Ixion', '2. Added TeslaField skill to farming panel']
     },
