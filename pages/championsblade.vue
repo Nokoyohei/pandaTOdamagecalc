@@ -56,6 +56,21 @@ export default class ChampionsBlade extends Vue {
 
   APBuff: APBuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ap = stats?.ap ?? 10000
+    this.fire = stats?.fire ?? 1000
+    this.extraAP = stats?.extraAP ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ap = this.ap
+    stats.fire = this.fire
+    stats.extraAP = this.extraAP
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedAP() {
     return (
       Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +

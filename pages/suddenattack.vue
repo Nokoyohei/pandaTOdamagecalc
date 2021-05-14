@@ -95,6 +95,27 @@ export default class SuddenAttack extends Vue {
   LKBuff: LKBuffName[] = []
   debuffSkills: DebuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ap = stats?.ap ?? 100000
+    this.da = stats?.da ?? 10000
+    this.lk = stats?.lk ?? 10000
+    this.extraAP = stats?.extraAP ?? 0
+    this.extraDA = stats?.extraDA ?? 0
+    this.extraLK = stats?.extraLK ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ap = this.ap
+    stats.hv = this.da
+    stats.lk = this.lk
+    stats.extraAP = this.extraAP
+    stats.extraDA = this.extraDA
+    stats.extraLK = this.extraLK
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   debuffSkillsDef: skillPanel[] = [
     {
       value: 'ShieldBreaker',

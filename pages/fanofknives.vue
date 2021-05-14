@@ -61,6 +61,21 @@ export default class FanOfKnives extends Vue {
   DABuff: DABuffName[] = []
   ThrowBuff: ThrowBuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.da = stats?.da ?? 10000
+    this.throwAp = stats?.throwAP ?? 32000
+    this.extraDA = stats?.extraDA ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.hv = this.da
+    stats.throwAP = this.throwAp
+    stats.extraDA = this.extraDA
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedDA() {
     return (
       Math.floor((this.da - this.extraDA) * calcDABuffRatio(this.DABuff)) +

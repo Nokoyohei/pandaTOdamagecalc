@@ -64,6 +64,21 @@ export default class Scythe extends Vue {
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ma = stats?.ma ?? 10000
+    this.dark = stats?.dark ?? 1000
+    this.extraMA = stats?.extraMA ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ma = this.ma
+    stats.dark = this.dark
+    stats.extraMA = this.extraMA
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedMA() {
     return (
       Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +

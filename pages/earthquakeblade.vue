@@ -86,6 +86,18 @@ export default class EarthquakeBlade extends Vue {
     if (this.mode === 'boss') {
       this.monster = requiem
     }
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ap = stats?.ap ?? 10000
+    this.soil = stats?.soil ?? 1000
+    this.extraAP = stats?.extraAP ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ap = this.ap
+    stats.soil = this.soil
+    stats.extraAP = this.extraAP
+    localStorage.setItem('stats', JSON.stringify(stats))
   }
 
   get monsterHP() {

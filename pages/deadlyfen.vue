@@ -65,6 +65,23 @@ export default class DeadlyFen extends Vue {
   MABuff: MABuffName[] = []
   LKBuff: LKBuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ma = stats?.ma ?? 10000
+    this.lk = stats?.lk ?? 10000
+    this.extraMA = stats?.extraMA ?? 0
+    this.extraLK = stats?.extraLK ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ma = this.ma
+    stats.lk = this.lk
+    stats.extraMA = this.extraMA
+    stats.extraLK = this.extraLK
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedMA() {
     return (
       Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +

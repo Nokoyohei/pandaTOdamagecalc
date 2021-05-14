@@ -74,19 +74,6 @@ export default class CelestialStrike extends Vue {
   MABuff: MABuffName[] = []
   selectedLightSkills: LightSkillName[] = []
 
-  created() {
-    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
-    if (this.mode === 'boss') {
-      this.monster = requiem
-    }
-  }
-
-  get monsterHP() {
-    return this.mode === 'boss'
-      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
-      : this.monster.hp
-  }
-
   lightSkills = [
     {
       value: 'ArrowOfLight',
@@ -124,6 +111,30 @@ export default class CelestialStrike extends Vue {
       img: require('~/static/holylance.gif')
     }
   ]
+
+  created() {
+    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
+    if (this.mode === 'boss') {
+      this.monster = requiem
+    }
+
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ma = stats?.ma ?? 10000
+    this.extraMA = stats?.extraMA ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ma = this.ma
+    stats.extraMA = this.extraMA
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
+  get monsterHP() {
+    return this.mode === 'boss'
+      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
+      : this.monster.hp
+  }
 
   get buffedMA() {
     return (

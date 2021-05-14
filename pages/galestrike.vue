@@ -75,6 +75,21 @@ export default class GaleStrike extends Vue {
     }
   ]
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ap = stats?.ap ?? 10000
+    this.wind = stats?.wind ?? 1000
+    this.extraAP = stats?.extraAP ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ap = this.ap
+    stats.wind = this.wind
+    stats.extraAP = this.extraAP
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get debuffedMonster() {
     return calcDebuffedMonster(this.monster, this.debuffSkills)
   }

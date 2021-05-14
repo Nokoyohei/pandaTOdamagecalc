@@ -66,6 +66,23 @@ export default class RagingStorm extends Vue {
   ACBuff: ACBuffName[] = []
   MABuff: MABuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ma = stats?.ma ?? 10000
+    this.extraMA = stats?.extraMA ?? 0
+    this.ac = stats?.ac ?? 10000
+    this.extraAC = stats?.extraAC ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ma = this.ma
+    stats.extraMA = this.extraMA
+    stats.ac = this.ac
+    stats.extraAC = this.extraAC
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedMA() {
     return (
       Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +

@@ -87,6 +87,23 @@ export default class TempestStrike extends Vue {
     }
   ]
 
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ap = stats?.ap ?? 100000
+    this.hv = stats?.hv ?? 10000
+    this.extraAP = stats?.extraAP ?? 0
+    this.extraHV = stats?.extraHV ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ap = this.ap
+    stats.hv = this.hv
+    stats.extraAP = this.extraAP
+    stats.extraHV = this.extraHV
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get debuffedMonster() {
     return calcDebuffedMonster(this.monster, this.debuffSkills)
   }

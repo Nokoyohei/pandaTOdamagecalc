@@ -70,6 +70,17 @@ export default class GravityCrash extends Vue {
     if (this.mode === 'boss') {
       this.monster = requiem
     }
+
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ma = stats?.ma ?? 10000
+    this.extraMA = stats?.extraMA ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ma = this.ma
+    stats.extraMA = this.extraMA
+    localStorage.setItem('stats', JSON.stringify(stats))
   }
 
   get monsterHP() {

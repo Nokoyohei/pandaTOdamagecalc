@@ -49,12 +49,27 @@ import { Monster, ACBuffName } from '~/types'
   }
 })
 export default class ShootingSpree extends Vue {
-  ac = 1092
+  ac = 10000
   extraAC = 0
-  gunAP = 12480
+  gunAP = 32000
   monster: Monster = isabelle
 
   ACBuff: ACBuffName[] = []
+
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ac = stats?.ac ?? 10000
+    this.gunAP = stats?.gunAP ?? 32000
+    this.extraAC = stats?.extraAC ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ac = this.ac
+    stats.gunAP = this.gunAP
+    stats.extraAC = this.extraAC
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
 
   get buffedAC() {
     return (

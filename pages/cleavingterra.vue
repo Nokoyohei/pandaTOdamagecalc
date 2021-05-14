@@ -51,6 +51,19 @@ export default class CleavingTerra extends Vue {
 
   MABuff: MABuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ma = stats?.ma ?? 10000
+    this.extraMA = stats?.extraMA ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ma = this.ma
+    stats.extraMA = this.extraMA
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedMA() {
     return (
       Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +

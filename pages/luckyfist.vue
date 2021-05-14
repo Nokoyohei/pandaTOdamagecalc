@@ -68,6 +68,19 @@ export default class ChampionsBlade extends Vue {
     }
   ]
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.lk = stats?.lk ?? 10000
+    this.extraLK = stats?.extraLK ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.lk = this.lk
+    stats.extraLK = this.extraLK
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get debuffedMonster() {
     return calcDebuffedMonster(this.monster, this.debuffSkills)
   }

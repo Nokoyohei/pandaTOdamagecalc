@@ -78,6 +78,27 @@ export default class FullHouse extends Vue {
   LKBuff: LKBuffName[] = []
   HVBuff: HVBuffName[] = []
 
+  created() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    this.ap = stats?.ap ?? 100000
+    this.hv = stats?.hv ?? 10000
+    this.lk = stats?.lk ?? 10000
+    this.extraAP = stats?.extraAP ?? 0
+    this.extraHV = stats?.extraHV ?? 0
+    this.extraLK = stats?.extraLK ?? 0
+  }
+
+  beforeDestroy() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    stats.ap = this.ap
+    stats.hv = this.hv
+    stats.lk = this.lk
+    stats.extraAP = this.extraAP
+    stats.extraHV = this.extraHV
+    stats.extraLK = this.extraLK
+    localStorage.setItem('stats', JSON.stringify(stats))
+  }
+
   get buffedAP() {
     return (
       Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
