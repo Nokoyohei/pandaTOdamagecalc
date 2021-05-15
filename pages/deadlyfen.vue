@@ -9,17 +9,17 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
         <stats-text-field
-          :input-stats.sync="lk"
+          :input-stats.sync="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraLK"
+          :extra-stats.sync="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -41,10 +41,12 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio,
-  calcLKBuffRatio
+  calcLKBuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, MABuffName, LKBuffName } from '~/types'
+import { Monster, MABuffName, LKBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -56,26 +58,39 @@ import { Monster, MABuffName, LKBuffName } from '~/types'
   }
 })
 export default class DeadlyFen extends Vue {
-  ma = 10000
-  extraMA = 0
-  lk = 1000
-  extraLK = 0
   monster: Monster = isabelle
+
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
 
   MABuff: MABuffName[] = []
   LKBuff: LKBuffName[] = []
 
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 
   get buffedLK() {
     return (
-      Math.floor((this.lk - this.extraLK) * calcLKBuffRatio(this.LKBuff)) +
-      this.extraLK
+      Math.floor(
+        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
+      ) + this.extraStats.lk
     )
   }
 

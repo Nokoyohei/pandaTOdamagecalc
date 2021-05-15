@@ -14,21 +14,21 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
         <stats-text-field
-          :input-stats.sync="fire"
+          :input-stats.sync="stats.fire"
           :need-stats="resFire"
           label="Fire Attr"
         />
@@ -52,7 +52,9 @@ import {
   calcMonsterDef,
   calcAPBuffRatio,
   calcMABuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
@@ -61,7 +63,9 @@ import {
   APBuffName,
   MABuffName,
   DebuffName,
-  skillPanel
+  skillPanel,
+  Status,
+  Attributes
 } from '~/types'
 
 @Component({
@@ -74,12 +78,10 @@ import {
   }
 })
 export default class ChampionsBlade extends Vue {
-  ap = 100000
-  extraAP = 0
-  ma = 10000
-  extraMA = 0
-  fire = 500
   monster: BossMonster = requiem
+
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
 
   APBuff: APBuffName[] = []
   MABuff: MABuffName[] = []
@@ -94,21 +96,35 @@ export default class ChampionsBlade extends Vue {
     }
   ]
 
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get debuffedMonster() {
     return calcDebuffedMonster(this.monster, this.debuffSkills)
   }
 
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 
@@ -116,7 +132,7 @@ export default class ChampionsBlade extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'magic'),
       this.debuffedMonster.fireR,
-      calcFlamingFistDamage(this.buffedAP, this.fire, this.buffedMA)
+      calcFlamingFistDamage(this.buffedAP, this.stats.fire, this.buffedMA)
     )
   }
 
@@ -125,7 +141,7 @@ export default class ChampionsBlade extends Vue {
       this.monster.hp * this.monster.gaugeNum,
       calcMonsterDef(this.debuffedMonster, 'magic'),
       this.debuffedMonster.fireR,
-      (SkillRatio.FlamingFist(this.fire) * this.buffedMA) / 100,
+      (SkillRatio.FlamingFist(this.stats.fire) * this.buffedMA) / 100,
       this.buffedAP,
       0
     )
@@ -139,7 +155,7 @@ export default class ChampionsBlade extends Vue {
         this.monster.hp * this.monster.gaugeNum,
         calcMonsterDef(this.debuffedMonster, 'magic'),
         this.debuffedMonster.fireR,
-        SkillRatio.FlamingFist(this.fire) * this.buffedAP,
+        SkillRatio.FlamingFist(this.stats.fire) * this.buffedAP,
         this.buffedMA / 100,
         0
       ) * 100
@@ -154,7 +170,7 @@ export default class ChampionsBlade extends Vue {
         calcMonsterDef(this.debuffedMonster, 'magic'),
         this.debuffedMonster.fireR,
         (this.buffedAP * this.buffedMA) / 100,
-        SkillRatio.FlamingFist(this.fire),
+        SkillRatio.FlamingFist(this.stats.fire),
         0
       ) * 100
     )

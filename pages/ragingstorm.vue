@@ -10,17 +10,17 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ac"
+          :input-stats.sync="stats.ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
-          :extra-stats.sync="extraAC"
+          :extra-stats.sync="extraStats.ac"
           label="AC"
         />
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -42,10 +42,12 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio,
-  calcACBuffRatio
+  calcACBuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, MABuffName, ACBuffName } from '~/types'
+import { Monster, MABuffName, ACBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -57,26 +59,39 @@ import { Monster, MABuffName, ACBuffName } from '~/types'
   }
 })
 export default class RagingStorm extends Vue {
-  ac = 10000
-  ma = 10000
-  extraMA = 0
-  extraAC = 0
   monster: Monster = isabelle
 
   ACBuff: ACBuffName[] = []
   MABuff: MABuffName[] = []
 
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 
   get buffedAC() {
     return (
-      Math.floor((this.ac - this.extraAC) * calcACBuffRatio(this.ACBuff)) +
-      this.extraAC
+      Math.floor(
+        (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
+      ) + this.extraStats.ac
     )
   }
 

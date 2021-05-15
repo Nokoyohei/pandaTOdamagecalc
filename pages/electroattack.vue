@@ -8,10 +8,10 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -31,10 +31,12 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio
+  calcMABuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, MABuffName } from '~/types'
+import { Monster, MABuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -45,16 +47,30 @@ import { Monster, MABuffName } from '~/types'
   }
 })
 export default class ElectroAttack extends Vue {
-  ma = 10000
-  extraMA = 0
   monster: Monster = isabelle
 
   MABuff: MABuffName[] = []
 
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 

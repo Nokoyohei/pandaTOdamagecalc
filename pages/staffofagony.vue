@@ -9,14 +9,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
         <stats-text-field
-          :input-stats.sync="dark"
+          :input-stats.sync="stats.dark"
           :need-stats="resDark"
           label="DARK attr"
         />
@@ -39,12 +39,20 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio
+  calcMABuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { BossMonster, MABuffName, DLBuffName } from '~/types'
+import {
+  BossMonster,
+  MABuffName,
+  DLBuffName,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -56,18 +64,31 @@ import { BossMonster, MABuffName, DLBuffName } from '~/types'
   }
 })
 export default class StaffOfAgony extends Vue {
-  ma = 10000
-  extraMA = 0
-  dark = 1000
   monster: BossMonster = requiem
 
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
 
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 
@@ -75,7 +96,7 @@ export default class StaffOfAgony extends Vue {
     const darkCommandoDamage = this.DLBuff.includes('darkCommando')
       ? calcDarkCommandoDamage(this.buffedMA)
       : 0
-    const staffOfAgonyDamage = calcStaffOfAgony(this.buffedMA, this.dark)
+    const staffOfAgonyDamage = calcStaffOfAgony(this.buffedMA, this.stats.dark)
 
     const buff = this.DLBuff.includes('bloodTestament')
       ? 1 + BloodTestamentBuff
@@ -99,8 +120,8 @@ export default class StaffOfAgony extends Vue {
 
   get resMA() {
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.StaffOfAgony(this.dark) + SkillRatio.DarkCommando
-      : SkillRatio.StaffOfAgony(this.dark)
+      ? SkillRatio.StaffOfAgony(this.stats.dark) + SkillRatio.DarkCommando
+      : SkillRatio.StaffOfAgony(this.stats.dark)
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *
@@ -125,8 +146,8 @@ export default class StaffOfAgony extends Vue {
 
   get resDark() {
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.StaffOfAgony(this.dark) + SkillRatio.DarkCommando
-      : SkillRatio.StaffOfAgony(this.dark)
+      ? SkillRatio.StaffOfAgony(this.stats.dark) + SkillRatio.DarkCommando
+      : SkillRatio.StaffOfAgony(this.stats.dark)
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *

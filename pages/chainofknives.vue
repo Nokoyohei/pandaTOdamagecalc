@@ -14,14 +14,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="da"
+          :input-stats.sync="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraDA"
+          :extra-stats.sync="extraStats.da"
           label="DA"
         />
         <stats-text-field
-          :input-stats.sync="throwAp"
+          :input-stats.sync="stats.throwAP"
           :need-stats="0"
           label="Throw AP"
         />
@@ -43,11 +43,20 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcDABuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { BossMonster, DABuffName, DebuffName, skillPanel } from '~/types'
+import {
+  BossMonster,
+  DABuffName,
+  DebuffName,
+  skillPanel,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -58,9 +67,6 @@ import { BossMonster, DABuffName, DebuffName, skillPanel } from '~/types'
   }
 })
 export default class MagicalSoul extends Vue {
-  da = 10000
-  throwAp = 20
-  extraDA = 0
   monster: BossMonster = requiem
 
   DABuff: DABuffName[] = []
@@ -74,10 +80,26 @@ export default class MagicalSoul extends Vue {
     }
   ]
 
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedDA() {
     return (
-      Math.floor((this.da - this.extraDA) * calcDABuffRatio(this.DABuff)) +
-      this.extraDA
+      Math.floor(
+        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
+      ) + this.extraStats.da
     )
   }
 
@@ -88,7 +110,7 @@ export default class MagicalSoul extends Vue {
   get damage() {
     const chainOfKnivesDamage = calcChainOfKnivesDamage(
       this.buffedDA,
-      this.throwAp
+      this.stats.throwAP
     )
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
@@ -103,7 +125,7 @@ export default class MagicalSoul extends Vue {
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
       SkillRatio.ChainOfKnives,
-      this.buffedDA * 16 + this.throwAp * 6,
+      this.buffedDA * 16 + this.stats.throwAP * 6,
       0
     )
 

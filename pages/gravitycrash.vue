@@ -15,10 +15,10 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -40,12 +40,21 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio
+  calcMABuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster, BossMonster, MABuffName, DLBuffName } from '~/types'
+import {
+  Monster,
+  BossMonster,
+  MABuffName,
+  DLBuffName,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -65,11 +74,24 @@ export default class GravityCrash extends Vue {
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
     if (this.mode === 'boss') {
       this.monster = requiem
     }
+
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get monsterHP() {
@@ -80,8 +102,9 @@ export default class GravityCrash extends Vue {
 
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 

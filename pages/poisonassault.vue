@@ -10,14 +10,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="da"
+          :input-stats.sync="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraDA"
+          :extra-stats.sync="extraStats.da"
           label="DA"
         />
         <stats-text-field
-          :input-stats.sync="throwAp"
+          :input-stats.sync="stats.throwAP"
           :need-stats="0"
           label="Throw AP"
         />
@@ -37,11 +37,19 @@ import { requiem } from '~/utils/monsters'
 import {
   calcPoisonDamage,
   calcDABuffRatio,
-  calcThrowBuffRatio
+  calcThrowBuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { BossMonster, DABuffName, ThrowBuffName } from '~/types'
+import {
+  BossMonster,
+  DABuffName,
+  ThrowBuffName,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -53,18 +61,31 @@ import { BossMonster, DABuffName, ThrowBuffName } from '~/types'
   }
 })
 export default class PoisonAssault extends Vue {
-  da = 10000
-  throwAp = 60
-  extraDA = 0
   monster: BossMonster = requiem
 
   DABuff: DABuffName[] = []
   ThrowBuff: ThrowBuffName[] = []
 
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedDA() {
     return (
-      Math.floor((this.da - this.extraDA) * calcDABuffRatio(this.DABuff)) +
-      this.extraDA
+      Math.floor(
+        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
+      ) + this.extraStats.da
     )
   }
 
@@ -73,7 +94,7 @@ export default class PoisonAssault extends Vue {
   }
 
   get buffedThrowAP() {
-    return this.throwAp * calcThrowBuffRatio(this.ThrowBuff)
+    return this.stats.throwAP * calcThrowBuffRatio(this.ThrowBuff)
   }
 
   get damage() {

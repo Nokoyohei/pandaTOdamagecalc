@@ -13,10 +13,10 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="lk"
+          :input-stats.sync="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraLK"
+          :extra-stats.sync="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -37,11 +37,20 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcLKBuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { BossMonster, LKBuffName, DebuffName, skillPanel } from '~/types'
+import {
+  BossMonster,
+  LKBuffName,
+  DebuffName,
+  skillPanel,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -52,9 +61,10 @@ import { BossMonster, LKBuffName, DebuffName, skillPanel } from '~/types'
   }
 })
 export default class ChampionsBlade extends Vue {
-  lk = 52796
-  extraLK = 0
   monster: BossMonster = requiem
+
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
 
   LKBuff: LKBuffName[] = []
 
@@ -68,14 +78,27 @@ export default class ChampionsBlade extends Vue {
     }
   ]
 
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get debuffedMonster() {
     return calcDebuffedMonster(this.monster, this.debuffSkills)
   }
 
   get buffedLK() {
     return (
-      Math.floor((this.lk - this.extraLK) * calcLKBuffRatio(this.LKBuff)) +
-      this.extraLK
+      Math.floor(
+        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
+      ) + this.extraStats.lk
     )
   }
 

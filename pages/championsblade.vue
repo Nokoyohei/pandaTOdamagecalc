@@ -8,14 +8,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="fire"
+          :input-stats.sync="stats.fire"
           :need-stats="resFire"
           label="Fire Attr"
         />
@@ -35,11 +35,13 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcAPBuffRatio
+  calcAPBuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster, APBuffName } from '~/types'
+import { Monster, APBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -49,17 +51,30 @@ import { Monster, APBuffName } from '~/types'
   }
 })
 export default class ChampionsBlade extends Vue {
-  ap = 100000
-  extraAP = 0
-  fire = 1000
   monster: Monster = isabelle
 
   APBuff: APBuffName[] = []
 
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
+  }
+
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
@@ -67,7 +82,7 @@ export default class ChampionsBlade extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      calcChampionsBladeDamage(this.buffedAP, this.fire)
+      calcChampionsBladeDamage(this.buffedAP, this.stats.fire)
     )
   }
 
@@ -76,7 +91,7 @@ export default class ChampionsBlade extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      SkillRatio.ChampionsBlade(this.fire),
+      SkillRatio.ChampionsBlade(this.stats.fire),
       this.buffedAP,
       0
     )
@@ -91,7 +106,7 @@ export default class ChampionsBlade extends Vue {
         calcMonsterDef(this.monster, 'physical'),
         this.monster.physicalR,
         this.buffedAP,
-        SkillRatio.ChampionsBlade(this.fire),
+        SkillRatio.ChampionsBlade(this.stats.fire),
         0
       ) * 100
     )

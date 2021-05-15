@@ -15,14 +15,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="soil"
+          :input-stats.sync="stats.soil"
           :need-stats="resSoil"
           label="Soil Attr"
         />
@@ -44,7 +44,9 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 import {
@@ -52,7 +54,9 @@ import {
   BossMonster,
   APBuffName,
   DebuffName,
-  skillPanel
+  skillPanel,
+  Status,
+  Attributes
 } from '~/types'
 
 @Component({
@@ -64,11 +68,11 @@ import {
   }
 })
 export default class EarthquakeBlade extends Vue {
-  ap = 100000
-  extraAP = 0
-  soil = 1000
   mode = 'farming'
   monster: Monster = isabelle
+
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
 
   APBuff: APBuffName[] = []
   debuffSkills: DebuffName[] = []
@@ -81,11 +85,20 @@ export default class EarthquakeBlade extends Vue {
     }
   ]
 
-  created() {
+  beforeMount() {
     this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
     if (this.mode === 'boss') {
       this.monster = requiem
     }
+    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
+  }
+
+  beforeDestroy() {
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get monsterHP() {
@@ -102,8 +115,9 @@ export default class EarthquakeBlade extends Vue {
 
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
@@ -111,7 +125,7 @@ export default class EarthquakeBlade extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcEarthquakeBladeDamage(this.buffedAP, this.soil)
+      calcEarthquakeBladeDamage(this.buffedAP, this.stats.soil)
     )
   }
 
@@ -120,7 +134,7 @@ export default class EarthquakeBlade extends Vue {
       this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      SkillRatio.EarthquakeBlade(this.soil),
+      SkillRatio.EarthquakeBlade(this.stats.soil),
       this.buffedAP,
       0
     )
@@ -135,7 +149,7 @@ export default class EarthquakeBlade extends Vue {
         calcMonsterDef(this.debuffedMonster, 'physical'),
         this.debuffedMonster.physicalR,
         this.buffedAP,
-        SkillRatio.EarthquakeBlade(this.soil),
+        SkillRatio.EarthquakeBlade(this.stats.soil),
         0
       ) * 50
     )
