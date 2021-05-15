@@ -13,14 +13,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ac"
+          :input-stats.sync="stats.ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
-          :extra-stats.sync="extraAC"
+          :extra-stats.sync="extraStats.ac"
           label="AC"
         />
         <stats-text-field
-          :input-stats.sync="gunAP"
+          :input-stats.sync="stats.gunAP"
           :need-stats="0"
           label="GunAP"
         />
@@ -41,11 +41,20 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcACBuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { ACBuffName, BossMonster, skillPanel, DebuffName } from '~/types'
+import {
+  ACBuffName,
+  BossMonster,
+  skillPanel,
+  DebuffName,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -55,9 +64,6 @@ import { ACBuffName, BossMonster, skillPanel, DebuffName } from '~/types'
   }
 })
 export default class ShootingSpree extends Vue {
-  ac = 10000
-  extraAC = 0
-  gunAP = 32000
   monster: BossMonster = requiem
 
   debuffSkills: DebuffName[] = []
@@ -70,19 +76,19 @@ export default class ShootingSpree extends Vue {
     }
   ]
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ac = stats?.ac ?? 10000
-    this.gunAP = stats?.gunAP ?? 32000
-    this.extraAC = stats?.extraAC ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ac = this.ac
-    stats.gunAP = this.gunAP
-    stats.extraAC = this.extraAC
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get debuffedMonster() {
@@ -91,8 +97,9 @@ export default class ShootingSpree extends Vue {
 
   get buffedAC() {
     return (
-      Math.floor((this.ac - this.extraAC) * calcACBuffRatio(this.ACBuff)) +
-      this.extraAC
+      Math.floor(
+        (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
+      ) + this.extraStats.ac
     )
   }
 
@@ -100,7 +107,7 @@ export default class ShootingSpree extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'gun'),
       this.debuffedMonster.gunR,
-      calcPowerShotDamage(this.buffedAC * 20 + this.gunAP)
+      calcPowerShotDamage(this.buffedAC * 20 + this.stats.gunAP)
     )
   }
 
@@ -110,7 +117,7 @@ export default class ShootingSpree extends Vue {
       calcMonsterDef(this.monster, 'gun'),
       this.debuffedMonster.gunR,
       SkillRatio.PowerShot,
-      this.buffedAC * 20 + this.gunAP,
+      this.buffedAC * 20 + this.stats.gunAP,
       48 * 20
     )
   }

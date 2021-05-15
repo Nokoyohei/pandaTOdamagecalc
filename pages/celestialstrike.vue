@@ -29,10 +29,10 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -52,10 +52,19 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio
+  calcMABuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { Monster, BossMonster, MABuffName, LightSkillName } from '~/types'
+import {
+  Monster,
+  BossMonster,
+  MABuffName,
+  LightSkillName,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -66,8 +75,6 @@ import { Monster, BossMonster, MABuffName, LightSkillName } from '~/types'
   }
 })
 export default class CelestialStrike extends Vue {
-  ma = 10000
-  extraMA = 0
   mode = 'farming'
   monster: Monster | BossMonster = isabelle
 
@@ -112,22 +119,24 @@ export default class CelestialStrike extends Vue {
     }
   ]
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
     if (this.mode === 'boss') {
       this.monster = requiem
     }
 
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ma = stats?.ma ?? 10000
-    this.extraMA = stats?.extraMA ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ma = this.ma
-    stats.extraMA = this.extraMA
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get monsterHP() {
@@ -138,8 +147,9 @@ export default class CelestialStrike extends Vue {
 
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 

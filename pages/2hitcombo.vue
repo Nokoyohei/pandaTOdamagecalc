@@ -18,17 +18,17 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="hv"
+          :input-stats.sync="stats.hv"
           :need-stats="resHV"
           :buffed-stats="buffedHV"
-          :extra-stats.sync="extraHV"
+          :extra-stats.sync="extraStats.hv"
           label="HV"
         />
       </v-col>
@@ -50,14 +50,18 @@ import {
   calcMonsterDef,
   calcAPBuffRatio,
   calcHVBuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import {
   BossMonster,
   APBuffName,
   HVBuffName,
   DebuffName,
-  skillPanel
+  skillPanel,
+  Status,
+  Attributes
 } from '~/types'
 
 @Component({
@@ -69,11 +73,10 @@ import {
   }
 })
 export default class TempestStrike extends Vue {
-  ap = 100000
-  extraAP = 0
-  hv = 10000
-  extraHV = 0
   monster: BossMonster = requiem
+
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
 
   APBuff: APBuffName[] = []
   HVBuff: HVBuffName[] = []
@@ -89,19 +92,14 @@ export default class TempestStrike extends Vue {
 
   beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ap = stats?.ap ?? 100000
-    this.hv = stats?.hv ?? 10000
-    this.extraAP = stats?.extraAP ?? 0
-    this.extraHV = stats?.extraHV ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ap = this.ap
-    stats.hv = this.hv
-    stats.extraAP = this.extraAP
-    stats.extraHV = this.extraHV
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get debuffedMonster() {
@@ -110,15 +108,17 @@ export default class TempestStrike extends Vue {
 
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
   get buffedHV() {
     return (
-      Math.floor((this.hv - this.extraHV) * calcHVBuffRatio(this.HVBuff)) +
-      this.extraHV
+      Math.floor(
+        (this.stats.hv - this.extraStats.hv) * calcHVBuffRatio(this.HVBuff)
+      ) + this.extraStats.hv
     )
   }
 

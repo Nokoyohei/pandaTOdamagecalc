@@ -18,14 +18,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="wind"
+          :input-stats.sync="stats.wind"
           :need-stats="resWind"
           label="Wind Attr"
         />
@@ -46,10 +46,19 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
-import { BossMonster, APBuffName, DebuffName, skillPanel } from '~/types'
+import {
+  BossMonster,
+  APBuffName,
+  DebuffName,
+  skillPanel,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -59,10 +68,10 @@ import { BossMonster, APBuffName, DebuffName, skillPanel } from '~/types'
   }
 })
 export default class TempestStrike extends Vue {
-  ap = 100000
-  extraAP = 0
-  wind = 1000
   monster: BossMonster = requiem
+
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
 
   APBuff: APBuffName[] = []
   debuffSkills: DebuffName[] = []
@@ -75,19 +84,16 @@ export default class TempestStrike extends Vue {
     }
   ]
 
-  created() {
+  beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ap = stats?.ap ?? 10000
-    this.wind = stats?.wind ?? 1000
-    this.extraAP = stats?.extraAP ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ap = this.ap
-    stats.wind = this.wind
-    stats.extraAP = this.extraAP
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get debuffedMonster() {
@@ -96,8 +102,9 @@ export default class TempestStrike extends Vue {
 
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
@@ -105,7 +112,7 @@ export default class TempestStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcTempestStrikeDamage(this.buffedAP, this.wind)
+      calcTempestStrikeDamage(this.buffedAP, this.stats.wind)
     )
   }
 
@@ -121,7 +128,7 @@ export default class TempestStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcTempestStrikeDamage(this.buffedAP, this.wind / 2)
+      calcTempestStrikeDamage(this.buffedAP, this.stats.wind / 2)
     )
   }
 
@@ -130,7 +137,7 @@ export default class TempestStrike extends Vue {
       this.monster.hp * this.monster.gaugeNum,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      SkillRatio.TempestStrike(this.wind / 2),
+      SkillRatio.TempestStrike(this.stats.wind / 2),
       this.buffedAP,
       0
     )
@@ -145,7 +152,7 @@ export default class TempestStrike extends Vue {
         calcMonsterDef(this.debuffedMonster, 'physical'),
         this.debuffedMonster.physicalR,
         this.buffedAP,
-        SkillRatio.TempestStrike(this.wind / 2),
+        SkillRatio.TempestStrike(this.stats.wind / 2),
         0
       ) *
         ((100 / 5) * 2)

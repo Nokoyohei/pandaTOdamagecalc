@@ -28,16 +28,16 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ac"
+          :input-stats.sync="stats.ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
-          :extra-stats.sync="extraAC"
+          :extra-stats.sync="extraStats.ac"
           label="AC"
         /><stats-text-field
-          :input-stats.sync="lk"
+          :input-stats.sync="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraLK"
+          :extra-stats.sync="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -56,13 +56,20 @@ import { isabelle } from '~/utils/monsters'
 import {
   calcBlessingDamage,
   calcDamage,
-  // calcNeedStats,
   calcMonsterDef,
   calcLKBuffRatio,
-  calcACBuffRatio
+  calcACBuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
-// import SkillRatio from '~/utils/skillRatio'
-import { Monster, ACBuffName, LKBuffName, Skill } from '~/types'
+import {
+  Monster,
+  ACBuffName,
+  LKBuffName,
+  Skill,
+  Status,
+  Attributes
+} from '~/types'
 import skillRatio from '~/utils/skillRatio'
 
 @Component({
@@ -75,10 +82,6 @@ import skillRatio from '~/utils/skillRatio'
   }
 })
 export default class Blessing extends Vue {
-  ac = 10000
-  lk = 10000
-  extraAC = 0
-  extraLK = 0
   monster: Monster = isabelle
 
   ACBuff: ACBuffName[] = []
@@ -123,34 +126,34 @@ export default class Blessing extends Vue {
     }
   ]
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ac = stats?.ac ?? 10000
-    this.lk = stats?.lk ?? 10000
-    this.extraAC = stats?.extraAC ?? 0
-    this.extraLK = stats?.extraLK ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ac = this.ac
-    stats.lk = this.lk
-    stats.extraAC = this.extraAC
-    stats.extraLK = this.extraLK
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get buffedAC() {
     return (
-      Math.floor((this.ac - this.extraAC) * calcACBuffRatio(this.ACBuff)) +
-      this.extraAC
+      Math.floor(
+        (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
+      ) + this.extraStats.ac
     )
   }
 
   get buffedLK() {
     return (
-      Math.floor((this.lk - this.extraLK) * calcLKBuffRatio(this.LKBuff)) +
-      this.extraLK
+      Math.floor(
+        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
+      ) + this.extraStats.lk
     )
   }
 
@@ -169,48 +172,5 @@ export default class Blessing extends Vue {
     })
     return damage
   }
-
-  // get needStats() {
-  //   let lowestIndex = 0
-  //   const lowestResist = this.selectedBlessingSkills.reduce(
-  //     (acc: number, idx: number) => {
-  //       const monsterResist = this.monster[this.BlessingSkills[idx].attr]
-  //       if (monsterResist < acc) {
-  //         acc = monsterResist
-  //         lowestIndex = idx
-  //         return acc
-  //       }
-  //       return acc
-  //     },
-  //     500
-  //   )
-
-  //   const resistRatio = this.selectedBlessingSkills.reduce(
-  //     (acc: number, idx: number) => {
-  //       if (idx === lowestIndex) return acc
-  //       const monsterResist = this.monster[this.BlessingSkills[idx].attr]
-  //       if (monsterResist >= 100) return acc
-  //       return acc + (100 - monsterResist) / (100 - lowestResist)
-  //     },
-  //     1
-  //   )
-
-  //   return calcNeedStats(
-  //     this.monster.hp / resistRatio,
-  //     calcMonsterDef(this.monster, 'magic'),
-  //     lowestResist,
-  //     SkillRatio.Blessing,
-  //     this.buffedLK + this.buffedAC,
-  //     0
-  //   )
-  // }
-
-  // get resAC() {
-  //   return Math.ceil(this.needStats / calcACBuffRatio(this.ACBuff))
-  // }
-
-  // get resLK() {
-  //   return Math.ceil(this.needStats / calcLKBuffRatio(this.LKBuff))
-  // }
 }
 </script>

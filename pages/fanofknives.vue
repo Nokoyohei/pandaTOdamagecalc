@@ -9,14 +9,14 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="da"
+          :input-stats.sync="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraDA"
+          :extra-stats.sync="extraStats.da"
           label="DA"
         />
         <stats-text-field
-          :input-stats.sync="throwAp"
+          :input-stats.sync="stats.throwAP"
           :need-stats="0"
           label="Throw AP"
         />
@@ -38,11 +38,13 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcThrowBuffRatio,
-  calcDABuffRatio
+  calcDABuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-import { Monster, DABuffName, ThrowBuffName } from '~/types'
+import { Monster, DABuffName, ThrowBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -53,38 +55,36 @@ import { Monster, DABuffName, ThrowBuffName } from '~/types'
   }
 })
 export default class FanOfKnives extends Vue {
-  da = 10000
-  extraDA = 0
-  throwAp = 20
   monster: Monster = isabelle
 
   DABuff: DABuffName[] = []
   ThrowBuff: ThrowBuffName[] = []
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.da = stats?.da ?? 10000
-    this.throwAp = stats?.throwAP ?? 32000
-    this.extraDA = stats?.extraDA ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.hv = this.da
-    stats.throwAP = this.throwAp
-    stats.extraDA = this.extraDA
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get buffedDA() {
     return (
-      Math.floor((this.da - this.extraDA) * calcDABuffRatio(this.DABuff)) +
-      this.extraDA
+      Math.floor(
+        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
+      ) + this.extraStats.da
     )
   }
 
   get buffedThrowAP() {
-    return this.throwAp * calcThrowBuffRatio(this.ThrowBuff)
+    return this.stats.throwAP * calcThrowBuffRatio(this.ThrowBuff)
   }
 
   get damage() {

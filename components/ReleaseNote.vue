@@ -35,7 +35,7 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
-      date: '2021/05/14',
+      date: '2021/05/15',
       texts: ['Changed to remember info of the stats you entered.']
     },
     {

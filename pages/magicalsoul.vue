@@ -10,17 +10,17 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="ma"
+          :input-stats.sync="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraMA"
+          :extra-stats.sync="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -42,10 +42,18 @@ import {
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
-  calcMABuffRatio
+  calcMABuffRatio,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 
-import { BossMonster, APBuffName, MABuffName } from '~/types'
+import {
+  BossMonster,
+  APBuffName,
+  MABuffName,
+  Status,
+  Attributes
+} from '~/types'
 
 @Component({
   components: {
@@ -57,43 +65,39 @@ import { BossMonster, APBuffName, MABuffName } from '~/types'
   }
 })
 export default class MagicalSoul extends Vue {
-  ma = 10000
-  extraMA = 0
-  ap = 100000
-  extraAP = 0
   monster: BossMonster = requiem
 
   MABuff: MABuffName[] = []
   APBuff: APBuffName[] = []
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ap = stats?.ap ?? 10000
-    this.ma = stats?.ma ?? 10000
-    this.extraAP = stats?.extraAP ?? 0
-    this.extraMA = stats?.extraMA ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ap = this.ap
-    stats.ma = this.ma
-    stats.extraAP = this.extraAP
-    stats.extraMA = this.extraMA
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
   get buffedMA() {
     return (
-      Math.floor((this.ma - this.extraMA) * calcMABuffRatio(this.MABuff)) +
-      this.extraMA
+      Math.floor(
+        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
+      ) + this.extraStats.ma
     )
   }
 

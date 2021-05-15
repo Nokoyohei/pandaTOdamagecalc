@@ -1,6 +1,49 @@
 import BuffRatio from '~/utils/buffRatio'
-import { Monster, DebuffName, BossMonster } from '~/types'
+import { Monster, DebuffName, BossMonster, Status, Attributes } from '~/types'
 import SkillRatio from '~/utils/skillRatio'
+
+export const initStatus = (): Status & Attributes => {
+  return {
+    ap: 100000,
+    ac: 10000,
+    dx: -1000,
+    mp: 200000,
+    ma: 10000,
+    md: 200000,
+    wt: 200000,
+    da: 10000,
+    lk: 10000,
+    hp: 200000,
+    dp: 200000,
+    hv: 10000,
+    gunAP: 32000,
+    throwAP: 32000,
+    fire: 2000,
+    water: 2000,
+    elec: 2000,
+    wind: 2000,
+    soil: 2000,
+    holy: 2000,
+    dark: 2000
+  }
+}
+
+export const initExtraStatus = (): Status => {
+  return {
+    ap: 0,
+    ac: 0,
+    dx: 0,
+    mp: 0,
+    ma: 0,
+    md: 0,
+    wt: 0,
+    da: 0,
+    lk: 0,
+    hp: 0,
+    dp: 0,
+    hv: 0
+  }
+}
 
 // like python's np.linspace
 // Returns a cardinality-divided value from startValue to stopValue

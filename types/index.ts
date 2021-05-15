@@ -43,6 +43,33 @@ export interface BossMonster {
   gaugeNum: number
 }
 
+export interface Status {
+  ap: number
+  ac: number
+  dx: number
+  mp: number
+  ma: number
+  md: number
+  wt: number
+  da: number
+  lk: number
+  hp: number
+  dp: number
+  hv: number
+}
+
+export interface Attributes {
+  fire: number
+  water: number
+  elec: number
+  wind: number
+  soil: number
+  holy: number
+  dark: number
+  gunAP: number
+  throwAP: number
+}
+
 export type APBuffName = 'pumpingHeart' | 'adrenaline'
 export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye'
 export type LKBuffName = 'luckySeven' | 'auraOfLuck' | 'firstAnniversary'

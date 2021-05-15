@@ -16,24 +16,24 @@
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field
-          :input-stats.sync="ap"
+          :input-stats.sync="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraAP"
+          :extra-stats.sync="extraStats.ap"
           label="AP"
         />
         <stats-text-field
-          :input-stats.sync="da"
+          :input-stats.sync="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraDA"
+          :extra-stats.sync="extraStats.da"
           label="DA"
         />
         <stats-text-field
-          :input-stats.sync="lk"
+          :input-stats.sync="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraLK"
+          :extra-stats.sync="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -58,7 +58,9 @@ import {
   calcDABuffRatio,
   calcAPBuffRatio,
   calcLKBuffRatio,
-  calcDebuffedMonster
+  calcDebuffedMonster,
+  initStatus,
+  initExtraStatus
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
@@ -68,7 +70,9 @@ import {
   DABuffName,
   LKBuffName,
   DebuffName,
-  skillPanel
+  skillPanel,
+  Status,
+  Attributes
 } from '~/types'
 
 @Component({
@@ -82,12 +86,6 @@ import {
   }
 })
 export default class SuddenAttack extends Vue {
-  ap = 100000
-  da = 10000
-  lk = 10000
-  extraAP = 0
-  extraDA = 0
-  extraLK = 0
   monster: BossMonster = requiem
 
   APBuff: APBuffName[] = []
@@ -95,25 +93,19 @@ export default class SuddenAttack extends Vue {
   LKBuff: LKBuffName[] = []
   debuffSkills: DebuffName[] = []
 
-  created() {
+  stats: Status & Attributes = initStatus()
+  extraStats: Status = initExtraStatus()
+
+  beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    this.ap = stats?.ap ?? 100000
-    this.da = stats?.da ?? 10000
-    this.lk = stats?.lk ?? 10000
-    this.extraAP = stats?.extraAP ?? 0
-    this.extraDA = stats?.extraDA ?? 0
-    this.extraLK = stats?.extraLK ?? 0
+    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
+    if (Object.keys(stats).length !== 0) this.stats = stats
+    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
   }
 
   beforeDestroy() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    stats.ap = this.ap
-    stats.hv = this.da
-    stats.lk = this.lk
-    stats.extraAP = this.extraAP
-    stats.extraDA = this.extraDA
-    stats.extraLK = this.extraLK
-    localStorage.setItem('stats', JSON.stringify(stats))
+    localStorage.setItem('stats', JSON.stringify(this.stats))
+    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
   }
 
   debuffSkillsDef: skillPanel[] = [
@@ -126,22 +118,25 @@ export default class SuddenAttack extends Vue {
 
   get buffedAP() {
     return (
-      Math.floor((this.ap - this.extraAP) * calcAPBuffRatio(this.APBuff)) +
-      this.extraAP
+      Math.floor(
+        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
+      ) + this.extraStats.ap
     )
   }
 
   get buffedDA() {
     return (
-      Math.floor((this.da - this.extraDA) * calcDABuffRatio(this.DABuff)) +
-      this.extraDA
+      Math.floor(
+        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
+      ) + this.extraStats.da
     )
   }
 
   get buffedLK() {
     return (
-      Math.floor((this.lk - this.extraLK) * calcLKBuffRatio(this.LKBuff)) +
-      this.extraLK
+      Math.floor(
+        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
+      ) + this.extraStats.lk
     )
   }
 
