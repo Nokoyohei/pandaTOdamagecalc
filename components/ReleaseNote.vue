@@ -35,12 +35,16 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2021/12/14',
+      texts: ['1. Fixed Poison Assault Damage.', '2. Appied mob nerf.']
+    },
+    {
       date: '2021/05/15',
       texts: ['Changed to remember info of the stats you entered.']
     },
     {
       date: '2021/05/11',
-      texts: ['Apply blessings nerf (maybe unstable).']
+      texts: ['Applied blessings nerf (maybe unstable).']
     },
     {
       date: '2021/04/21',
@@ -49,14 +53,14 @@ export default class ReleaseNote extends Vue {
     {
       date: '2021/04/16',
       texts: [
-        '1. Apply buffed/nerfed skills',
-        '2. Apply nerfed monster resistance'
+        '1. Applied buffed/nerfed skills',
+        '2. Applied nerfed monster resistance'
       ]
     },
     {
       date: '2021/04/14',
       texts: [
-        '1. Apply buffed/nerfed skills',
+        '1. Applied buffed/nerfed skills',
         '2. Added following skills to farming panel',
         'StaffofThunder/DeadlyFen/Earthquake/TornadoBlast'
       ]
@@ -64,14 +68,14 @@ export default class ReleaseNote extends Vue {
     {
       date: '2021/03/28',
       texts: [
-        '1. Apply buffed skills',
+        '1. Applied buffed skills',
         '2. Added following skills to farming panel',
         'TidalSlash/SonicSlash'
       ]
     },
     {
       date: '2021/03/13',
-      texts: ['Apply buffed skills']
+      texts: ['Applied buffed skills']
     },
     {
       date: '2020/08/16',

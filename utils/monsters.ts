@@ -20,18 +20,18 @@ const isabelle: Monster = {
 const little: Monster = {
   hp: 350000,
   dp: 75000,
-  md: 10000,
+  md: 8000,
   hv: 1500,
-  fireR: 95,
-  waterR: 95,
-  windR: 80,
-  earthR: 80,
-  elecR: 80,
-  lightR: 80,
-  darkR: 80,
-  noPropR: 80,
-  physicalR: 80,
-  gunR: 75
+  fireR: 90,
+  waterR: 90,
+  windR: 75,
+  earthR: 75,
+  elecR: 75,
+  lightR: 75,
+  darkR: 75,
+  noPropR: 75,
+  physicalR: 75,
+  gunR: 70
 }
 
 const toilet: Monster = {
@@ -91,16 +91,16 @@ const requiem: BossMonster = {
   md: 3900,
   hv: 400,
   da: 3000,
-  fireR: 80,
-  waterR: 80,
-  windR: 80,
-  earthR: 80,
-  elecR: 80,
-  lightR: 40,
+  fireR: 70,
+  waterR: 70,
+  windR: 70,
+  earthR: 70,
+  elecR: 70,
+  lightR: 30,
   darkR: 40,
   noPropR: 40,
-  physicalR: 90,
-  gunR: 90,
+  physicalR: 80,
+  gunR: 80,
   gaugeNum: 5
 }
 
@@ -119,7 +119,7 @@ const snake: BossMonster = {
   darkR: 60,
   noPropR: 40,
   physicalR: 95,
-  gunR: 95,
+  gunR: 85,
   gaugeNum: 5
 }
 
