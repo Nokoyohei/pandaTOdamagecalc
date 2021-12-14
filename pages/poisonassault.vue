@@ -98,13 +98,13 @@ export default class PoisonAssault extends Vue {
   }
 
   get damage() {
-    return calcPoisonDamage(this.buffedDA, this.buffedThrowAP) * 30
+    return calcPoisonDamage(this.buffedDA, this.buffedThrowAP)
   }
 
   get resDA() {
     const needDA =
       (this.monster.hp * this.monster.gaugeNum) /
-        (SkillRatio.PoisonAssault * 0.312 * 30) -
+        (SkillRatio.PoisonAssault * 0.412 * 30) -
       (this.buffedDA * 16 + this.buffedThrowAP)
 
     return Math.ceil(needDA / calcDABuffRatio(this.DABuff) / 16)
