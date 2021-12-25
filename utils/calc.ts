@@ -139,9 +139,9 @@ export const calcPoisonAssaultDamage = (da: number, throwAp: number) =>
 export const calcPoisonDamage = (da: number, throwAp: number) =>
   Math.ceil((da * 16 + throwAp) * 0.412 * SkillRatio.PoisonAssault)
 export const calcSuddenAttackDamage = (ap: number, da: number, lk: number) =>
-  Math.ceil((da + lk) * 16 + ap * SkillRatio.SuddenAttack)
+  Math.ceil(((da + lk) * 16 + ap) * SkillRatio.SuddenAttack)
 export const calcLuckyFistDamage = (enemyHp: number, lk: number) =>
-  Math.ceil(enemyHp + lk * 80 * SkillRatio.LuckyFist)
+  Math.ceil((enemyHp + lk * 80) * SkillRatio.LuckyFist)
 export const calcPowerShotDamage = (gunAP: number) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.PowerShot)
 export const calcDoubleShotDamage = (gunAP: number) =>

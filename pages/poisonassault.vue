@@ -1,7 +1,11 @@
 <template>
   <v-container>
     <h1>Poison Assault (Only Poison Damage)</h1>
-    <boss-monster-panel :damage="damage" :monster.sync="monster" />
+    <boss-monster-panel
+      :damage="damage"
+      :damage-string="`${damage.toLocaleString()} * 30`"
+      :monster.sync="monster"
+    />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">

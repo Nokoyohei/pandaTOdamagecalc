@@ -69,7 +69,7 @@ const straw: Monster = {
 }
 
 const shadow: Monster = {
-  hp: 2300000,
+  hp: 2500000,
   dp: 300000,
   md: 40000,
   hv: 6500,
@@ -86,10 +86,10 @@ const shadow: Monster = {
 }
 
 const requiem: BossMonster = {
-  hp: 800000,
-  dp: 60000,
-  md: 3900,
-  hv: 400,
+  hp: 650000,
+  dp: 50000,
+  md: 3000,
+  hv: 300,
   da: 3000,
   fireR: 70,
   waterR: 70,
