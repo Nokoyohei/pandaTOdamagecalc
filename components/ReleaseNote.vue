@@ -35,6 +35,14 @@ import ReleaseText from '~/components/ReleaseText.vue'
 export default class ReleaseNote extends Vue {
   releaseNotes = [
     {
+      date: '2021/12/25',
+      texts: [
+        '1. Merry Christmas!!',
+        '2. Fixed SuddenAttack/LuckyFist Damage.',
+        "3. Fixed Apocrypha's stats"
+      ]
+    },
+    {
       date: '2021/12/14',
       texts: ['1. Fixed Poison Assault Damage.', '2. Appied mob nerf.']
     },
