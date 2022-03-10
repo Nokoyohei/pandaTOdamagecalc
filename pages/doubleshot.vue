@@ -100,7 +100,7 @@ export default class ShootingSpree extends Vue {
     return (
       Math.floor(
         (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
-      ) + this.stats.ac
+      ) + this.extraStats.ac
     )
   }
 
