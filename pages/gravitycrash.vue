@@ -33,28 +33,20 @@ import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle, requiem } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
   calcGravityCrashDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio,
-  initStatus,
-  initExtraStatus
+  calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
 
-import {
-  Monster,
-  BossMonster,
-  MABuffName,
-  DLBuffName,
-  Status,
-  Attributes
-} from '~/types'
+import Test from '~/mixins/MainPanel'
+
+import { MABuffName, DLBuffName } from '~/types'
 
 @Component({
   components: {
@@ -63,42 +55,14 @@ import {
     DarkLoadBuff,
     MaBuff,
     StatsTextField
-  }
+  },
+  mixins: [Test]
 })
 export default class GravityCrash extends Vue {
   ma = 10000
   extraMA = 0
-  mode = 'farming'
-  monster: Monster | BossMonster = isabelle
-
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
-    if (this.mode === 'boss') {
-      this.monster = requiem
-    }
-
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get monsterHP() {
-    return this.mode === 'boss'
-      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
-      : this.monster.hp
-  }
 
   get buffedMA() {
     return (
