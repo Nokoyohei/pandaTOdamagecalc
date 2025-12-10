@@ -8,6 +8,33 @@
         <dark-load-buff :buff.sync="DLBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Scythe Power
+          </v-card-title>
+          <v-slider
+            v-model="scythePower"
+            :min="0"
+            :max="550"
+            :step="0.5"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="scythePower"
+                type="number"
+                :min="0"
+                :max="50"
+                :step="0.5"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -71,6 +98,7 @@ export default class Scythe extends Vue {
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
+  scythePower: number = 45
 
   beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
@@ -96,7 +124,7 @@ export default class Scythe extends Vue {
     const darkCommandoDamage = this.DLBuff.includes('darkCommando')
       ? calcDarkCommandoDamage(this.buffedMA)
       : 0
-    const scytheDamage = calcScytheDamage(this.buffedMA, this.stats.dark)
+    const scytheDamage = calcScytheDamage(this.buffedMA, this.stats.dark, this.scythePower)
 
     const buff = this.DLBuff.includes('bloodTestament')
       ? 1 + BloodTestamentBuff
@@ -119,9 +147,10 @@ export default class Scythe extends Vue {
   }
 
   get resMA() {
+    const scytheRatio = SkillRatio.Scythe(this.stats.dark, this.scythePower)
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.Scythe(this.stats.dark) + SkillRatio.DarkCommando
-      : SkillRatio.Scythe(this.stats.dark)
+      ? scytheRatio + SkillRatio.DarkCommando
+      : scytheRatio
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *
@@ -145,9 +174,10 @@ export default class Scythe extends Vue {
   }
 
   get resDark() {
+    const scytheRatio = SkillRatio.Scythe(this.stats.dark, this.scythePower)
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.Scythe(this.stats.dark) + SkillRatio.DarkCommando
-      : SkillRatio.Scythe(this.stats.dark)
+      ? scytheRatio + SkillRatio.DarkCommando
+      : scytheRatio
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *

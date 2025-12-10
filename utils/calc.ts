@@ -64,8 +64,8 @@ export const calcDarkCommandoDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.DarkCommando)
 export const calcGravityCrashDamage = (ma: number) =>
   Math.ceil((ma - 49) * SkillRatio.GravityCrash)
-export const calcCelestialStrikeDamage = (ma: number, skillNum: number) =>
-  Math.ceil((ma - 25) * SkillRatio.CelestialStrike(skillNum))
+export const calcCelestialStrikeDamage = (ma: number, skillNum: number, basePower: number = 550 / 10) =>
+  Math.ceil((ma - 25) * SkillRatio.CelestialStrike(skillNum, basePower))
 export const calcBlessingDamage = (ac: number, lk: number, ratio: number) =>
   Math.ceil(ac + lk) * ratio
 export const calcCleavingTerraDamage = (ma: number) =>
@@ -76,8 +76,8 @@ export const calcRagingStormDamage = (ac: number, ma: number) =>
   Math.ceil((ac + ma - 49) * SkillRatio.RasingStorm)
 export const calcElectroAttackDamage = (ma: number) =>
   Math.ceil((ma - 25) * SkillRatio.ElectroAttack)
-export const calcScytheDamage = (ma: number, dark: number) =>
-  Math.ceil((ma - 49) * SkillRatio.Scythe(dark))
+export const calcScytheDamage = (ma: number, dark: number, basePower: number = 45) =>
+  Math.ceil((ma - 49) * SkillRatio.Scythe(dark, basePower))
 export const calcStaffOfAgony = (ma: number, dark: number) =>
   Math.ceil((ma - 49) * SkillRatio.StaffOfAgony(dark))
 export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
@@ -207,7 +207,8 @@ export const calcDamage = (
   monsterDef: number,
   monsterResist: number,
   idealDamage: number,
-  extraMultiplier = 1
+  extraMultiplier = 1,
+  damageMultiplier = 1
 ) => {
   const extraDamage = calcExtraDamage(
     idealDamage,
@@ -217,7 +218,7 @@ export const calcDamage = (
   const damage = Math.floor(
     ((100 - monsterResist) / 100) * (idealDamage * extraMultiplier - monsterDef)
   )
-  return Math.floor(damage + extraDamage < 0 ? 0 : damage + extraDamage) + 1
+  return (Math.floor(damage + extraDamage < 0 ? 0 : damage + extraDamage) + 1) * damageMultiplier
 }
 
 // Calculate the missing status
