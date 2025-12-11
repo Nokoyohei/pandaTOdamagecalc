@@ -7,6 +7,32 @@
         <ac-buff :buff.sync="ACBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="480"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="480"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ac"
           :need-stats="resAC"
@@ -29,7 +55,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import AcBuff from '~/components/ACBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcShootingSpreeDamage,
   calcDamage,
@@ -39,7 +65,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import { Monster, ACBuffName, Status, Attributes } from '~/types'
 
@@ -51,9 +77,10 @@ import { Monster, ACBuffName, Status, Attributes } from '~/types'
   }
 })
 export default class ShootingSpree extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   ACBuff: ACBuffName[] = []
+  basePower: number = BASE_POWER.ShootingSpree
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -82,7 +109,7 @@ export default class ShootingSpree extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'gun'),
       this.monster.gunR,
-      calcShootingSpreeDamage(this.buffedAC * 20 + this.stats.gunAP)
+      calcShootingSpreeDamage(this.buffedAC * 20 + this.stats.gunAP, this.basePower)
     )
   }
 
@@ -91,7 +118,7 @@ export default class ShootingSpree extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'gun'),
       this.monster.gunR,
-      SkillRatio.ShootingSpree,
+      SkillRatio.ShootingSpree(this.basePower),
       this.buffedAC * 20 + this.stats.gunAP,
       48 * 20
     )

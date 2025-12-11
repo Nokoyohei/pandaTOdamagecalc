@@ -19,6 +19,32 @@
         </v-switch>
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="1380"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1380"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ap"
           :need-stats="resAP"
@@ -65,7 +91,7 @@ import {
   Status,
   Attributes
 } from '~/types'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 @Component({
   components: {
@@ -82,6 +108,7 @@ export default class TempestStrike extends Vue {
   HVBuff: HVBuffName[] = []
   debuffSkills: DebuffName[] = []
   buff: 'ladyluck' | null = null
+  basePower: number = BASE_POWER.OnePair
 
   debuffSkillsDef: skillPanel[] = [
     {
@@ -134,17 +161,17 @@ export default class TempestStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcOnePairDamage(this.buffedAP, this.buffedHV, this.isLadyLuck)
+      calcOnePairDamage(this.buffedAP, this.buffedHV, this.isLadyLuck, this.basePower)
     )
   }
 
   resStats() {
-    const multiplier = this.isLadyLuck ? 1 + SkillRatio.LadyLuck : 1
+    const multiplier = this.isLadyLuck ? 1 + SkillRatio.LadyLuck() : 1
     return calcNeedStats(
       this.monster.hp * this.monster.gaugeNum,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      SkillRatio.OnePair * multiplier,
+      SkillRatio.OnePair(this.basePower) * multiplier,
       this.buffedAP + this.buffedHV * 8,
       0
     )

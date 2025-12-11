@@ -73,18 +73,12 @@ import DamageArea from '~/components/DamageArea.vue'
 import ChartLine from '~/components/ChartLine.vue'
 import {
   requiem,
-  snake,
-  lucia,
+  bossTorrobie,
+  predator,
   mong,
-  hecate,
-  janus,
-  chronos,
   kevin,
   madray,
   koiosu,
-  outraged,
-  ed,
-  ixion
 } from '~/utils/monsters'
 import { BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -117,22 +111,22 @@ export default class BossMonsterPanel extends Vue {
 
   tabContents = [
     {
+      srcimg: require('~/static/torobbie.gif'),
+      height: '60%',
+      title: 'Torobbie',
+      alt: 'TOROBBIE'
+    },
+    {
       srcimg: require('~/static/requiem.gif'),
-      height: '160%',
-      title: 'Requiem apocrypha',
+      height: '140%',
+      title: 'Requiem Apocrypha',
       alt: 'REQUIEM APOCRYPHA'
     },
     {
-      srcimg: require('~/static/snake.gif'),
-      height: '140%',
-      title: 'Frashire Snake',
-      alt: 'FRASHIE SNAKE'
-    },
-    {
-      srcimg: require('~/static/lucia.gif'),
-      height: '120%',
-      title: 'Easter Monster',
-      alt: 'EASTER MONSTER'
+      srcimg: require('~/static/predator.gif'),
+      height: '160%',
+      title: 'Predator G',
+      alt: 'PREDATOR G'
     },
     {
       srcimg: require('~/static/mong.gif'),
@@ -141,28 +135,10 @@ export default class BossMonsterPanel extends Vue {
       alt: 'MASTER MONG'
     },
     {
-      srcimg: require('~/static/hecate.gif'),
+      srcimg: require('~/static/koiosu.gif'),
       height: '160%',
-      title: 'Hecate',
-      alt: 'HECATE'
-    },
-    {
-      srcimg: require('~/static/janus.gif'),
-      height: '160%',
-      title: 'janus',
-      alt: 'JANUS'
-    },
-    {
-      srcimg: require('~/static/chronos.gif'),
-      height: '160%',
-      title: 'chronos',
-      alt: 'CHRONOS'
-    },
-    {
-      srcimg: require('~/static/gm_kevin.gif'),
-      height: '120%',
-      title: 'GM Kevin',
-      alt: 'GM KEVIN'
+      title: 'Koiosu',
+      alt: 'KOIOSU'
     },
     {
       srcimg: require('~/static/madray.gif'),
@@ -171,28 +147,10 @@ export default class BossMonsterPanel extends Vue {
       alt: 'MAD RAY'
     },
     {
-      srcimg: require('~/static/koiosu.gif'),
-      height: '160%',
-      title: 'Koiosu',
-      alt: 'KOIOSU'
-    },
-    {
-      srcimg: require('~/static/outraged.gif'),
-      height: '200%',
-      title: 'Outraged Requiem',
-      alt: 'OUTRAGED REQUIEM'
-    },
-    {
-      srcimg: require('~/static/ed.gif'),
-      height: '140%',
-      title: 'Ed',
-      alt: 'ED'
-    },
-    {
-      srcimg: require('~/static/ixion.gif'),
-      height: '140%',
-      title: 'Ixion',
-      alt: 'IXION'
+      srcimg: require('~/static/gm_kevin.gif'),
+      height: '120%',
+      title: 'GM Kevin',
+      alt: 'GM KEVIN'
     }
   ]
 
@@ -203,19 +161,13 @@ export default class BossMonsterPanel extends Vue {
 
   changeSelectedMonster() {
     this._monster = [
+      bossTorrobie,
       requiem,
-      snake,
-      lucia,
+      predator,
       mong,
-      hecate,
-      janus,
-      chronos,
       kevin,
       madray,
       koiosu,
-      outraged,
-      ed,
-      ixion
     ][this.tab]
   }
 

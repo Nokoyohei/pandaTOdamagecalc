@@ -7,6 +7,32 @@
         <ma-buff :buff.sync="MABuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="1020"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1020"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -25,7 +51,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcStaffOfThunderDamage,
   calcDamage,
@@ -35,7 +61,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import { Monster, MABuffName, Status, Attributes } from '~/types'
 
 @Component({
@@ -47,9 +73,10 @@ import { Monster, MABuffName, Status, Attributes } from '~/types'
   }
 })
 export default class StaffOfThunder extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   MABuff: MABuffName[] = []
+  basePower: number = BASE_POWER.StaffOfThunder
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -78,7 +105,7 @@ export default class StaffOfThunder extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'magic'),
       this.monster.elecR,
-      calcStaffOfThunderDamage(this.buffedMA)
+      calcStaffOfThunderDamage(this.buffedMA, this.basePower)
     )
   }
 
@@ -87,7 +114,7 @@ export default class StaffOfThunder extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.elecR,
-      SkillRatio.StaffOfThunder,
+      SkillRatio.StaffOfThunder(this.basePower),
       this.buffedMA,
       25
     )

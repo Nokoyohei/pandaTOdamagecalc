@@ -8,6 +8,32 @@
         <lk-buff :buff.sync="LKBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="740"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="740"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -34,7 +60,7 @@ import MaBuff from '~/components/MABuff.vue'
 import LkBuff from '~/components/LKBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcDeadlyFenDamage,
   calcDamage,
@@ -45,7 +71,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import { Monster, MABuffName, LKBuffName, Status, Attributes } from '~/types'
 
 @Component({
@@ -58,13 +84,14 @@ import { Monster, MABuffName, LKBuffName, Status, Attributes } from '~/types'
   }
 })
 export default class DeadlyFen extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
 
   MABuff: MABuffName[] = []
   LKBuff: LKBuffName[] = []
+  basePower: number = BASE_POWER.DeadlyFen
 
   beforeMount() {
     const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
@@ -98,7 +125,7 @@ export default class DeadlyFen extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'magic'),
       this.monster.earthR,
-      calcDeadlyFenDamage(this.buffedMA, this.buffedLK)
+      calcDeadlyFenDamage(this.buffedMA, this.buffedLK, this.basePower)
     )
   }
 
@@ -107,7 +134,7 @@ export default class DeadlyFen extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.earthR,
-      SkillRatio.DeadlyFen,
+      SkillRatio.DeadlyFen(this.basePower),
       this.buffedMA + this.buffedLK,
       25
     )

@@ -13,6 +13,32 @@
         <da-buff :buff.sync="DABuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="1260"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1260"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.da"
           :need-stats="resDA"
@@ -47,7 +73,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import {
   BossMonster,
@@ -71,6 +97,7 @@ export default class MagicalSoul extends Vue {
 
   DABuff: DABuffName[] = []
   debuffSkills: DebuffName[] = []
+  basePower: number = BASE_POWER.ChainOfKnives
 
   debuffSkillsDef: skillPanel[] = [
     {
@@ -110,7 +137,8 @@ export default class MagicalSoul extends Vue {
   get damage() {
     const chainOfKnivesDamage = calcChainOfKnivesDamage(
       this.buffedDA,
-      this.stats.throwAP
+      this.stats.throwAP,
+      this.basePower
     )
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
@@ -124,7 +152,7 @@ export default class MagicalSoul extends Vue {
       this.monster.hp * this.monster.gaugeNum,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      SkillRatio.ChainOfKnives,
+      SkillRatio.ChainOfKnives(this.basePower),
       this.buffedDA * 16 + this.stats.throwAP * 6,
       0
     )

@@ -46,7 +46,7 @@ import { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
 import ChartLine from '~/components/ChartLine.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle, toilet, little, straw, shadow } from '~/utils/monsters'
+import { torobbie, toilet, cora } from '~/utils/monsters'
 import { Monster } from '~/types'
 
 @Component({
@@ -67,16 +67,10 @@ export default class FarmingMonster extends Vue {
 
   tabContents = [
     {
-      srcimg: require('~/static/isabelle.gif'),
-      height: '120%',
-      title: 'Chaotic Isabelle',
-      alt: 'CHAOTIC ISABELLE'
-    },
-    {
-      srcimg: require('~/static/little.gif'),
-      height: '120%',
-      title: 'Mermaid Little',
-      alt: 'MERMAID LITTLE'
+      srcimg: require('~/static/torobbie.gif'),
+      height: '60%',
+      title: 'Torobbie',
+      alt: 'TOROBBIE'
     },
     {
       srcimg: require('~/static/mac.gif'),
@@ -85,21 +79,15 @@ export default class FarmingMonster extends Vue {
       alt: 'HAUNTED TOILET'
     },
     {
-      srcimg: require('~/static/straw.gif'),
+      srcimg: require('~/static/cora.gif'),
       height: '120%',
-      title: 'Haunted Straw',
-      alt: 'HAUNTED STRAW'
+      title: 'Cora Merrymaker',
+      alt: 'CORA MERRYMAKER'
     },
-    {
-      srcimg: require('~/static/shadow.gif'),
-      height: '120%',
-      title: 'Picture Ghost',
-      alt: 'PICTURE GHOST'
-    }
   ]
 
   changeSelectedMonster() {
-    this._monster = [isabelle, little, toilet, straw, shadow][this.tab]
+    this._monster = [torobbie, toilet, cora][this.tab]
   }
 
   // Limit the drawing range to 0-monster.hp*1.2 so that the drawing of the graph is not corrupted

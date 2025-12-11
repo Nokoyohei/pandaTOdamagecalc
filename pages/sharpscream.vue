@@ -8,6 +8,32 @@
         <hv-buff :buff.sync="HVBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="12"
+            :step="0.1"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1020"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ap"
           :need-stats="resAP"
@@ -33,7 +59,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import ApBuff from '~/components/APBuff.vue'
 import HvBuff from '~/components/HVBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcSharpScreamDamage,
   calcDamage,
@@ -44,7 +70,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import { Monster, APBuffName, HVBuffName, Status, Attributes } from '~/types'
 
@@ -57,10 +83,11 @@ import { Monster, APBuffName, HVBuffName, Status, Attributes } from '~/types'
   }
 })
 export default class SharpScream extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   APBuff: APBuffName[] = []
   HVBuff: HVBuffName[] = []
+  basePower: number = BASE_POWER.SharpScream
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -97,7 +124,7 @@ export default class SharpScream extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      calcSharpScreamDamage(this.buffedAP, this.buffedHV)
+      calcSharpScreamDamage(this.buffedAP, this.buffedHV, this.basePower)
     )
   }
 
@@ -106,7 +133,7 @@ export default class SharpScream extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      SkillRatio.SharpScream,
+      SkillRatio.SharpScream(this.basePower),
       this.buffedAP + this.buffedHV * 16,
       0
     )

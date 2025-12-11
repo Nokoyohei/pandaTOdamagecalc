@@ -31,7 +31,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcTeslaFieldDamage,
   calcDamage,
@@ -53,7 +53,7 @@ import { Monster, MABuffName, Status, Attributes } from '~/types'
   }
 })
 export default class TeslaField extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   MABuff: MABuffName[] = []
 
@@ -93,7 +93,7 @@ export default class TeslaField extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.elecR,
-      SkillRatio.TeslaField,
+      SkillRatio.TeslaField(),
       this.buffedMA + Math.floor(this.stats.mp / 120),
       0
     )

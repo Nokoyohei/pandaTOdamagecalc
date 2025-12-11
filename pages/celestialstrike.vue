@@ -28,6 +28,32 @@
         </v-btn-toggle>
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="1100"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1100"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -46,7 +72,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle, requiem } from '~/utils/monsters'
+import { torobbie, requiem } from '~/utils/monsters'
 import {
   calcCelestialStrikeDamage,
   calcDamage,
@@ -56,7 +82,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import {
   Monster,
   BossMonster,
@@ -76,10 +102,11 @@ import {
 })
 export default class CelestialStrike extends Vue {
   mode = 'farming'
-  monster: Monster | BossMonster = isabelle
+  monster: Monster | BossMonster = torobbie
 
   MABuff: MABuffName[] = []
   selectedLightSkills: LightSkillName[] = []
+  basePower: number = BASE_POWER.CelestialStrike
 
   lightSkills = [
     {
@@ -157,7 +184,7 @@ export default class CelestialStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'magic'),
       this.monster.lightR,
-      calcCelestialStrikeDamage(this.buffedMA, this.selectedLightSkills.length)
+      calcCelestialStrikeDamage(this.buffedMA, this.selectedLightSkills.length, this.basePower)
     )
   }
 
@@ -166,7 +193,7 @@ export default class CelestialStrike extends Vue {
       this.monsterHP,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.lightR,
-      SkillRatio.CelestialStrike(this.selectedLightSkills.length),
+      SkillRatio.CelestialStrike(this.selectedLightSkills.length, this.basePower),
       this.buffedMA,
       25
     )

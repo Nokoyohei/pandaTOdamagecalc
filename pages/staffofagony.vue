@@ -8,6 +8,32 @@
         <dark-load-buff :buff.sync="DLBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="130"
+            :step="1"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="130"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -44,7 +70,7 @@ import {
   initExtraStatus
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import {
   BossMonster,
@@ -68,6 +94,7 @@ export default class StaffOfAgony extends Vue {
 
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
+  basePower: number = BASE_POWER.StaffOfAgony
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -96,7 +123,7 @@ export default class StaffOfAgony extends Vue {
     const darkCommandoDamage = this.DLBuff.includes('darkCommando')
       ? calcDarkCommandoDamage(this.buffedMA)
       : 0
-    const staffOfAgonyDamage = calcStaffOfAgony(this.buffedMA, this.stats.dark)
+    const staffOfAgonyDamage = calcStaffOfAgony(this.buffedMA, this.stats.dark, this.basePower)
 
     const buff = this.DLBuff.includes('bloodTestament')
       ? 1 + BloodTestamentBuff
@@ -120,8 +147,8 @@ export default class StaffOfAgony extends Vue {
 
   get resMA() {
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.StaffOfAgony(this.stats.dark) + SkillRatio.DarkCommando
-      : SkillRatio.StaffOfAgony(this.stats.dark)
+      ? SkillRatio.StaffOfAgony(this.stats.dark, this.basePower) + SkillRatio.DarkCommando()
+      : SkillRatio.StaffOfAgony(this.stats.dark, this.basePower)
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *
@@ -146,8 +173,8 @@ export default class StaffOfAgony extends Vue {
 
   get resDark() {
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.StaffOfAgony(this.stats.dark) + SkillRatio.DarkCommando
-      : SkillRatio.StaffOfAgony(this.stats.dark)
+      ? SkillRatio.StaffOfAgony(this.stats.dark, this.basePower) + SkillRatio.DarkCommando()
+      : SkillRatio.StaffOfAgony(this.stats.dark, this.basePower)
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *

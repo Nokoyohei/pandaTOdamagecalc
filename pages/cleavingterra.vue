@@ -1,12 +1,40 @@
 <template>
   <v-container>
     <h1>Cleaving Terra</h1>
+    {{ monster.name }}
+    {{ monster.earthR }}
     <farming-monster :damage="damage" :monster.sync="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <ma-buff :buff.sync="MABuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="680"
+            :step="0.5"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="680"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -25,7 +53,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcCleavingTerraDamage,
   calcDamage,
@@ -35,7 +63,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import { Monster, MABuffName, Status, Attributes } from '~/types'
 
 @Component({
@@ -47,9 +75,10 @@ import { Monster, MABuffName, Status, Attributes } from '~/types'
   }
 })
 export default class CleavingTerra extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   MABuff: MABuffName[] = []
+  basePower: number = BASE_POWER.CleavingTerra
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -78,7 +107,7 @@ export default class CleavingTerra extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'magic'),
       this.monster.earthR,
-      calcCleavingTerraDamage(this.buffedMA)
+      calcCleavingTerraDamage(this.buffedMA, this.basePower)
     )
   }
 
@@ -87,7 +116,7 @@ export default class CleavingTerra extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.earthR,
-      SkillRatio.CleavingTerra,
+      SkillRatio.CleavingTerra(this.basePower),
       this.buffedMA,
       25
     )

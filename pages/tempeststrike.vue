@@ -17,6 +17,32 @@
         <ap-buff :buff.sync="APBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="480"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="480"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ap"
           :need-stats="resAP"
@@ -50,7 +76,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import {
   BossMonster,
   APBuffName,
@@ -75,6 +101,7 @@ export default class TempestStrike extends Vue {
 
   APBuff: APBuffName[] = []
   debuffSkills: DebuffName[] = []
+  basePower: number = BASE_POWER.TempestStrike
 
   debuffSkillsDef: skillPanel[] = [
     {
@@ -112,7 +139,7 @@ export default class TempestStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcTempestStrikeDamage(this.buffedAP, this.stats.wind)
+      calcTempestStrikeDamage(this.buffedAP, this.stats.wind, this.basePower)
     )
   }
 
@@ -120,7 +147,7 @@ export default class TempestStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcTempestStrikeDamage(this.buffedAP, 0)
+      calcTempestStrikeDamage(this.buffedAP, 0, this.basePower)
     )
   }
 
@@ -128,7 +155,7 @@ export default class TempestStrike extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcTempestStrikeDamage(this.buffedAP, this.stats.wind / 2)
+      calcTempestStrikeDamage(this.buffedAP, this.stats.wind / 2, this.basePower)
     )
   }
 
@@ -137,7 +164,7 @@ export default class TempestStrike extends Vue {
       this.monster.hp * this.monster.gaugeNum,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      SkillRatio.TempestStrike(this.stats.wind / 2),
+      SkillRatio.TempestStrike(this.stats.wind / 2, this.basePower),
       this.buffedAP,
       0
     )
@@ -152,7 +179,7 @@ export default class TempestStrike extends Vue {
         calcMonsterDef(this.debuffedMonster, 'physical'),
         this.debuffedMonster.physicalR,
         this.buffedAP,
-        SkillRatio.TempestStrike(this.stats.wind / 2),
+        SkillRatio.TempestStrike(this.stats.wind / 2, this.basePower),
         0
       ) *
         ((100 / 5) * 2)

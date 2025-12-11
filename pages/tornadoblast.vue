@@ -25,7 +25,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcTornadoBlastDamage,
   calcDamage,
@@ -47,7 +47,7 @@ import { Monster, MABuffName, Status, Attributes } from '~/types'
   }
 })
 export default class TornadoBlast extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   MABuff: MABuffName[] = []
 
@@ -87,7 +87,7 @@ export default class TornadoBlast extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.windR,
-      SkillRatio.TornadoBlast,
+      SkillRatio.TornadoBlast(),
       this.buffedMA,
       49
     )

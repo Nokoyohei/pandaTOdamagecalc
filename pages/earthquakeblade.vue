@@ -14,6 +14,32 @@
         <ap-buff :buff.sync="APBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="880"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="880"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ap"
           :need-stats="resAP"
@@ -37,7 +63,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle, requiem } from '~/utils/monsters'
+import { torobbie, requiem } from '~/utils/monsters'
 import {
   calcEarthquakeBladeDamage,
   calcDamage,
@@ -48,7 +74,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import {
   Monster,
   BossMonster,
@@ -69,13 +95,14 @@ import {
 })
 export default class EarthquakeBlade extends Vue {
   mode = 'farming'
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
 
   APBuff: APBuffName[] = []
   debuffSkills: DebuffName[] = []
+  basePower: number = BASE_POWER.EarthquakeBlade
 
   debuffSkillsDef: skillPanel[] = [
     {
@@ -125,7 +152,7 @@ export default class EarthquakeBlade extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      calcEarthquakeBladeDamage(this.buffedAP, this.stats.soil)
+      calcEarthquakeBladeDamage(this.buffedAP, this.stats.soil, this.basePower)
     )
   }
 
@@ -134,7 +161,7 @@ export default class EarthquakeBlade extends Vue {
       this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
-      SkillRatio.EarthquakeBlade(this.stats.soil),
+      SkillRatio.EarthquakeBlade(this.stats.soil, this.basePower),
       this.buffedAP,
       0
     )
@@ -149,7 +176,7 @@ export default class EarthquakeBlade extends Vue {
         calcMonsterDef(this.debuffedMonster, 'physical'),
         this.debuffedMonster.physicalR,
         this.buffedAP,
-        SkillRatio.EarthquakeBlade(this.stats.soil),
+        SkillRatio.EarthquakeBlade(this.stats.soil, this.basePower),
         0
       ) * 50
     )

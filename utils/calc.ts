@@ -60,92 +60,94 @@ export const makeArr = (
   return arr
 }
 
-export const calcDarkCommandoDamage = (ma: number) =>
-  Math.ceil((ma - 49) * SkillRatio.DarkCommando)
-export const calcGravityCrashDamage = (ma: number) =>
-  Math.ceil((ma - 49) * SkillRatio.GravityCrash)
-export const calcCelestialStrikeDamage = (ma: number, skillNum: number, basePower: number = 550 / 10) =>
+export const calcDarkCommandoDamage = (ma: number, basePower: number = 184) =>
+  Math.ceil((ma - 49) * SkillRatio.DarkCommando(basePower))
+export const calcGravityCrashDamage = (ma: number, basePower: number = 900) =>
+  Math.ceil((ma - 49) * SkillRatio.GravityCrash(basePower))
+export const calcCelestialStrikeDamage = (ma: number, skillNum: number, basePower: number = 550) =>
   Math.ceil((ma - 25) * SkillRatio.CelestialStrike(skillNum, basePower))
 export const calcBlessingDamage = (ac: number, lk: number, ratio: number) =>
   Math.ceil(ac + lk) * ratio
-export const calcCleavingTerraDamage = (ma: number) =>
-  Math.ceil((ma - 25) * SkillRatio.CleavingTerra)
-export const calcWindBladeDamage = (ma: number) =>
-  Math.ceil((ma - 49) * SkillRatio.WindBlade)
-export const calcRagingStormDamage = (ac: number, ma: number) =>
-  Math.ceil((ac + ma - 49) * SkillRatio.RasingStorm)
-export const calcElectroAttackDamage = (ma: number) =>
-  Math.ceil((ma - 25) * SkillRatio.ElectroAttack)
+export const calcCleavingTerraDamage = (ma: number, basePower: number = 337) =>
+  Math.ceil((ma - 25) * SkillRatio.CleavingTerra(basePower))
+export const calcWindBladeDamage = (ma: number, basePower: number = 268) =>
+  Math.ceil((ma - 49) * SkillRatio.WindBlade(basePower))
+export const calcRagingStormDamage = (ac: number, ma: number, basePower: number = 360) =>
+  Math.ceil((ac + ma - 49) * SkillRatio.RasingStorm(basePower))
+export const calcElectroAttackDamage = (ma: number, basePower: number = 376) =>
+  Math.ceil((ma - 25) * SkillRatio.ElectroAttack(basePower))
 export const calcScytheDamage = (ma: number, dark: number, basePower: number = 45) =>
   Math.ceil((ma - 49) * SkillRatio.Scythe(dark, basePower))
-export const calcStaffOfAgony = (ma: number, dark: number) =>
-  Math.ceil((ma - 49) * SkillRatio.StaffOfAgony(dark))
+export const calcStaffOfAgony = (ma: number, dark: number, basePower: number = 65) =>
+  Math.ceil((ma - 49) * SkillRatio.StaffOfAgony(dark, basePower))
 export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
-export const calcStaffOfThunderDamage = (ma: number) =>
-  Math.ceil((ma - 25) * SkillRatio.StaffOfThunder)
-export const calcTeslaFieldDamage = (ma: number, mp: number) =>
-  Math.ceil((ma + Math.floor(mp / 120)) * SkillRatio.TeslaField)
-export const calcDeadlyFenDamage = (ma: number, lk: number) =>
-  Math.ceil((ma + lk - 25) * SkillRatio.DeadlyFen)
-export const calcTornadoBlastDamage = (ma: number) =>
-  Math.ceil((ma - 49) * SkillRatio.TornadoBlast)
-export const calcEarthquakeDamage = (ma: number) =>
-  Math.ceil((ma - 25) * SkillRatio.Earthquake)
+export const calcStaffOfThunderDamage = (ma: number, basePower: number = 510) =>
+  Math.ceil((ma - 25) * SkillRatio.StaffOfThunder(basePower))
+export const calcTeslaFieldDamage = (ma: number, mp: number, basePower: number = 430) =>
+  Math.ceil((ma + Math.floor(mp / 120)) * SkillRatio.TeslaField(basePower))
+export const calcDeadlyFenDamage = (ma: number, lk: number, basePower: number = 368) =>
+  Math.ceil((ma + lk - 25) * SkillRatio.DeadlyFen(basePower))
+export const calcTornadoBlastDamage = (ma: number, basePower: number = 330) =>
+  Math.ceil((ma - 49) * SkillRatio.TornadoBlast(basePower))
+export const calcEarthquakeDamage = (ma: number, basePower: number = 495) =>
+  Math.ceil((ma - 25) * SkillRatio.Earthquake(basePower))
 
-export const calcFullHouseDamage = (ap: number, lk: number, hv: number) =>
-  Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse)
-export const calcSharpScreamDamage = (ap: number, hv: number) =>
-  Math.ceil((ap + hv * 16) * SkillRatio.SharpScream)
-export const calcFirstHitComboDamage = (ap: number) =>
-  Math.ceil(ap * (11 * 0.6 + 3) * SkillRatio.FirstHitCombo)
-export const calcSecondHitComboDamage = (ap: number, hv: number) =>
-  Math.ceil((ap + hv * 16) * (11 * 0.6 + 3) * SkillRatio.SecondHitCombo)
+export const calcFullHouseDamage = (ap: number, lk: number, hv: number, basePower: number = 800) =>
+  Math.ceil((ap + (lk + hv) * 8) * SkillRatio.FullHouse(basePower))
+export const calcSharpScreamDamage = (ap: number, hv: number, basePower: number = 510) =>
+  Math.ceil((ap + hv * 16) * SkillRatio.SharpScream(basePower))
+export const calcFirstHitComboDamage = (ap: number, basePower: number = 620) =>
+  Math.ceil(ap * (11 * 0.6 + 3) * SkillRatio.FirstHitCombo(basePower))
+export const calcSecondHitComboDamage = (ap: number, hv: number, basePower: number = 620) =>
+  Math.ceil((ap + hv * 16) * (11 * 0.6 + 3) * SkillRatio.SecondHitCombo(basePower))
 export const calcOnePairDamage = (
   ap: number,
   hv: number,
-  isLadyLuck?: boolean
+  isLadyLuck?: boolean,
+  basePower: number = 690,
+  ladyLuckPower: number = 6
 ) => {
-  const onePairDamage = Math.ceil((ap + hv * 8) * SkillRatio.OnePair)
+  const onePairDamage = Math.ceil((ap + hv * 8) * SkillRatio.OnePair(basePower))
   return isLadyLuck
-    ? onePairDamage + onePairDamage * SkillRatio.LadyLuck
+    ? onePairDamage + onePairDamage * SkillRatio.LadyLuck(ladyLuckPower)
     : onePairDamage
 }
 
-export const calcEarthquakeBladeDamage = (ap: number, soil: number) =>
-  Math.ceil(ap * SkillRatio.EarthquakeBlade(soil))
-export const calcSonicSlashDamage = (ap: number, water: number) =>
-  Math.ceil(ap * SkillRatio.SonicSlash(water))
-export const calcTidalSlashDamage = (ap: number, water: number) =>
-  Math.ceil(ap * SkillRatio.TidalSlash(water))
-export const calcTempestStrikeDamage = (ap: number, wind: number) =>
-  Math.ceil(ap * SkillRatio.TempestStrike(wind))
-export const calcGaleStrikeDamage = (ap: number, wind: number) =>
-  Math.ceil(ap * SkillRatio.GaleStrike(wind))
-export const calcChampionsBladeDamage = (ap: number, fire: number) =>
-  Math.ceil(ap * SkillRatio.ChampionsBlade(fire))
-export const calcFlamingFistDamage = (ap: number, fire: number, ma: number) =>
-  Math.ceil((ap * SkillRatio.FlamingFist(fire) * ma) / 100)
+export const calcEarthquakeBladeDamage = (ap: number, soil: number, basePower: number = 440) =>
+  Math.ceil(ap * SkillRatio.EarthquakeBlade(soil, basePower))
+export const calcSonicSlashDamage = (ap: number, water: number, basePower: number = 700) =>
+  Math.ceil(ap * SkillRatio.SonicSlash(water, basePower))
+export const calcTidalSlashDamage = (ap: number, water: number, basePower: number = 550) =>
+  Math.ceil(ap * SkillRatio.TidalSlash(water, basePower))
+export const calcTempestStrikeDamage = (ap: number, wind: number, basePower: number = 240) =>
+  Math.ceil(ap * SkillRatio.TempestStrike(wind, basePower))
+export const calcGaleStrikeDamage = (ap: number, wind: number, basePower: number = 260) =>
+  Math.ceil(ap * SkillRatio.GaleStrike(wind, basePower))
+export const calcChampionsBladeDamage = (ap: number, fire: number, basePower: number = 490) =>
+  Math.ceil(ap * SkillRatio.ChampionsBlade(fire, basePower))
+export const calcFlamingFistDamage = (ap: number, fire: number, ma: number, basePower: number = 570) =>
+  Math.ceil((ap * SkillRatio.FlamingFist(fire, basePower) * ma) / 100)
 
-export const calcFanOfKnicesDamage = (da: number, throwAp: number) =>
-  Math.ceil((da + throwAp / 10) * SkillRatio.FanOfKnives)
-export const calcShootingSpreeDamage = (gunAP: number) =>
-  Math.ceil((gunAP - 48 * 20) * SkillRatio.ShootingSpree)
-export const calcBerserkDamage = (gunAP: number) =>
-  Math.ceil((gunAP - 48 * 20) * SkillRatio.Berserk)
-export const calcChainOfKnivesDamage = (da: number, throwAp: number) =>
-  Math.ceil((da * 16 + throwAp * 6) * SkillRatio.ChainOfKnives)
-export const calcPoisonAssaultDamage = (da: number, throwAp: number) =>
-  Math.ceil(da * 16 * SkillRatio.PoisonAssault) + throwAp
-export const calcPoisonDamage = (da: number, throwAp: number) =>
-  Math.ceil((da * 16 + throwAp) * 0.412 * SkillRatio.PoisonAssault)
-export const calcSuddenAttackDamage = (ap: number, da: number, lk: number) =>
-  Math.ceil(((da + lk) * 16 + ap) * SkillRatio.SuddenAttack)
-export const calcLuckyFistDamage = (enemyHp: number, lk: number) =>
-  Math.ceil((enemyHp + lk * 80) * SkillRatio.LuckyFist)
-export const calcPowerShotDamage = (gunAP: number) =>
-  Math.ceil((gunAP - 48 * 20) * SkillRatio.PowerShot)
-export const calcDoubleShotDamage = (gunAP: number) =>
-  Math.ceil((gunAP - 48 * 20) * SkillRatio.DoubleShot)
+export const calcFanOfKnicesDamage = (da: number, throwAp: number, basePower: number = 600) =>
+  Math.ceil((da + throwAp / 10) * SkillRatio.FanOfKnives(basePower))
+export const calcShootingSpreeDamage = (gunAP: number, basePower: number = 240) =>
+  Math.ceil((gunAP - 48 * 20) * SkillRatio.ShootingSpree(basePower))
+export const calcBerserkDamage = (gunAP: number, basePower: number = 350) =>
+  Math.ceil((gunAP - 48 * 20) * SkillRatio.Berserk(basePower))
+export const calcChainOfKnivesDamage = (da: number, throwAp: number, basePower: number = 630) =>
+  Math.ceil((da * 16 + throwAp * 6) * SkillRatio.ChainOfKnives(basePower))
+export const calcPoisonAssaultDamage = (da: number, throwAp: number, basePower: number = 390) =>
+  Math.ceil(da * 16 * SkillRatio.PoisonAssault(basePower)) + throwAp
+export const calcPoisonDamage = (da: number, throwAp: number, basePower: number = 390) =>
+  Math.ceil((da * 16 + throwAp) * 0.412 * SkillRatio.PoisonAssault(basePower))
+export const calcSuddenAttackDamage = (ap: number, da: number, lk: number, basePower: number = 840) =>
+  Math.ceil(((da + lk) * 16 + ap) * SkillRatio.SuddenAttack(basePower))
+export const calcLuckyFistDamage = (enemyHp: number, lk: number, basePower: number = 440) =>
+  Math.ceil((enemyHp + lk * 80) * SkillRatio.LuckyFist(basePower))
+export const calcPowerShotDamage = (gunAP: number, basePower: number = 300) =>
+  Math.ceil((gunAP - 48 * 20) * SkillRatio.PowerShot(basePower))
+export const calcDoubleShotDamage = (gunAP: number, basePower: number = 480) =>
+  Math.ceil((gunAP - 48 * 20) * SkillRatio.DoubleShot(basePower))
 
 // In Trickster, there is a spec that deals 2^32/100 damage for every 2^32 damage
 // if the resistance *idealDamage exceeds 2^31, with no resistance or defense

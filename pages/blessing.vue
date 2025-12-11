@@ -52,7 +52,7 @@ import LkBuff from '~/components/LKBuff.vue'
 import AcBuff from '~/components/ACBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcBlessingDamage,
   calcDamage,
@@ -82,7 +82,7 @@ import skillRatio from '~/utils/skillRatio'
   }
 })
 export default class Blessing extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   ACBuff: ACBuffName[] = []
   LKBuff: LKBuffName[] = []
@@ -93,35 +93,35 @@ export default class Blessing extends Vue {
       value: 0,
       name: "Salamander's Blessing",
       attr: 'fireR',
-      ratio: skillRatio.FireBlessing,
+      ratio: skillRatio.FireBlessing(),
       img: require('~/static/salamanderBlessing.gif')
     },
     {
       value: 1,
       name: "Raion's Blessing",
       attr: 'elecR',
-      ratio: skillRatio.ElecBlessing,
+      ratio: skillRatio.ElecBlessing(),
       img: require('~/static/raionBlessing.gif')
     },
     {
       value: 2,
       name: "Gnome's Blessing",
       attr: 'earthR',
-      ratio: skillRatio.EarthBlessing,
+      ratio: skillRatio.EarthBlessing(),
       img: require('~/static/gnomeBlessing.gif')
     },
     {
       value: 3,
       name: "Undine's Blessing",
       attr: 'waterR',
-      ratio: skillRatio.WaterBlessing,
+      ratio: skillRatio.WaterBlessing(),
       img: require('~/static/undineBlessing.gif')
     },
     {
       value: 4,
       name: "Sylph's Blessing",
       attr: 'windR',
-      ratio: skillRatio.WindBlessing,
+      ratio: skillRatio.WindBlessing(),
       img: require('~/static/sylphBlessing.gif')
     }
   ]

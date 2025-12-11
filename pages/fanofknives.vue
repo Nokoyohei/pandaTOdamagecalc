@@ -8,6 +8,32 @@
         <throw-buff :buff.sync="ThrowBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="120"
+            :step="1"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1200"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.da"
           :need-stats="resDA"
@@ -31,7 +57,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import DaBuff from '~/components/DABuff.vue'
 import ThrowBuff from '~/components/ThrowBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle } from '~/utils/monsters'
+import { torobbie} from '~/utils/monsters'
 import {
   calcFanOfKnicesDamage,
   calcDamage,
@@ -42,7 +68,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import { Monster, DABuffName, ThrowBuffName, Status, Attributes } from '~/types'
 
@@ -55,10 +81,11 @@ import { Monster, DABuffName, ThrowBuffName, Status, Attributes } from '~/types'
   }
 })
 export default class FanOfKnives extends Vue {
-  monster: Monster = isabelle
+  monster: Monster = torobbie
 
   DABuff: DABuffName[] = []
   ThrowBuff: ThrowBuffName[] = []
+  basePower: number = BASE_POWER.FanOfKnives
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -91,7 +118,7 @@ export default class FanOfKnives extends Vue {
     return calcDamage(
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      calcFanOfKnicesDamage(this.buffedDA, this.buffedThrowAP)
+      calcFanOfKnicesDamage(this.buffedDA, this.buffedThrowAP, this.basePower)
     )
   }
 
@@ -100,7 +127,7 @@ export default class FanOfKnives extends Vue {
       this.monster.hp,
       calcMonsterDef(this.monster, 'physical'),
       this.monster.physicalR,
-      SkillRatio.FanOfKnives,
+      SkillRatio.FanOfKnives(this.basePower),
       this.buffedDA + this.buffedThrowAP / 10,
       0
     )

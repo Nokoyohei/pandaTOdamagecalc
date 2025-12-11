@@ -13,6 +13,32 @@
         <ma-buff :buff.sync="MABuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="1140"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1140"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ap"
           :need-stats="resAP"
@@ -56,7 +82,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import {
   BossMonster,
@@ -85,6 +111,7 @@ export default class ChampionsBlade extends Vue {
 
   APBuff: APBuffName[] = []
   MABuff: MABuffName[] = []
+  basePower: number = BASE_POWER.FlamingFist
 
   debuffSkills: DebuffName[] = []
 
@@ -132,7 +159,7 @@ export default class ChampionsBlade extends Vue {
     return calcDamage(
       calcMonsterDef(this.debuffedMonster, 'magic'),
       this.debuffedMonster.fireR,
-      calcFlamingFistDamage(this.buffedAP, this.stats.fire, this.buffedMA)
+      calcFlamingFistDamage(this.buffedAP, this.stats.fire, this.buffedMA, this.basePower)
     )
   }
 
@@ -141,7 +168,7 @@ export default class ChampionsBlade extends Vue {
       this.monster.hp * this.monster.gaugeNum,
       calcMonsterDef(this.debuffedMonster, 'magic'),
       this.debuffedMonster.fireR,
-      (SkillRatio.FlamingFist(this.stats.fire) * this.buffedMA) / 100,
+      (SkillRatio.FlamingFist(this.stats.fire, this.basePower) * this.buffedMA) / 100,
       this.buffedAP,
       0
     )
@@ -155,7 +182,7 @@ export default class ChampionsBlade extends Vue {
         this.monster.hp * this.monster.gaugeNum,
         calcMonsterDef(this.debuffedMonster, 'magic'),
         this.debuffedMonster.fireR,
-        SkillRatio.FlamingFist(this.stats.fire) * this.buffedAP,
+        SkillRatio.FlamingFist(this.stats.fire, this.basePower) * this.buffedAP,
         this.buffedMA / 100,
         0
       ) * 100
@@ -170,7 +197,7 @@ export default class ChampionsBlade extends Vue {
         calcMonsterDef(this.debuffedMonster, 'magic'),
         this.debuffedMonster.fireR,
         (this.buffedAP * this.buffedMA) / 100,
-        SkillRatio.FlamingFist(this.stats.fire),
+        SkillRatio.FlamingFist(this.stats.fire, this.basePower),
         0
       ) * 100
     )

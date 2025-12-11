@@ -35,7 +35,7 @@ import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle, requiem } from '~/utils/monsters'
+import { torobbie, requiem } from '~/utils/monsters'
 import {
   calcTidalSlashDamage,
   calcDamage,
@@ -67,7 +67,7 @@ import {
 })
 export default class TidalSlash extends Vue {
   mode = 'farming'
-  monster: Monster | BossMonster = isabelle
+  monster: Monster | BossMonster = torobbie
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()

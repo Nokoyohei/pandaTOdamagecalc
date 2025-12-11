@@ -14,6 +14,32 @@
         <dark-load-buff :buff.sync="DLBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="1800"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="1800"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.ma"
           :need-stats="resMA"
@@ -33,7 +59,7 @@ import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { isabelle, requiem } from '~/utils/monsters'
+import { torobbie, requiem } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
   calcGravityCrashDamage,
@@ -45,7 +71,7 @@ import {
   initExtraStatus
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import {
   Monster,
@@ -69,10 +95,11 @@ export default class GravityCrash extends Vue {
   ma = 10000
   extraMA = 0
   mode = 'farming'
-  monster: Monster | BossMonster = isabelle
+  monster: Monster | BossMonster = torobbie
 
   MABuff: MABuffName[] = []
   DLBuff: DLBuffName[] = []
+  basePower: number = BASE_POWER.GravityCrash
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -112,7 +139,7 @@ export default class GravityCrash extends Vue {
     let darkCommandoDamage = this.DLBuff.includes('darkCommando')
       ? calcDarkCommandoDamage(this.buffedMA)
       : 0
-    let gravityCrashDamage = calcGravityCrashDamage(this.buffedMA)
+    let gravityCrashDamage = calcGravityCrashDamage(this.buffedMA, this.basePower)
     if (this.DLBuff.includes('bloodTestament')) {
       darkCommandoDamage = Math.round(
         darkCommandoDamage * (1 + BloodTestamentBuff)
@@ -138,8 +165,8 @@ export default class GravityCrash extends Vue {
 
   get resMA() {
     const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.GravityCrash + SkillRatio.DarkCommando
-      : SkillRatio.GravityCrash
+      ? SkillRatio.GravityCrash(this.basePower) + SkillRatio.DarkCommando()
+      : SkillRatio.GravityCrash(this.basePower)
     const constStats = 49
     const monsterDef =
       calcMonsterDef(this.monster, 'magic') *

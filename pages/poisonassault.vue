@@ -13,6 +13,32 @@
         <throw-buff :buff.sync="ThrowBuff" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <v-card class="mb-4 pa-4">
+          <v-card-title class="text-subtitle-1 pa-0 pb-2">
+            Base Power Adjustment
+          </v-card-title>
+          <v-slider
+            v-model="basePower"
+            :min="0"
+            :max="780"
+            :step="10"
+            thumb-label="always"
+            label="Base Power"
+            class="mt-4"
+          >
+            <template v-slot:append>
+              <v-text-field
+                v-model.number="basePower"
+                type="number"
+                :min="0"
+                :max="780"
+                style="width: 80px"
+                dense
+                hide-details
+              />
+            </template>
+          </v-slider>
+        </v-card>
         <stats-text-field
           :input-stats.sync="stats.da"
           :need-stats="resDA"
@@ -45,7 +71,7 @@ import {
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 import {
   BossMonster,
@@ -69,6 +95,7 @@ export default class PoisonAssault extends Vue {
 
   DABuff: DABuffName[] = []
   ThrowBuff: ThrowBuffName[] = []
+  basePower: number = BASE_POWER.PoisonAssault
 
   stats: Status & Attributes = initStatus()
   extraStats: Status = initExtraStatus()
@@ -102,13 +129,13 @@ export default class PoisonAssault extends Vue {
   }
 
   get damage() {
-    return calcPoisonDamage(this.buffedDA, this.buffedThrowAP)
+    return calcPoisonDamage(this.buffedDA, this.buffedThrowAP, this.basePower)
   }
 
   get resDA() {
     const needDA =
       (this.monster.hp * this.monster.gaugeNum) /
-        (SkillRatio.PoisonAssault * 0.412 * 30) -
+        (SkillRatio.PoisonAssault(this.basePower) * 0.412 * 30) -
       (this.buffedDA * 16 + this.buffedThrowAP)
 
     return Math.ceil(needDA / calcDABuffRatio(this.DABuff) / 16)
