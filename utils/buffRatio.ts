@@ -1,5 +1,5 @@
-const MistOfManaBuff = 0.45
-export const BloodTestamentBuff = 0.15
+const MistOfManaBuff = 0.65
+export const BloodTestamentBuff = 0.5
 const PumpingHeartBuff = 0.16
 const AdrenalineBuff = 0.26
 const LuckySevenBuff = 0.45

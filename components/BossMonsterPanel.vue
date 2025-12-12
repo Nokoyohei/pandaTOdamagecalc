@@ -165,9 +165,9 @@ export default class BossMonsterPanel extends Vue {
       requiem,
       predator,
       mong,
-      kevin,
-      madray,
       koiosu,
+      madray,
+      kevin,
     ][this.tab]
   }
 
