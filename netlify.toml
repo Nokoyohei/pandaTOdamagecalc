@@ -1,0 +1,7 @@
+[build]
+  command = "yarn generate"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "14"
+  PYTHON_VERSION = "3.8"
