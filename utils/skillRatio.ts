@@ -15,8 +15,8 @@ export const BASE_POWER = {
   FlamingFist: 570,
   FanOfKnives: 60,
   ChainOfKnives: 630,
-  SuddenAttack: 840,
-  PoisonAssault: 390,
+  SuddenAttack: 1200,
+  PoisonAssault: 600,
   LuckyFist: 440,
   ShootingSpree: 240,
   Berserk: 350,
@@ -33,7 +33,7 @@ export const BASE_POWER = {
   TornadoBlast: 330,
   CleavingTerra: 22.5,
   SharpScream: 3.4,
-  HitCombo: 620,
+  HitCombo: 800,
   OnePair: 1000,
   LadyLuck: 6
 } as const
