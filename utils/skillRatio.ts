@@ -20,8 +20,8 @@ export const BASE_POWER = {
   LuckyFist: 440,
   ShootingSpree: 240,
   Berserk: 350,
-  PowerShot: 300,
-  DoubleShot: 480,
+  PowerShot: 1200,
+  DoubleShot: 1000,
   Blessing: 162,
   WindBlade: 268,
   RasingStorm: 360,
@@ -34,7 +34,7 @@ export const BASE_POWER = {
   CleavingTerra: 22.5,
   SharpScream: 3.4,
   HitCombo: 620,
-  OnePair: 690,
+  OnePair: 1000,
   LadyLuck: 6
 } as const
 
