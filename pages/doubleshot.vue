@@ -20,7 +20,7 @@
           <v-slider
             v-model="basePower"
             :min="0"
-            :max="960"
+            :max="5000"
             :step="10"
             thumb-label="always"
             label="Base Power"

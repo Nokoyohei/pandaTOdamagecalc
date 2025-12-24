@@ -7,8 +7,8 @@ export const BASE_POWER = {
   StaffOfAgony: 65,
   FullHouse: 800,
   EarthquakeBlade: 440,
-  SonicSlash: 700,
-  TidalSlash: 550,
+  SonicSlash: 750,
+  TidalSlash: 600,
   TempestStrike: 240,
   GaleStrike: 260,
   ChampionsBlade: 490,
@@ -20,8 +20,8 @@ export const BASE_POWER = {
   LuckyFist: 440,
   ShootingSpree: 240,
   Berserk: 350,
-  PowerShot: 1200,
-  DoubleShot: 1000,
+  PowerShot: 2500,
+  DoubleShot: 2500,
   Blessing: 162,
   WindBlade: 268,
   RasingStorm: 360,
@@ -33,8 +33,8 @@ export const BASE_POWER = {
   TornadoBlast: 330,
   CleavingTerra: 22.5,
   SharpScream: 3.4,
-  HitCombo: 800,
-  OnePair: 1000,
+  HitCombo: 1500,
+  OnePair: 2500,
   LadyLuck: 6
 } as const
 
