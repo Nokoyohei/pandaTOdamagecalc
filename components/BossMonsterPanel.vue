@@ -79,6 +79,7 @@ import {
   kevin,
   madray,
   koiosu,
+  chronos
 } from '~/utils/monsters'
 import { BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -151,6 +152,12 @@ export default class BossMonsterPanel extends Vue {
       height: '120%',
       title: 'GM Kevin',
       alt: 'GM KEVIN'
+    },
+    {
+      srcimg: require('~/static/chronos.gif'),
+      height: '160%',
+      title: 'Chronos',
+      alt: 'CHRONOS'
     }
   ]
 
@@ -168,6 +175,7 @@ export default class BossMonsterPanel extends Vue {
       koiosu,
       madray,
       kevin,
+      chronos
     ][this.tab]
   }
 

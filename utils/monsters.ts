@@ -166,21 +166,40 @@ const mong: BossMonster = {
 }
 
 const kevin: BossMonster = {
-  hp: 3000000,
-  dp: 200000,
-  md: 15000,
+  hp: 10000000,
+  dp: 300000,
+  md: 50000,
   hv: 3000,
-  da: 4000,
+  da: 10000,
   fireR: 250,
-  waterR: 96,
-  windR: 96,
+  waterR: 99,
+  windR: 99,
   earthR: 96,
   elecR: 90,
   lightR: 90,
-  darkR: 90,
+  darkR: 80,
   noPropR: 65,
   physicalR: 96,
   gunR: 96,
+  gaugeNum: 5
+}
+
+const chronos: BossMonster = {
+  hp: 100000000,
+  dp: 600000,
+  md: 250000,
+  hv: 5000,
+  da: 25000,
+  fireR: 250,
+  waterR: 99,
+  windR: 99,
+  earthR: 99,
+  elecR: 99,
+  lightR: 99,
+  darkR: 65,
+  noPropR: 70,
+  physicalR: 96,
+  gunR: 99,
   gaugeNum: 5
 }
 
@@ -195,4 +214,5 @@ export {
   kevin,
   madray,
   koiosu,
+  chronos
 }
