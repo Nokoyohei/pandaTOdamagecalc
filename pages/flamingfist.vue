@@ -64,35 +64,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcFlamingFistDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
-  calcMABuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcMABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import {
-  BossMonster,
-  APBuffName,
-  MABuffName,
-  DebuffName,
-  skillPanel,
-  Status,
-  Attributes
-} from '~/types'
+import { skillPanel } from '~/types'
 
 @Component({
   components: {
@@ -103,17 +91,9 @@ import {
     DamageArea
   }
 })
-export default class ChampionsBlade extends Vue {
-  monster: BossMonster = requiem
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  APBuff: APBuffName[] = []
-  MABuff: MABuffName[] = []
+export default class FlamingFist extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.FlamingFist
-
-  debuffSkills: DebuffName[] = []
 
   debuffSkillsDef: skillPanel[] = [
     {
@@ -122,38 +102,6 @@ export default class ChampionsBlade extends Vue {
       img: require('~/static/thunderarea.gif')
     }
   ]
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get debuffedMonster() {
-    return calcDebuffedMonster(this.monster, this.debuffSkills)
-  }
-
-  get buffedAP() {
-    return (
-      Math.floor(
-        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
-      ) + this.extraStats.ap
-    )
-  }
-
-  get buffedMA() {
-    return (
-      Math.floor(
-        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
-      ) + this.extraStats.ma
-    )
-  }
 
   get damage() {
     return calcDamage(
@@ -165,7 +113,7 @@ export default class ChampionsBlade extends Vue {
 
   get resAP() {
     const needAP = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'magic'),
       this.debuffedMonster.fireR,
       (SkillRatio.FlamingFist(this.stats.fire, this.basePower) * this.buffedMA) / 100,
@@ -179,7 +127,7 @@ export default class ChampionsBlade extends Vue {
   get resMA() {
     const needMA =
       calcNeedStats(
-        this.monster.hp * this.monster.gaugeNum,
+        this.monsterHP,
         calcMonsterDef(this.debuffedMonster, 'magic'),
         this.debuffedMonster.fireR,
         SkillRatio.FlamingFist(this.stats.fire, this.basePower) * this.buffedAP,
@@ -193,7 +141,7 @@ export default class ChampionsBlade extends Vue {
   get resFire() {
     return Math.ceil(
       calcNeedStats(
-        this.monster.hp * this.monster.gaugeNum,
+        this.monsterHP,
         calcMonsterDef(this.debuffedMonster, 'magic'),
         this.debuffedMonster.fireR,
         (this.buffedAP * this.buffedMA) / 100,

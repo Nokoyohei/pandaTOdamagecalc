@@ -57,32 +57,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DaBuff from '~/components/DABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcChainOfKnivesDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcDABuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import {
-  BossMonster,
-  DABuffName,
-  DebuffName,
-  skillPanel,
-  Status,
-  Attributes
-} from '~/types'
+import { skillPanel } from '~/types'
 
 @Component({
   components: {
@@ -92,11 +81,8 @@ import {
     DamageArea
   }
 })
-export default class MagicalSoul extends Vue {
-  monster: BossMonster = requiem
-
-  DABuff: DABuffName[] = []
-  debuffSkills: DebuffName[] = []
+export default class ChainOfKnives extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.ChainOfKnives
 
   debuffSkillsDef: skillPanel[] = [
@@ -106,33 +92,6 @@ export default class MagicalSoul extends Vue {
       img: require('~/static/barrier_break.gif')
     }
   ]
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedDA() {
-    return (
-      Math.floor(
-        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
-      ) + this.extraStats.da
-    )
-  }
-
-  get debuffedMonster() {
-    return calcDebuffedMonster(this.monster, this.debuffSkills)
-  }
 
   get damage() {
     const chainOfKnivesDamage = calcChainOfKnivesDamage(
@@ -149,7 +108,7 @@ export default class MagicalSoul extends Vue {
 
   get resDA() {
     const needDA = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
       SkillRatio.ChainOfKnives(this.basePower),

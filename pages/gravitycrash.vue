@@ -53,34 +53,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { torobbie, requiem } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
   calcGravityCrashDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio,
-  initStatus,
-  initExtraStatus
+  calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import {
-  Monster,
-  BossMonster,
-  MABuffName,
-  DLBuffName,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -91,49 +80,9 @@ import {
     StatsTextField
   }
 })
-export default class GravityCrash extends Vue {
-  ma = 10000
-  extraMA = 0
-  mode = 'farming'
-  monster: Monster | BossMonster = torobbie
-
-  MABuff: MABuffName[] = []
-  DLBuff: DLBuffName[] = []
+export default class GravityCrash extends BaseSkillPage {
+  get skillMode() { return 'dual' as const }
   basePower: number = BASE_POWER.GravityCrash
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
-    if (this.mode === 'boss') {
-      this.monster = requiem
-    }
-
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get monsterHP() {
-    return this.mode === 'boss'
-      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
-      : this.monster.hp
-  }
-
-  get buffedMA() {
-    return (
-      Math.floor(
-        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
-      ) + this.extraStats.ma
-    )
-  }
 
   get damage() {
     let darkCommandoDamage = this.DLBuff.includes('darkCommando')

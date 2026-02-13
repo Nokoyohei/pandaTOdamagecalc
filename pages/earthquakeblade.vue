@@ -58,32 +58,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { torobbie, requiem } from '~/utils/monsters'
 import {
   calcEarthquakeBladeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcAPBuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcAPBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import {
-  Monster,
-  BossMonster,
-  APBuffName,
-  DebuffName,
-  skillPanel,
-  Status,
-  Attributes
-} from '~/types'
+import { skillPanel } from '~/types'
 
 @Component({
   components: {
@@ -93,15 +82,8 @@ import {
     StatsTextField
   }
 })
-export default class EarthquakeBlade extends Vue {
-  mode = 'farming'
-  monster: Monster = torobbie
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  APBuff: APBuffName[] = []
-  debuffSkills: DebuffName[] = []
+export default class EarthquakeBlade extends BaseSkillPage {
+  get skillMode() { return 'dual' as const }
   basePower: number = BASE_POWER.EarthquakeBlade
 
   debuffSkillsDef: skillPanel[] = [
@@ -111,42 +93,6 @@ export default class EarthquakeBlade extends Vue {
       img: require('~/static/barrier_break.gif')
     }
   ]
-
-  beforeMount() {
-    this.mode = this.$route.query.mode === 'boss' ? 'boss' : 'farming'
-    if (this.mode === 'boss') {
-      this.monster = requiem
-    }
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get monsterHP() {
-    return this.mode === 'boss'
-      ? (this.monster as BossMonster).gaugeNum * this.monster.hp
-      : this.monster.hp
-  }
-
-  get debuffedMonster() {
-    return this.mode === 'boss'
-      ? calcDebuffedMonster(this.monster as BossMonster, this.debuffSkills)
-      : this.monster
-  }
-
-  get buffedAP() {
-    return (
-      Math.floor(
-        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
-      ) + this.extraStats.ap
-    )
-  }
 
   get damage() {
     return calcDamage(

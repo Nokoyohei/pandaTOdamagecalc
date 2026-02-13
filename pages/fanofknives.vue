@@ -52,25 +52,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import DaBuff from '~/components/DABuff.vue'
 import ThrowBuff from '~/components/ThrowBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { torobbie} from '~/utils/monsters'
 import {
   calcFanOfKnicesDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcThrowBuffRatio,
-  calcDABuffRatio,
-  initStatus,
-  initExtraStatus
+  calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import { Monster, DABuffName, ThrowBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -80,39 +75,8 @@ import { Monster, DABuffName, ThrowBuffName, Status, Attributes } from '~/types'
     StatsTextField
   }
 })
-export default class FanOfKnives extends Vue {
-  monster: Monster = torobbie
-
-  DABuff: DABuffName[] = []
-  ThrowBuff: ThrowBuffName[] = []
+export default class FanOfKnives extends BaseSkillPage {
   basePower: number = BASE_POWER.FanOfKnives
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedDA() {
-    return (
-      Math.floor(
-        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
-      ) + this.extraStats.da
-    )
-  }
-
-  get buffedThrowAP() {
-    return this.stats.throwAP * calcThrowBuffRatio(this.ThrowBuff)
-  }
 
   get damage() {
     return calcDamage(

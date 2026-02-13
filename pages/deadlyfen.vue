@@ -54,25 +54,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import LkBuff from '~/components/LKBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { torobbie} from '~/utils/monsters'
 import {
   calcDeadlyFenDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio,
-  calcLKBuffRatio,
-  initStatus,
-  initExtraStatus
+  calcLKBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import { Monster, MABuffName, LKBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -83,43 +80,8 @@ import { Monster, MABuffName, LKBuffName, Status, Attributes } from '~/types'
     DamageArea
   }
 })
-export default class DeadlyFen extends Vue {
-  monster: Monster = torobbie
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  MABuff: MABuffName[] = []
-  LKBuff: LKBuffName[] = []
+export default class DeadlyFen extends BaseSkillPage {
   basePower: number = BASE_POWER.DeadlyFen
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedMA() {
-    return (
-      Math.floor(
-        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
-      ) + this.extraStats.ma
-    )
-  }
-
-  get buffedLK() {
-    return (
-      Math.floor(
-        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
-      ) + this.extraStats.lk
-    )
-  }
 
   get damage() {
     return calcDamage(

@@ -48,23 +48,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { torobbie} from '~/utils/monsters'
 import {
   calcCleavingTerraDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio,
-  initStatus,
-  initExtraStatus
+  calcMABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import { Monster, MABuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -74,34 +71,8 @@ import { Monster, MABuffName, Status, Attributes } from '~/types'
     DamageArea
   }
 })
-export default class CleavingTerra extends Vue {
-  monster: Monster = torobbie
-
-  MABuff: MABuffName[] = []
+export default class CleavingTerra extends BaseSkillPage {
   basePower: number = BASE_POWER.CleavingTerra
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedMA() {
-    return (
-      Math.floor(
-        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
-      ) + this.extraStats.ma
-    )
-  }
 
   get damage() {
     return calcDamage(

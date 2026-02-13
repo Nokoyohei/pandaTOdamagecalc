@@ -57,31 +57,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import AcBuff from '~/components/ACBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcDoubleShotDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcACBuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcACBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import {
-  ACBuffName,
-  BossMonster,
-  skillPanel,
-  DebuffName,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -90,46 +78,17 @@ import {
     StatsTextField
   }
 })
-export default class ShootingSpree extends Vue {
-  monster: BossMonster = requiem
-
-  debuffSkills: DebuffName[] = []
-  ACBuff: ACBuffName[] = []
+export default class DoubleShot extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.DoubleShot
-  debuffSkillsDef: skillPanel[] = [
+
+  debuffSkillsDef = [
     {
       value: 'ShieldBreaker',
       name: 'Shield Breaker',
       img: require('~/static/barrier_break.gif')
     }
   ]
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get debuffedMonster() {
-    return calcDebuffedMonster(this.monster, this.debuffSkills)
-  }
-
-  get buffedAC() {
-    return (
-      Math.floor(
-        (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
-      ) + this.extraStats.ac
-    )
-  }
 
   get damage() {
     return calcDamage(
@@ -141,7 +100,7 @@ export default class ShootingSpree extends Vue {
 
   get needStats() {
     return calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.monster, 'gun'),
       this.debuffedMonster.gunR,
       SkillRatio.DoubleShot(this.basePower),

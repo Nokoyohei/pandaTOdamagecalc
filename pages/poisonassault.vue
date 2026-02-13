@@ -57,29 +57,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DaBuff from '~/components/DABuff.vue'
 import ThrowBuff from '~/components/ThrowBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcPoisonDamage,
-  calcDABuffRatio,
-  calcThrowBuffRatio,
-  initStatus,
-  initExtraStatus
+  calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import {
-  BossMonster,
-  DABuffName,
-  ThrowBuffName,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -90,42 +79,12 @@ import {
     DamageArea
   }
 })
-export default class PoisonAssault extends Vue {
-  monster: BossMonster = requiem
-
-  DABuff: DABuffName[] = []
-  ThrowBuff: ThrowBuffName[] = []
+export default class PoisonAssault extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.PoisonAssault
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedDA() {
-    return (
-      Math.floor(
-        (this.stats.da - this.extraStats.da) * calcDABuffRatio(this.DABuff)
-      ) + this.extraStats.da
-    )
-  }
 
   get poison() {
     return calcPoisonDamage(this.buffedDA, this.buffedThrowAP)
-  }
-
-  get buffedThrowAP() {
-    return this.stats.throwAP * calcThrowBuffRatio(this.ThrowBuff)
   }
 
   get damage() {
@@ -134,7 +93,7 @@ export default class PoisonAssault extends Vue {
 
   get resDA() {
     const needDA =
-      (this.monster.hp * this.monster.gaugeNum) /
+      (this.monsterHP) /
         (SkillRatio.PoisonAssault(this.basePower) * 0.412 * 30) -
       (this.buffedDA * 16 + this.buffedThrowAP)
 

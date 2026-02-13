@@ -29,31 +29,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcMagicalSoulDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
-  calcMABuffRatio,
-  initStatus,
-  initExtraStatus
+  calcMABuffRatio
 } from '~/utils/calc'
-
-import {
-  BossMonster,
-  APBuffName,
-  MABuffName,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -64,42 +54,8 @@ import {
     DamageArea
   }
 })
-export default class MagicalSoul extends Vue {
-  monster: BossMonster = requiem
-
-  MABuff: MABuffName[] = []
-  APBuff: APBuffName[] = []
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedAP() {
-    return (
-      Math.floor(
-        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
-      ) + this.extraStats.ap
-    )
-  }
-
-  get buffedMA() {
-    return (
-      Math.floor(
-        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
-      ) + this.extraStats.ma
-    )
-  }
+export default class MagicalSoul extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
 
   get damage() {
     const magicalSoulDamage = calcMagicalSoulDamage(
@@ -115,7 +71,7 @@ export default class MagicalSoul extends Vue {
 
   get resAP() {
     const needAP = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.monster, 'magic'),
       this.monster.noPropR,
       this.buffedMA / 100,
@@ -129,7 +85,7 @@ export default class MagicalSoul extends Vue {
   get resMA() {
     const needMA =
       calcNeedStats(
-        this.monster.hp * this.monster.gaugeNum,
+        this.monsterHP,
         calcMonsterDef(this.monster, 'magic'),
         this.monster.noPropR,
         this.buffedAP,

@@ -53,33 +53,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
 import MaBuff from '~/components/MABuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcDarkCommandoDamage,
   calcScytheDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio,
-  initStatus,
-  initExtraStatus
+  calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio from '~/utils/skillRatio'
-
-import {
-  BossMonster,
-  MABuffName,
-  DLBuffName,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -90,35 +80,9 @@ import {
     DamageArea
   }
 })
-export default class Scythe extends Vue {
-  monster: BossMonster = requiem
-
-  MABuff: MABuffName[] = []
-  DLBuff: DLBuffName[] = []
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
+export default class Scythe extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   scythePower: number = 45
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedMA() {
-    return (
-      Math.floor(
-        (this.stats.ma - this.extraStats.ma) * calcMABuffRatio(this.MABuff)
-      ) + this.extraStats.ma
-    )
-  }
 
   get damage() {
     const darkCommandoDamage = this.DLBuff.includes('darkCommando')
@@ -161,7 +125,7 @@ export default class Scythe extends Vue {
       : 1
 
     const needMA = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       monsterDef,
       this.monster.darkR,
       attackRatio,
@@ -189,7 +153,7 @@ export default class Scythe extends Vue {
 
     return Math.ceil(
       (calcNeedStats(
-        this.monster.hp * this.monster.gaugeNum,
+        this.monsterHP,
         monsterDef,
         this.monster.darkR,
         this.buffedMA - constStats,

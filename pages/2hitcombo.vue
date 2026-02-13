@@ -63,33 +63,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import HvBuff from '~/components/HVBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcFirstHitComboDamage,
   calcSecondHitComboDamage,
   calcDamage,
-  calcMonsterDef,
-  calcAPBuffRatio,
-  calcHVBuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcMonsterDef
 } from '~/utils/calc'
 import { BASE_POWER } from '~/utils/skillRatio'
-import {
-  BossMonster,
-  APBuffName,
-  HVBuffName,
-  DebuffName,
-  skillPanel,
-  Status,
-  Attributes
-} from '~/types'
+import { skillPanel } from '~/types'
 
 @Component({
   components: {
@@ -99,15 +86,8 @@ import {
     StatsTextField
   }
 })
-export default class TempestStrike extends Vue {
-  monster: BossMonster = requiem
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  APBuff: APBuffName[] = []
-  HVBuff: HVBuffName[] = []
-  debuffSkills: DebuffName[] = []
+export default class HitCombo extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.HitCombo
 
   debuffSkillsDef: skillPanel[] = [
@@ -117,38 +97,6 @@ export default class TempestStrike extends Vue {
       img: require('~/static/barrier_break.gif')
     }
   ]
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get debuffedMonster() {
-    return calcDebuffedMonster(this.monster, this.debuffSkills)
-  }
-
-  get buffedAP() {
-    return (
-      Math.floor(
-        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
-      ) + this.extraStats.ap
-    )
-  }
-
-  get buffedHV() {
-    return (
-      Math.floor(
-        (this.stats.hv - this.extraStats.hv) * calcHVBuffRatio(this.HVBuff)
-      ) + this.extraStats.hv
-    )
-  }
 
   get fisrtHitDamage() {
     return calcDamage(

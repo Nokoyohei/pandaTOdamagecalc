@@ -46,30 +46,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import LkBuff from '~/components/LKBuff.vue'
 import AcBuff from '~/components/ACBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { torobbie} from '~/utils/monsters'
 import {
   calcBlessingDamage,
   calcDamage,
-  calcMonsterDef,
-  calcLKBuffRatio,
-  calcACBuffRatio,
-  initStatus,
-  initExtraStatus
+  calcMonsterDef
 } from '~/utils/calc'
-import {
-  Monster,
-  ACBuffName,
-  LKBuffName,
-  Skill,
-  Status,
-  Attributes
-} from '~/types'
+import { Skill } from '~/types'
 import skillRatio from '~/utils/skillRatio'
 
 @Component({
@@ -81,11 +70,7 @@ import skillRatio from '~/utils/skillRatio'
     DamageArea
   }
 })
-export default class Blessing extends Vue {
-  monster: Monster = torobbie
-
-  ACBuff: ACBuffName[] = []
-  LKBuff: LKBuffName[] = []
+export default class Blessing extends BaseSkillPage {
   selectedBlessingSkills: number[] = []
 
   BlessingSkills: Skill[] = [
@@ -125,37 +110,6 @@ export default class Blessing extends Vue {
       img: require('~/static/sylphBlessing.gif')
     }
   ]
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedAC() {
-    return (
-      Math.floor(
-        (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
-      ) + this.extraStats.ac
-    )
-  }
-
-  get buffedLK() {
-    return (
-      Math.floor(
-        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
-      ) + this.extraStats.lk
-    )
-  }
 
   get damage() {
     let damage = 0

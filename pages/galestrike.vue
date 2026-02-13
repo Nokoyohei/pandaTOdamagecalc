@@ -61,30 +61,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import ApBuff from '~/components/APBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcGaleStrikeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcAPBuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcAPBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import {
-  BossMonster,
-  APBuffName,
-  DebuffName,
-  skillPanel,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -93,47 +82,17 @@ import {
     StatsTextField
   }
 })
-export default class GaleStrike extends Vue {
-  monster: BossMonster = requiem
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  APBuff: APBuffName[] = []
-  debuffSkills: DebuffName[] = []
+export default class GaleStrike extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.GaleStrike
 
-  debuffSkillsDef: skillPanel[] = [
+  debuffSkillsDef = [
     {
       value: 'ShieldBreaker',
       name: 'Shield Breaker',
       img: require('~/static/barrier_break.gif')
     }
   ]
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get debuffedMonster() {
-    return calcDebuffedMonster(this.monster, this.debuffSkills)
-  }
-
-  get buffedAP() {
-    return (
-      Math.floor(
-        (this.stats.ap - this.extraStats.ap) * calcAPBuffRatio(this.APBuff)
-      ) + this.extraStats.ap
-    )
-  }
 
   get maxDamage() {
     return calcDamage(
@@ -161,7 +120,7 @@ export default class GaleStrike extends Vue {
 
   get resAP() {
     const needAP = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
       SkillRatio.GaleStrike(this.stats.wind, this.basePower),
@@ -175,7 +134,7 @@ export default class GaleStrike extends Vue {
   get resWind() {
     return Math.ceil(
       calcNeedStats(
-        this.monster.hp * this.monster.gaugeNum,
+        this.monsterHP,
         calcMonsterDef(this.debuffedMonster, 'physical'),
         this.debuffedMonster.physicalR,
         this.buffedAP,

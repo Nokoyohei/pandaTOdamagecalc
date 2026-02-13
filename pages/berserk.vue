@@ -51,23 +51,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import FarmingMonster from '~/components/FarmingMonster.vue'
 import AcBuff from '~/components/ACBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
-import { torobbie } from '~/utils/monsters'
 import {
   calcBerserkDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcACBuffRatio,
-  initStatus,
-  initExtraStatus
+  calcACBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import { Monster, ACBuffName, Status, Attributes } from '~/types'
 
 @Component({
   components: {
@@ -76,34 +72,8 @@ import { Monster, ACBuffName, Status, Attributes } from '~/types'
     StatsTextField
   }
 })
-export default class ShootingSpree extends Vue {
-  monster: Monster = torobbie
-
-  ACBuff: ACBuffName[] = []
+export default class Berserk extends BaseSkillPage {
   basePower: number = BASE_POWER.Berserk
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get buffedAC() {
-    return (
-      Math.floor(
-        (this.stats.ac - this.extraStats.ac) * calcACBuffRatio(this.ACBuff)
-      ) + this.extraStats.ac
-    )
-  }
 
   get damage() {
     return calcDamage(

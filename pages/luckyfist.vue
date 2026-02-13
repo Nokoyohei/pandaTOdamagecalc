@@ -51,32 +51,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import BaseSkillPage from '~/utils/BaseSkillPage'
 import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
 import LkBuff from '~/components/LKBuff.vue'
 import StatsTextField from '~/components/StatsTextField.vue'
 import DamageArea from '~/components/DamageArea.vue'
-import { requiem } from '~/utils/monsters'
 import {
   calcLuckyFistDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcLKBuffRatio,
-  calcDebuffedMonster,
-  initStatus,
-  initExtraStatus
+  calcLKBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-
-import {
-  BossMonster,
-  LKBuffName,
-  DebuffName,
-  skillPanel,
-  Status,
-  Attributes
-} from '~/types'
 
 @Component({
   components: {
@@ -86,48 +74,17 @@ import {
     DamageArea
   }
 })
-export default class ChampionsBlade extends Vue {
-  monster: BossMonster = requiem
-
-  stats: Status & Attributes = initStatus()
-  extraStats: Status = initExtraStatus()
-
-  LKBuff: LKBuffName[] = []
+export default class LuckyFist extends BaseSkillPage {
+  get skillMode() { return 'boss' as const }
   basePower: number = BASE_POWER.LuckyFist
 
-  debuffSkills: DebuffName[] = []
-
-  debuffSkillsDef: skillPanel[] = [
+  debuffSkillsDef = [
     {
       value: 'ShieldBreaker',
       name: 'Shield Breaker',
       img: require('~/static/barrier_break.gif')
     }
   ]
-
-  beforeMount() {
-    const stats = JSON.parse(localStorage.getItem('stats') ?? '{}')
-    const extraStats = JSON.parse(localStorage.getItem('extraStats') ?? '{}')
-    if (Object.keys(stats).length !== 0) this.stats = stats
-    if (Object.keys(extraStats).length !== 0) this.extraStats = extraStats
-  }
-
-  beforeDestroy() {
-    localStorage.setItem('stats', JSON.stringify(this.stats))
-    localStorage.setItem('extraStats', JSON.stringify(this.extraStats))
-  }
-
-  get debuffedMonster() {
-    return calcDebuffedMonster(this.monster, this.debuffSkills)
-  }
-
-  get buffedLK() {
-    return (
-      Math.floor(
-        (this.stats.lk - this.extraStats.lk) * calcLKBuffRatio(this.LKBuff)
-      ) + this.extraStats.lk
-    )
-  }
 
   get damage() {
     return calcDamage(
@@ -139,7 +96,7 @@ export default class ChampionsBlade extends Vue {
 
   get resLK() {
     const needLK = calcNeedStats(
-      this.monster.hp * this.monster.gaugeNum,
+      this.monsterHP,
       calcMonsterDef(this.debuffedMonster, 'physical'),
       this.debuffedMonster.physicalR,
       SkillRatio.LuckyFist(this.basePower),
