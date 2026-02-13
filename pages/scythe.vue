@@ -7,33 +7,7 @@
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:dl-buffs="dlBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-card class="mb-4 pa-4">
-          <v-card-title class="text-subtitle-1 pa-0 pb-2">
-            Scythe Power
-          </v-card-title>
-          <v-slider
-            v-model="scythePower"
-            :min="0"
-            :max="550"
-            :step="0.5"
-            thumb-label="always"
-            label="Base Power"
-            class="mt-4"
-          >
-            <template v-slot:append>
-              <v-text-field
-                v-model.number="scythePower"
-                type="number"
-                :min="0"
-                :max="50"
-                :step="0.5"
-                style="width: 80px"
-                density="compact"
-                hide-details
-              />
-            </template>
-          </v-slider>
-        </v-card>
+        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.Scythe" />
         <StatsTextField
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -61,17 +35,17 @@ import {
   calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
-const scythePower = ref(45)
+const localBasePower = ref(BASE_POWER.Scythe)
 
 const damage = computed(() => {
   const darkCommandoDamage = dlBuffs.value.includes('darkCommando')
     ? calcDarkCommandoDamage(buffedMA.value)
     : 0
-  const scytheDamage = calcScytheDamage(buffedMA.value, stats.value.dark, scythePower.value)
+  const scytheDamage = calcScytheDamage(buffedMA.value, stats.value.dark, localBasePower.value)
 
   const buff = dlBuffs.value.includes('bloodTestament')
     ? 1 + BloodTestamentBuff
@@ -94,7 +68,7 @@ const damage = computed(() => {
 })
 
 const resMA = computed(() => {
-  const scytheRatio = SkillRatio.Scythe(stats.value.dark, scythePower.value)
+  const scytheRatio = SkillRatio.Scythe(stats.value.dark, localBasePower.value)
   const attackRatio = dlBuffs.value.includes('darkCommando')
     ? scytheRatio + SkillRatio.DarkCommando()
     : scytheRatio
@@ -121,7 +95,7 @@ const resMA = computed(() => {
 })
 
 const resDark = computed(() => {
-  const scytheRatio = SkillRatio.Scythe(stats.value.dark, scythePower.value)
+  const scytheRatio = SkillRatio.Scythe(stats.value.dark, localBasePower.value)
   const attackRatio = dlBuffs.value.includes('darkCommando')
     ? scytheRatio + SkillRatio.DarkCommando()
     : scytheRatio

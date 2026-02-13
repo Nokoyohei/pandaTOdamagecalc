@@ -12,6 +12,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.TidalSlash" />
         <stats-text-field
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -37,10 +38,12 @@ import {
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })
+
+const localBasePower = ref(BASE_POWER.TidalSlash)
 
 const debuffSkillsDef = [
   {
@@ -54,7 +57,7 @@ const damage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcTidalSlashDamage(buffedAP.value, stats.value.water)
+    calcTidalSlashDamage(buffedAP.value, stats.value.water, localBasePower.value)
   )
 })
 
@@ -63,7 +66,7 @@ const resAP = computed(() => {
     monsterHP.value,
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    SkillRatio.TidalSlash(stats.value.water),
+    SkillRatio.TidalSlash(stats.value.water, localBasePower.value),
     buffedAP.value,
     0
   )
@@ -78,7 +81,7 @@ const resWater = computed(() => {
       calcMonsterDef(debuffedMonster.value, 'physical'),
       debuffedMonster.value.physicalR,
       buffedAP.value,
-      SkillRatio.TidalSlash(stats.value.water),
+      SkillRatio.TidalSlash(stats.value.water, localBasePower.value),
       0
     ) *
       100) /

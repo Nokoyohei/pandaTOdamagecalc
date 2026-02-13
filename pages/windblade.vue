@@ -7,6 +7,7 @@
         <BuffPanel v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.WindBlade" />
         <StatsTextField
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -27,15 +28,17 @@ import {
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
+
+const localBasePower = ref(BASE_POWER.WindBlade)
 
 const damage = computed(() =>
   calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.windR,
-    calcWindBladeDamage(buffedMA.value)
+    calcWindBladeDamage(buffedMA.value, localBasePower.value)
   )
 )
 
@@ -44,7 +47,7 @@ const resMA = computed(() => {
     monster.value.hp,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.windR,
-    SkillRatio.WindBlade(),
+    SkillRatio.WindBlade(localBasePower.value),
     buffedMA.value,
     49
   )

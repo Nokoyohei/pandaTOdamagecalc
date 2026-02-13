@@ -8,32 +8,7 @@
         <BuffPanel v-model:ac-buffs="acBuffs" v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-card class="mb-4 pa-4">
-          <v-card-title class="text-subtitle-1 pa-0 pb-2">
-            Base Power Adjustment
-          </v-card-title>
-          <v-slider
-            v-model="localBasePower"
-            :min="0"
-            :max="720"
-            :step="10"
-            thumb-label="always"
-            label="Base Power"
-            class="mt-4"
-          >
-            <template v-slot:append>
-              <v-text-field
-                v-model.number="localBasePower"
-                type="number"
-                :min="0"
-                :max="720"
-                style="width: 80px"
-                density="compact"
-                hide-details
-              />
-            </template>
-          </v-slider>
-        </v-card>
+        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.RasingStorm" />
         <StatsTextField
           v-model:input-stats="stats.ac"
           :need-stats="resAC"

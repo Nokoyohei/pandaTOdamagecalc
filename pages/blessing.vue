@@ -25,6 +25,7 @@
         <BuffPanel v-model:ac-buffs="acBuffs" v-model:lk-buffs="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.Blessing" />
         <StatsTextField
           v-model:input-stats="stats.ac"
           :buffed-stats="buffedAC"
@@ -49,49 +50,50 @@ import {
   calcMonsterDef
 } from '~/utils/calc'
 import type { Skill } from '~/types'
-import skillRatio from '~/utils/skillRatio'
+import skillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 const { stats, extraStats, monster, acBuffs, lkBuffs, buffedAC, buffedLK } = useSkillPage()
 
+const localBasePower = ref(BASE_POWER.Blessing)
 const selectedBlessingSkills = ref<number[]>([])
 
-const BlessingSkills: Skill[] = [
+const BlessingSkills = computed<Skill[]>(() => [
   {
     value: 0,
     name: "Salamander's Blessing",
     attr: 'fireR',
-    ratio: skillRatio.FireBlessing(),
+    ratio: skillRatio.FireBlessing(localBasePower.value),
     img: '/salamanderBlessing.gif'
   },
   {
     value: 1,
     name: "Raion's Blessing",
     attr: 'elecR',
-    ratio: skillRatio.ElecBlessing(),
+    ratio: skillRatio.ElecBlessing(localBasePower.value),
     img: '/raionBlessing.gif'
   },
   {
     value: 2,
     name: "Gnome's Blessing",
     attr: 'earthR',
-    ratio: skillRatio.EarthBlessing(),
+    ratio: skillRatio.EarthBlessing(localBasePower.value),
     img: '/gnomeBlessing.gif'
   },
   {
     value: 3,
     name: "Undine's Blessing",
     attr: 'waterR',
-    ratio: skillRatio.WaterBlessing(),
+    ratio: skillRatio.WaterBlessing(localBasePower.value),
     img: '/undineBlessing.gif'
   },
   {
     value: 4,
     name: "Sylph's Blessing",
     attr: 'windR',
-    ratio: skillRatio.WindBlessing(),
+    ratio: skillRatio.WindBlessing(localBasePower.value),
     img: '/sylphBlessing.gif'
   }
-]
+])
 
 const damage = computed(() => {
   let damage = 0

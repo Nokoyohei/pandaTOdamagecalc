@@ -7,6 +7,7 @@
         <BuffPanel v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
+        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.TeslaField" />
         <StatsTextField
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -33,15 +34,17 @@ import {
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
 const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
+
+const localBasePower = ref(BASE_POWER.TeslaField)
 
 const damage = computed(() =>
   calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.elecR,
-    calcTeslaFieldDamage(buffedMA.value, stats.value.mp)
+    calcTeslaFieldDamage(buffedMA.value, stats.value.mp, localBasePower.value)
   )
 )
 
@@ -50,7 +53,7 @@ const resStat = computed(() =>
     monster.value.hp,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.elecR,
-    SkillRatio.TeslaField(),
+    SkillRatio.TeslaField(localBasePower.value),
     buffedMA.value + Math.floor(stats.value.mp / 120),
     0
   )
