@@ -9,17 +9,16 @@
     <FarmingMonster v-else :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <MABuff v-model:buff="maBuffs" />
+        <BuffPanel v-model:ma-buffs="maBuffs" />
         <p>Light Skills</p>
         <v-btn-toggle
           v-model="selectedLightSkills"
           multiple
-          borderless
-          background-color="black"
+          bg-color="black"
         >
-          <v-tooltip v-for="skill in lightSkills" :key="skill.name" bottom>
-            <template #activator="{on}">
-              <v-btn :value="skill.value" v-on="on">
+          <v-tooltip v-for="skill in lightSkills" :key="skill.name" location="bottom">
+            <template #activator="{ props: activatorProps }">
+              <v-btn :value="skill.value" v-bind="activatorProps">
                 <img :src="skill.img" />
               </v-btn>
             </template>

@@ -11,7 +11,6 @@ export default defineNuxtConfig({
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
-          hid: 'description',
           name: 'description',
           content: 'damage calculator for PandaTo'
         }
@@ -42,7 +41,7 @@ export default defineNuxtConfig({
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
-        config.plugins!.push(vuetify({ autoImport: true }))
+        config.plugins!.push(vuetify({ autoImport: true }) as any)
       })
     }
   ],

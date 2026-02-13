@@ -8,6 +8,7 @@
         center-active
         bg-color="#424242"
         hide-slider
+        height="80"
         @update:model-value="changeSelectedMonster"
       >
         <v-tooltip v-for="content in tabContents" :key="content.title" location="bottom">
@@ -55,19 +56,19 @@ const tab = ref(0)
 const tabContents = [
   {
     srcimg: '/torobbie.gif',
-    height: '60%',
+    height: '30',
     title: 'Torobbie',
     alt: 'TOROBBIE'
   },
   {
     srcimg: '/mac.gif',
-    height: '120%',
+    height: '60',
     title: 'Haunted Toilet',
     alt: 'HAUNTED TOILET'
   },
   {
     srcimg: '/cora.gif',
-    height: '120%',
+    height: '60',
     title: 'Cora Merrymaker',
     alt: 'CORA MERRYMAKER'
   }
@@ -81,7 +82,7 @@ const dmgList = computed(() =>
   [...makeArr(0, monster.value.hp * 1.2, datanum)].map((x) => Math.round(x))
 )
 
-const chartData = computed<ChartData<'line'>>(() => ({
+const chartData = computed<ChartData>(() => ({
   labels: dmgList.value,
   datasets: [
     {
@@ -118,7 +119,7 @@ const chartData = computed<ChartData<'line'>>(() => ({
   ]
 }))
 
-const chartOption = computed<ChartOptions<'line'>>(() => ({
+const chartOption = computed<ChartOptions>(() => ({
   maintainAspectRatio: false,
   animation: false,
   plugins: {

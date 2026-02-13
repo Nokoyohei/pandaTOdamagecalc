@@ -10,7 +10,7 @@
     ></BossMonsterPanel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ACBuff v-model:buff="acBuffs" />
+        <BuffPanel v-model:ac-buffs="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">

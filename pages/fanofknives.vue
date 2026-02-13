@@ -4,8 +4,7 @@
     <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <DABuff v-model:buff="daBuffs" />
-        <ThrowBuff v-model:buff="throwBuffs" />
+        <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">

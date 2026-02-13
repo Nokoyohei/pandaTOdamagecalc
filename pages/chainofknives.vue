@@ -10,7 +10,7 @@
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <DABuff v-model:buff="daBuffs" />
+        <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -67,7 +67,7 @@ import {
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 import type { skillPanel } from '~/types'
 
-const { stats, extraStats, monster, monsterHP, daBuffs, debuffSkills, buffedDA, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
+const { stats, extraStats, monster, monsterHP, daBuffs, throwBuffs, debuffSkills, buffedDA, buffedThrowAP, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const localBasePower = ref(BASE_POWER.ChainOfKnives)
 
@@ -82,7 +82,7 @@ const debuffSkillsDef: skillPanel[] = [
 const damage = computed(() => {
   const chainOfKnivesDamage = calcChainOfKnivesDamage(
     buffedDA.value,
-    stats.value.throwAP,
+    buffedThrowAP.value,
     localBasePower.value
   )
   return calcDamage(
@@ -98,7 +98,7 @@ const resDA = computed(() => {
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
     SkillRatio.ChainOfKnives(localBasePower.value),
-    buffedDA.value * 16 + stats.value.throwAP * 6,
+    buffedDA.value * 16 + buffedThrowAP.value * 6,
     0
   )
 

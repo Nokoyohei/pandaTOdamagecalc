@@ -24,22 +24,8 @@ export interface Skill {
   img: string
 }
 
-export interface BossMonster {
-  hp: number
-  dp: number
-  md: number
-  hv: number
+export interface BossMonster extends Monster {
   da: number
-  fireR: number
-  waterR: number
-  earthR: number
-  windR: number
-  elecR: number
-  lightR: number
-  darkR: number
-  noPropR: number
-  physicalR: number
-  gunR: number
   gaugeNum: number
 }
 

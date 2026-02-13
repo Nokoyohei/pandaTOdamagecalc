@@ -8,6 +8,7 @@
         center-active
         bg-color="#424242"
         hide-slider
+        height="80"
         @update:model-value="changeSelectedMonster"
       >
         <v-tooltip v-for="content in tabContents" :key="content.title" location="bottom">
@@ -45,7 +46,6 @@
         <v-btn-toggle
           v-model="debuff"
           multiple
-          borderless
           bg-color="black"
         >
           <v-tooltip v-for="skill in debuffSkillsDef" :key="skill.name" location="bottom">
@@ -75,7 +75,7 @@ import {
   koiosu,
   chronos
 } from '~/utils/monsters'
-import type { BossMonster, DebuffName, skillPanel } from '~/types'
+import type { Monster, BossMonster, DebuffName, skillPanel } from '~/types'
 
 const props = defineProps<{
   damage: number
@@ -83,8 +83,10 @@ const props = defineProps<{
   debuffSkillsDef?: skillPanel[]
 }>()
 
-const monster = defineModel<BossMonster>('monster', { required: true })
+const monster = defineModel<Monster | BossMonster>('monster', { required: true })
 const debuff = defineModel<DebuffName[]>('debuff')
+
+const boss = computed(() => monster.value as BossMonster)
 
 const datanum = 100
 const tab = ref(0)
@@ -94,49 +96,49 @@ const textColor = ['pink', 'red', 'deep-orange']
 const tabContents = [
   {
     srcimg: '/torobbie.gif',
-    height: '60%',
+    height: '30',
     title: 'Torobbie',
     alt: 'TOROBBIE'
   },
   {
     srcimg: '/requiem.gif',
-    height: '140%',
+    height: '68',
     title: 'Requiem Apocrypha',
     alt: 'REQUIEM APOCRYPHA'
   },
   {
     srcimg: '/predator.gif',
-    height: '160%',
+    height: '76',
     title: 'Predator G',
     alt: 'PREDATOR G'
   },
   {
     srcimg: '/mong.gif',
-    height: '120%',
+    height: '60',
     title: 'Master Mong',
     alt: 'MASTER MONG'
   },
   {
     srcimg: '/koiosu.gif',
-    height: '160%',
+    height: '76',
     title: 'Koiosu',
     alt: 'KOIOSU'
   },
   {
     srcimg: '/madray.gif',
-    height: '160%',
+    height: '76',
     title: 'Mad Ray',
     alt: 'MAD RAY'
   },
   {
     srcimg: '/gm_kevin.gif',
-    height: '120%',
+    height: '60',
     title: 'GM Kevin',
     alt: 'GM KEVIN'
   },
   {
     srcimg: '/chronos.gif',
-    height: '160%',
+    height: '76',
     title: 'Chronos',
     alt: 'CHRONOS'
   }
@@ -164,7 +166,7 @@ const dmgList = computed(() =>
   [
     ...makeArr(
       0,
-      monster.value.hp * monster.value.gaugeNum * 1.2,
+      monster.value.hp * boss.value.gaugeNum * 1.2,
       datanum
     )
   ].map((x) => Math.round(x))
@@ -172,9 +174,9 @@ const dmgList = computed(() =>
 
 const hpBar = computed(() => {
   const hpColor = ['purple', 'blue', 'green', 'yellow', 'red']
-  return [...Array(monster.value.gaugeNum).keys()].map((d) => ({
+  return [...Array(boss.value.gaugeNum).keys()].map((d) => ({
     label: `enemy's hp`,
-    borderColor: hpColor[5 - monster.value.gaugeNum + d],
+    borderColor: hpColor[5 - boss.value.gaugeNum + d],
     data: new Array<number>(datanum).fill(monster.value.hp * (d + 1)),
     pointRadius: 0,
     borderDash: [5] as number[],
@@ -182,7 +184,7 @@ const hpBar = computed(() => {
   }))
 })
 
-const chartData = computed<ChartData<'line'>>(() => ({
+const chartData = computed<ChartData>(() => ({
   labels: dmgList.value,
   datasets: [
     {
@@ -194,13 +196,13 @@ const chartData = computed<ChartData<'line'>>(() => ({
               ? dmgList.value[dmgList.value.length - 1]
               : dmgList.value.find((x) => x > props.damage)!,
           y:
-            props.damage > monster.value.hp * monster.value.gaugeNum * 1.2
-              ? monster.value.hp * monster.value.gaugeNum * 1.2
+            props.damage > monster.value.hp * boss.value.gaugeNum * 1.2
+              ? monster.value.hp * boss.value.gaugeNum * 1.2
               : props.damage
         }
       ],
       pointBackgroundColor:
-        props.damage >= monster.value.hp * monster.value.gaugeNum
+        props.damage >= monster.value.hp * boss.value.gaugeNum
           ? 'green'
           : 'gray',
       type: 'scatter' as const,
@@ -216,7 +218,7 @@ const chartData = computed<ChartData<'line'>>(() => ({
   ]
 }))
 
-const chartOption = computed<ChartOptions<'line'>>(() => ({
+const chartOption = computed<ChartOptions>(() => ({
   maintainAspectRatio: false,
   animation: false,
   plugins: {

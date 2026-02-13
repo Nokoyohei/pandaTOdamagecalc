@@ -4,7 +4,7 @@
     <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <MABuff v-model:buff="maBuffs" />
+        <BuffPanel v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <StatsTextField

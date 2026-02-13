@@ -9,7 +9,7 @@
     <FarmingMonster v-else :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <APBuff v-model:buff="apBuffs" />
+        <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <stats-text-field

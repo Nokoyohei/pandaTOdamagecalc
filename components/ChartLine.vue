@@ -1,6 +1,6 @@
 <template>
   <div :style="styles">
-    <Line :data="chartData" :options="options" />
+    <Line :data="(chartData as any)" :options="(options as any)" />
   </div>
 </template>
 
@@ -33,8 +33,8 @@ ChartJS.register(
 )
 
 defineProps<{
-  chartData: ChartData<'line'>
-  options: ChartOptions<'line'>
+  chartData: ChartData
+  options: ChartOptions
   styles?: Record<string, string>
 }>()
 </script>

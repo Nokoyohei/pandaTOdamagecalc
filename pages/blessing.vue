@@ -3,39 +3,36 @@
     <h1>Blessings</h1>
     <FarmingMonster :damage="damage" v-model:monster="monster" />
     <p class="text-center">Blessings</p>
-    <v-layout justify-center>
+    <div class="d-flex justify-center">
       <v-btn-toggle
         v-model="selectedBlessingSkills"
         multiple
-        borderless
         mandatory
-        background-color="black"
+        bg-color="black"
       >
-        <v-tooltip v-for="skill in BlessingSkills" :key="skill.name" bottom>
-          <template #activator="{on}">
-            <v-btn :value="skill.value" v-on="on">
+        <v-tooltip v-for="skill in BlessingSkills" :key="skill.name" location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <v-btn :value="skill.value" v-bind="activatorProps">
               <img :src="skill.img" />
             </v-btn>
           </template>
           <span>{{ skill.name }}</span>
         </v-tooltip>
       </v-btn-toggle>
-    </v-layout>
+    </div>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ACBuff v-model:buff="acBuffs" />
-        <LKBuff v-model:buff="lkBuffs" />
+        <BuffPanel v-model:ac-buffs="acBuffs" v-model:lk-buffs="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <StatsTextField
           v-model:input-stats="stats.ac"
-          :need-stats="resAC"
           :buffed-stats="buffedAC"
           v-model:extra-stats="extraStats.ac"
           label="AC"
-        /><StatsTextField
+        />
+        <StatsTextField
           v-model:input-stats="stats.lk"
-          :need-stats="resLK"
           :buffed-stats="buffedLK"
           v-model:extra-stats="extraStats.lk"
           label="LK"
