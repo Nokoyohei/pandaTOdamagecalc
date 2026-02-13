@@ -1,7 +1,6 @@
 [build]
-  command = "yarn generate"
-  publish = "dist"
+  command = "npx nuxi generate"
+  publish = ".output/public"
 
 [build.environment]
-  NODE_VERSION = "14"
-  PYTHON_VERSION = "3.8"
+  NODE_VERSION = "18"

@@ -1,19 +1,40 @@
-<script lang="ts">
-import { Component, Prop, mixins } from 'nuxt-property-decorator'
-import Chart from 'chart.js'
-import VueChart, { Line } from 'vue-chartjs'
-const reactiveProp = VueChart.mixins.reactiveProp
+<template>
+  <div :style="styles">
+    <Line :data="chartData" :options="options" />
+  </div>
+</template>
 
-@Component
-export default class ChartLine extends mixins(Line, reactiveProp) {
-  @Prop({ default: {} })
-  chartData!: Chart.ChartData
+<script setup lang="ts">
+import { Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  LineController,
+  ScatterController,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import type { ChartData, ChartOptions } from 'chart.js'
 
-  @Prop({ default: {} })
-  options!: Chart.ChartOptions
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  LineController,
+  ScatterController,
+  Title,
+  Tooltip,
+  Legend
+)
 
-  mounted() {
-    this.renderChart(this.chartData, this.options)
-  }
-}
+defineProps<{
+  chartData: ChartData<'line'>
+  options: ChartOptions<'line'>
+  styles?: Record<string, string>
+}>()
 </script>

@@ -1,18 +1,18 @@
 <template>
   <v-container>
     <h1>Sudden Attack</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       :damage="damage"
-      :monster.sync="monster"
+      v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
-      :debuff.sync="debuffSkills"
+      v-model:debuff="debuffSkills"
     />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ap-buff :buff.sync="APBuff" />
-        <da-buff :buff.sync="DABuff" />
-        <lk-buff :buff.sync="LKBuff" />
+        <APBuff v-model:buff="apBuffs" />
+        <DABuff v-model:buff="daBuffs" />
+        <LKBuff v-model:buff="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -20,7 +20,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="1680"
             :step="10"
@@ -30,36 +30,36 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="1680"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ap"
+        <StatsTextField
+          v-model:input-stats="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraStats.ap"
+          v-model:extra-stats="extraStats.ap"
           label="AP"
         />
-        <stats-text-field
-          :input-stats.sync="stats.da"
+        <StatsTextField
+          v-model:input-stats="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraStats.da"
+          v-model:extra-stats="extraStats.da"
           label="DA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.lk"
+        <StatsTextField
+          v-model:input-stats="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraStats.lk"
+          v-model:extra-stats="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -67,15 +67,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import ApBuff from '~/components/APBuff.vue'
-import DaBuff from '~/components/DABuff.vue'
-import LkBuff from '~/components/LKBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcSuddenAttackDamage,
   calcDamage,
@@ -86,67 +78,56 @@ import {
   calcLKBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import { skillPanel } from '~/types'
+import type { skillPanel } from '~/types'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    ApBuff,
-    DaBuff,
-    LkBuff,
-    StatsTextField,
-    DamageArea
+const { stats, extraStats, monster, monsterHP, apBuffs, daBuffs, lkBuffs, debuffSkills, buffedAP, buffedDA, buffedLK, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
+
+const localBasePower = ref(BASE_POWER.SuddenAttack)
+
+const debuffSkillsDef: skillPanel[] = [
+  {
+    value: 'ShieldBreaker',
+    name: 'Shield Breaker',
+    img: '/barrier_break.gif'
   }
+]
+
+const damage = computed(() => {
+  const suddenAttackDamage = calcSuddenAttackDamage(
+    buffedAP.value,
+    buffedDA.value,
+    buffedLK.value,
+    localBasePower.value
+  )
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    suddenAttackDamage
+  )
 })
-export default class SuddenAttack extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.SuddenAttack
 
-  debuffSkillsDef: skillPanel[] = [
-    {
-      value: 'ShieldBreaker',
-      name: 'Shield Breaker',
-      img: require('~/static/barrier_break.gif')
-    }
-  ]
+const needStats = computed(() => {
+  return calcNeedStats(
+    monsterHP.value,
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    SkillRatio.SuddenAttack(localBasePower.value),
+    buffedAP.value + (buffedDA.value + buffedLK.value) * 16,
+    0
+  )
+})
 
-  get damage() {
-    const suddenAttackDamage = calcSuddenAttackDamage(
-      this.buffedAP,
-      this.buffedDA,
-      this.buffedLK,
-      this.basePower
-    )
-    return calcDamage(
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      suddenAttackDamage
-    )
-  }
+const resAP = computed(() => {
+  return Math.ceil(needStats.value / calcAPBuffRatio(apBuffs.value))
+})
 
-  get needStats() {
-    return calcNeedStats(
-      this.monsterHP,
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      SkillRatio.SuddenAttack(this.basePower),
-      this.buffedAP + (this.buffedDA + this.buffedLK) * 16,
-      0
-    )
-  }
+const resDA = computed(() => {
+  const needDA = needStats.value / 16
+  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value))
+})
 
-  get resAP() {
-    return Math.ceil(this.needStats / calcAPBuffRatio(this.APBuff))
-  }
-
-  get resDA() {
-    const needDA = this.needStats / 16
-    return Math.ceil(needDA / calcDABuffRatio(this.DABuff))
-  }
-
-  get resLK() {
-    const needLK = this.needStats / 16
-    return Math.ceil(needLK / calcLKBuffRatio(this.LKBuff))
-  }
-}
+const resLK = computed(() => {
+  const needLK = needStats.value / 16
+  return Math.ceil(needLK / calcLKBuffRatio(lkBuffs.value))
+})
 </script>

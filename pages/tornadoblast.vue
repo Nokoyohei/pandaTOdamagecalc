@@ -1,17 +1,17 @@
 <template>
   <v-container>
     <h1>Tornado Blast</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ma-buff :buff.sync="MABuff" />
+        <MABuff v-model:buff="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <stats-text-field
-          :input-stats.sync="stats.ma"
+        <StatsTextField
+          v-model:input-stats="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraStats.ma"
+          v-model:extra-stats="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -19,13 +19,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import MaBuff from '~/components/MABuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcTornadoBlastDamage,
   calcDamage,
@@ -35,34 +29,25 @@ import {
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    MaBuff,
-    StatsTextField,
-    DamageArea
-  }
+const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
+
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.windR,
+    calcTornadoBlastDamage(buffedMA.value)
+  )
+)
+
+const resMA = computed(() => {
+  const needMA = calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.windR,
+    SkillRatio.TornadoBlast(),
+    buffedMA.value,
+    49
+  )
+  return Math.ceil(needMA / calcMABuffRatio(maBuffs.value))
 })
-export default class TornadoBlast extends BaseSkillPage {
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.windR,
-      calcTornadoBlastDamage(this.buffedMA)
-    )
-  }
-
-  get resMA() {
-    const needMA = calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.windR,
-      SkillRatio.TornadoBlast(),
-      this.buffedMA,
-      49
-    )
-
-    return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
-  }
-}
 </script>

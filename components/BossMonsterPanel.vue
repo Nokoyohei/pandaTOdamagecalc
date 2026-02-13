@@ -1,19 +1,18 @@
 <template>
   <div>
-    <v-layout column justify-center align-center>
+    <div class="d-flex flex-column justify-center">
       <v-tabs
         v-model="tab"
         fixed-tabs
         centered
         center-active
-        background-color="#424242"
+        bg-color="#424242"
         hide-slider
-        icons-and-text
-        @change="changeSelectedMonster"
+        @update:model-value="changeSelectedMonster"
       >
-        <v-tooltip v-for="content in tabContents" :key="content.title" bottom>
-          <template v-slot:activator="{ on }">
-            <v-tab v-on="on">
+        <v-tooltip v-for="content in tabContents" :key="content.title" location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <v-tab v-bind="activatorProps">
               <img
                 :src="content.srcimg"
                 :height="content.height"
@@ -24,53 +23,48 @@
           {{ content.title }}
         </v-tooltip>
       </v-tabs>
-      <v-container fluid>
-        <v-tabs-items>
-          <v-card flat>
-            <ChartLine
-              :chart-data="chartData"
-              :options="chartOption"
-              :styles="chartStyles"
-            />
-          </v-card>
-        </v-tabs-items>
-      </v-container>
-      <damage-area v-if="damageAreaMessage.length === 0" :damage="damage" />
-      <damage-area
-        v-for="(mes, i) in damageAreaMessage"
-        v-else
-        :key="mes"
-        :damage="mes"
-        :color="textColor[i]"
-      />
-      <span v-if="_debuff"
-        >debuff:
+      <v-card flat>
+        <ChartLine
+          :chart-data="chartData"
+          :options="chartOption"
+          :styles="chartStyles"
+        />
+      </v-card>
+      <div class="text-center">
+        <DamageArea v-if="damageAreaMessage.length === 0" :damage="damage" />
+        <DamageArea
+          v-for="(mes, i) in damageAreaMessage"
+          v-else
+          :key="mes"
+          :damage="mes"
+          :color="textColor[i]"
+        />
+      </div>
+      <div v-if="debuff" class="text-center">
+        debuff:
         <v-btn-toggle
-          v-model="_debuff"
+          v-model="debuff"
           multiple
           borderless
-          background-color="black"
+          bg-color="black"
         >
-          <v-tooltip v-for="skill in debuffSkillsDef" :key="skill.name" bottom>
-            <template #activator="{on}">
-              <v-btn :value="skill.value" v-on="on">
+          <v-tooltip v-for="skill in debuffSkillsDef" :key="skill.name" location="bottom">
+            <template #activator="{ props: activatorProps }">
+              <v-btn :value="skill.value" v-bind="activatorProps">
                 <img :src="skill.img" />
               </v-btn>
             </template>
             <span>{{ skill.name }}</span>
           </v-tooltip>
         </v-btn-toggle>
-      </span>
-    </v-layout>
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop, PropSync } from 'nuxt-property-decorator'
-import { ChartData, ChartOptions } from 'chart.js'
+<script setup lang="ts">
+import type { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
-import DamageArea from '~/components/DamageArea.vue'
-import ChartLine from '~/components/ChartLine.vue'
 import {
   requiem,
   bossTorrobie,
@@ -81,203 +75,177 @@ import {
   koiosu,
   chronos
 } from '~/utils/monsters'
-import { BossMonster, DebuffName, skillPanel } from '~/types'
+import type { BossMonster, DebuffName, skillPanel } from '~/types'
 
-@Component({
-  components: {
-    ChartLine,
-    DamageArea
-  }
-})
-export default class BossMonsterPanel extends Vue {
-  @Prop({ required: true })
-  damage!: number
-
-  @Prop()
+const props = defineProps<{
+  damage: number
   damageString?: string[] | string
-
-  @PropSync('monster', { required: true })
-  _monster!: BossMonster
-
-  @PropSync('debuff')
-  _debuff?: DebuffName[]
-
-  @Prop()
   debuffSkillsDef?: skillPanel[]
+}>()
 
-  datanum = 100
-  tab = 0
+const monster = defineModel<BossMonster>('monster', { required: true })
+const debuff = defineModel<DebuffName[]>('debuff')
 
-  textColor = ['pink', 'red', 'deep-orange']
+const datanum = 100
+const tab = ref(0)
 
-  tabContents = [
+const textColor = ['pink', 'red', 'deep-orange']
+
+const tabContents = [
+  {
+    srcimg: '/torobbie.gif',
+    height: '60%',
+    title: 'Torobbie',
+    alt: 'TOROBBIE'
+  },
+  {
+    srcimg: '/requiem.gif',
+    height: '140%',
+    title: 'Requiem Apocrypha',
+    alt: 'REQUIEM APOCRYPHA'
+  },
+  {
+    srcimg: '/predator.gif',
+    height: '160%',
+    title: 'Predator G',
+    alt: 'PREDATOR G'
+  },
+  {
+    srcimg: '/mong.gif',
+    height: '120%',
+    title: 'Master Mong',
+    alt: 'MASTER MONG'
+  },
+  {
+    srcimg: '/koiosu.gif',
+    height: '160%',
+    title: 'Koiosu',
+    alt: 'KOIOSU'
+  },
+  {
+    srcimg: '/madray.gif',
+    height: '160%',
+    title: 'Mad Ray',
+    alt: 'MAD RAY'
+  },
+  {
+    srcimg: '/gm_kevin.gif',
+    height: '120%',
+    title: 'GM Kevin',
+    alt: 'GM KEVIN'
+  },
+  {
+    srcimg: '/chronos.gif',
+    height: '160%',
+    title: 'Chronos',
+    alt: 'CHRONOS'
+  }
+]
+
+const damageAreaMessage = computed(() => {
+  if (props.damageString == null) return []
+  return [props.damageString].flat()
+})
+
+function changeSelectedMonster() {
+  monster.value = [
+    bossTorrobie,
+    requiem,
+    predator,
+    mong,
+    koiosu,
+    madray,
+    kevin,
+    chronos
+  ][tab.value]
+}
+
+const dmgList = computed(() =>
+  [
+    ...makeArr(
+      0,
+      monster.value.hp * monster.value.gaugeNum * 1.2,
+      datanum
+    )
+  ].map((x) => Math.round(x))
+)
+
+const hpBar = computed(() => {
+  const hpColor = ['purple', 'blue', 'green', 'yellow', 'red']
+  return [...Array(monster.value.gaugeNum).keys()].map((d) => ({
+    label: `enemy's hp`,
+    borderColor: hpColor[5 - monster.value.gaugeNum + d],
+    data: new Array<number>(datanum).fill(monster.value.hp * (d + 1)),
+    pointRadius: 0,
+    borderDash: [5] as number[],
+    tension: 0
+  }))
+})
+
+const chartData = computed<ChartData<'line'>>(() => ({
+  labels: dmgList.value,
+  datasets: [
     {
-      srcimg: require('~/static/torobbie.gif'),
-      height: '60%',
-      title: 'Torobbie',
-      alt: 'TOROBBIE'
+      label: 'your damage',
+      data: [
+        {
+          x:
+            dmgList.value.find((x) => x > props.damage) == null
+              ? dmgList.value[dmgList.value.length - 1]
+              : dmgList.value.find((x) => x > props.damage)!,
+          y:
+            props.damage > monster.value.hp * monster.value.gaugeNum * 1.2
+              ? monster.value.hp * monster.value.gaugeNum * 1.2
+              : props.damage
+        }
+      ],
+      pointBackgroundColor:
+        props.damage >= monster.value.hp * monster.value.gaugeNum
+          ? 'green'
+          : 'gray',
+      type: 'scatter' as const,
+      pointRadius: 8
     },
+    ...hpBar.value,
     {
-      srcimg: require('~/static/requiem.gif'),
-      height: '140%',
-      title: 'Requiem Apocrypha',
-      alt: 'REQUIEM APOCRYPHA'
-    },
-    {
-      srcimg: require('~/static/predator.gif'),
-      height: '160%',
-      title: 'Predator G',
-      alt: 'PREDATOR G'
-    },
-    {
-      srcimg: require('~/static/mong.gif'),
-      height: '120%',
-      title: 'Master Mong',
-      alt: 'MASTER MONG'
-    },
-    {
-      srcimg: require('~/static/koiosu.gif'),
-      height: '160%',
-      title: 'Koiosu',
-      alt: 'KOIOSU'
-    },
-    {
-      srcimg: require('~/static/madray.gif'),
-      height: '160%',
-      title: 'Mad Ray',
-      alt: 'MAD RAY'
-    },
-    {
-      srcimg: require('~/static/gm_kevin.gif'),
-      height: '120%',
-      title: 'GM Kevin',
-      alt: 'GM KEVIN'
-    },
-    {
-      srcimg: require('~/static/chronos.gif'),
-      height: '160%',
-      title: 'Chronos',
-      alt: 'CHRONOS'
+      label: 'DAMAGE',
+      data: dmgList.value,
+      pointRadius: 0,
+      borderColor: 'orange'
     }
   ]
+}))
 
-  get damageAreaMessage() {
-    if (this.damageString == null) return []
-    return [this.damageString].flat()
-  }
-
-  changeSelectedMonster() {
-    this._monster = [
-      bossTorrobie,
-      requiem,
-      predator,
-      mong,
-      koiosu,
-      madray,
-      kevin,
-      chronos
-    ][this.tab]
-  }
-
-  // Limit the drawing range to 0-monster.hp*1.2 so that the drawing of the graph is not corrupted
-  get dmgList() {
-    return [
-      ...makeArr(
-        0,
-        this._monster.hp * this._monster.gaugeNum * 1.2,
-        this.datanum
-      )
-    ].map((x) => Math.round(x))
-  }
-
-  get hpBar() {
-    const hpColor = ['purple', 'blue', 'green', 'yellow', 'red']
-    return [...Array(this._monster.gaugeNum).keys()].map((d) => {
-      return {
-        label: `enemy's hp`,
-        borderColor: hpColor[5 - this._monster.gaugeNum + d],
-        data: new Array<number>(this.datanum).fill(this._monster.hp * (d + 1)),
-        radius: 0,
-        borderDash: [5],
-        tension: 0
-      }
-    })
-  }
-
-  get chartData(): ChartData {
-    return {
-      labels: this.dmgList,
-      datasets: [
-        {
-          label: 'your damage',
-          // scatter
-          data: [
-            {
-              // If you set a value that is not in dmgList, the graph will be corrupted, so set the value closest to the current damage as x
-              x:
-                this.dmgList.find((x) => x > this.damage) == null
-                  ? this.dmgList[this.dmgList.length - 1]
-                  : this.dmgList.find((x) => x > this.damage),
-              // Set the maximum value to monster.hp*1.2 because the graph will be corrupted if damage is too large
-              y:
-                this.damage > this._monster.hp * this._monster.gaugeNum * 1.2
-                  ? this._monster.hp * this._monster.gaugeNum * 1.2
-                  : this.damage
-            }
-          ],
-          // For usability, the color of the pointer will be green when damage is larger than monster.hp
-          pointBackgroundColor:
-            this.damage >= this._monster.hp * this._monster.gaugeNum
-              ? 'green'
-              : 'gray',
-          type: 'scatter',
-          radius: 8
-        },
-        ...this.hpBar,
-        {
-          // damage line (linear line)
-          label: 'DAMAGE',
-          data: this.dmgList,
-          radius: 0,
-          borderColor: 'orange'
-        }
-      ]
-    }
-  }
-
-  private chartOption: ChartOptions = {
-    maintainAspectRatio: false,
+const chartOption = computed<ChartOptions<'line'>>(() => ({
+  maintainAspectRatio: false,
+  animation: false,
+  plugins: {
     legend: {
       display: false
     },
-    tooltips: {
+    tooltip: {
       callbacks: {
-        title: (_tooltipItem, _chart) => 'your damage',
-        label: (_tooltipItem, _chart) => this.damage.toLocaleString()
+        title: () => 'your damage',
+        label: () => props.damage.toLocaleString()
       }
+    }
+  },
+  scales: {
+    x: {
+      display: false
     },
-    scales: {
-      xAxes: [
-        {
-          display: false
-        }
-      ],
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true
-          }
-        }
-      ]
+    y: {
+      beginAtZero: true
     }
   }
+}))
 
-  private chartStyles = {
-    height: '100%',
-    width: '100%'
-  }
+const chartStyles = {
+  height: '400px',
+  width: '100%'
 }
 </script>
+
 <style scoped>
 .v-tab--active {
   background: #616161;

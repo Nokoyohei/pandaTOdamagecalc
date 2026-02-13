@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <h1>Staff of Agony</h1>
-    <boss-monster-panel :damage="damage" :monster.sync="monster" />
+    <BossMonsterPanel :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ma-buff :buff.sync="MABuff" />
-        <dark-load-buff :buff.sync="DLBuff" />
+        <MABuff v-model:buff="maBuffs" />
+        <DarkLoadBuff v-model:buff="dlBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -13,7 +13,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="130"
             :step="1"
@@ -23,26 +23,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="130"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ma"
+        <StatsTextField
+          v-model:input-stats="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraStats.ma"
+          v-model:extra-stats="extraStats.ma"
           label="MA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.dark"
+        <StatsTextField
+          v-model:input-stats="stats.dark"
           :need-stats="resDark"
           label="DARK attr"
         />
@@ -51,14 +51,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
-import MaBuff from '~/components/MABuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcDarkCommandoDamage,
   calcStaffOfAgony,
@@ -70,97 +63,87 @@ import {
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    DarkLoadBuff,
-    MaBuff,
-    StatsTextField,
-    DamageArea
-  }
-})
-export default class StaffOfAgony extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.StaffOfAgony
+const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
-  get damage() {
-    const darkCommandoDamage = this.DLBuff.includes('darkCommando')
-      ? calcDarkCommandoDamage(this.buffedMA)
-      : 0
-    const staffOfAgonyDamage = calcStaffOfAgony(this.buffedMA, this.stats.dark, this.basePower)
+const localBasePower = ref(BASE_POWER.StaffOfAgony)
 
-    const buff = this.DLBuff.includes('bloodTestament')
-      ? 1 + BloodTestamentBuff
-      : 1
+const damage = computed(() => {
+  const darkCommandoDamage = dlBuffs.value.includes('darkCommando')
+    ? calcDarkCommandoDamage(buffedMA.value)
+    : 0
+  const staffOfAgonyDamage = calcStaffOfAgony(buffedMA.value, stats.value.dark, localBasePower.value)
 
-    return (
-      calcDamage(
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster.darkR,
-        staffOfAgonyDamage,
-        buff
-      ) +
-      calcDamage(
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster.darkR,
-        darkCommandoDamage,
-        buff
-      )
-    )
-  }
+  const buff = dlBuffs.value.includes('bloodTestament')
+    ? 1 + BloodTestamentBuff
+    : 1
 
-  get resMA() {
-    const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.StaffOfAgony(this.stats.dark, this.basePower) + SkillRatio.DarkCommando()
-      : SkillRatio.StaffOfAgony(this.stats.dark, this.basePower)
-    const constStats = 49
-    const monsterDef =
-      calcMonsterDef(this.monster, 'magic') *
-      (this.DLBuff.includes('darkCommando') ? 2 : 1)
-
-    const buff = this.DLBuff.includes('bloodTestament')
-      ? 1 + BloodTestamentBuff
-      : 1
-
-    const needMA = calcNeedStats(
-      this.monsterHP,
-      monsterDef,
-      this.monster.darkR,
-      attackRatio,
-      this.buffedMA,
-      constStats,
+  return (
+    calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.darkR,
+      staffOfAgonyDamage,
+      buff
+    ) +
+    calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.darkR,
+      darkCommandoDamage,
       buff
     )
+  )
+})
 
-    return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
-  }
+const resMA = computed(() => {
+  const attackRatio = dlBuffs.value.includes('darkCommando')
+    ? SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value) + SkillRatio.DarkCommando()
+    : SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value)
+  const constStats = 49
+  const monsterDef =
+    calcMonsterDef(monster.value, 'magic') *
+    (dlBuffs.value.includes('darkCommando') ? 2 : 1)
 
-  get resDark() {
-    const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.StaffOfAgony(this.stats.dark, this.basePower) + SkillRatio.DarkCommando()
-      : SkillRatio.StaffOfAgony(this.stats.dark, this.basePower)
-    const constStats = 49
-    const monsterDef =
-      calcMonsterDef(this.monster, 'magic') *
-      (this.DLBuff.includes('darkCommando') ? 2 : 1)
+  const buff = dlBuffs.value.includes('bloodTestament')
+    ? 1 + BloodTestamentBuff
+    : 1
 
-    const buff = this.DLBuff.includes('bloodTestament')
-      ? 1 + BloodTestamentBuff
-      : 1
+  const needMA = calcNeedStats(
+    monsterHP.value,
+    monsterDef,
+    monster.value.darkR,
+    attackRatio,
+    buffedMA.value,
+    constStats,
+    buff
+  )
 
-    return Math.ceil(
-      (calcNeedStats(
-        this.monsterHP,
-        monsterDef,
-        this.monster.darkR,
-        this.buffedMA - constStats,
-        attackRatio,
-        0,
-        buff
-      ) *
-        100) /
-        30
-    )
-  }
-}
+  return Math.ceil(needMA / calcMABuffRatio(maBuffs.value))
+})
+
+const resDark = computed(() => {
+  const attackRatio = dlBuffs.value.includes('darkCommando')
+    ? SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value) + SkillRatio.DarkCommando()
+    : SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value)
+  const constStats = 49
+  const monsterDef =
+    calcMonsterDef(monster.value, 'magic') *
+    (dlBuffs.value.includes('darkCommando') ? 2 : 1)
+
+  const buff = dlBuffs.value.includes('bloodTestament')
+    ? 1 + BloodTestamentBuff
+    : 1
+
+  return Math.ceil(
+    (calcNeedStats(
+      monsterHP.value,
+      monsterDef,
+      monster.value.darkR,
+      buffedMA.value - constStats,
+      attackRatio,
+      0,
+      buff
+    ) *
+      100) /
+      30
+  )
+})
 </script>

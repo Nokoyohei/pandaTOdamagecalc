@@ -1,17 +1,17 @@
 <template>
   <v-container>
     <h1>Gravity Crash</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       v-if="mode === 'boss'"
       :damage="damage"
-      :monster.sync="monster"
-    ></boss-monster-panel>
-    <farming-monster v-else :damage="damage" :monster.sync="monster" />
+      v-model:monster="monster"
+    />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ma-buff :buff.sync="MABuff" />
-        <dark-load-buff :buff.sync="DLBuff" />
+        <MABuff v-model:buff="maBuffs" />
+        <dark-load-buff v-model:buff="dlBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -19,7 +19,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="1800"
             :step="10"
@@ -29,22 +29,22 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="1800"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
         <stats-text-field
-          :input-stats.sync="stats.ma"
+          v-model:input-stats="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraStats.ma"
+          v-model:extra-stats="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -52,14 +52,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import DarkLoadBuff from '~/components/DarkLoadBuff.vue'
-import MaBuff from '~/components/MABuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcDarkCommandoDamage,
   calcGravityCrashDamage,
@@ -71,71 +64,62 @@ import {
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    BossMonsterPanel,
-    DarkLoadBuff,
-    MaBuff,
-    StatsTextField
+const { mode, monster, stats, extraStats, maBuffs, dlBuffs, buffedMA, monsterHP } =
+  useSkillPage({ skillMode: 'dual' })
+
+const localBasePower = ref(BASE_POWER.GravityCrash)
+
+const damage = computed(() => {
+  let darkCommandoDamage = dlBuffs.value.includes('darkCommando')
+    ? calcDarkCommandoDamage(buffedMA.value)
+    : 0
+  let gravityCrashDamage = calcGravityCrashDamage(buffedMA.value, localBasePower.value)
+  if (dlBuffs.value.includes('bloodTestament')) {
+    darkCommandoDamage = Math.round(
+      darkCommandoDamage * (1 + BloodTestamentBuff)
+    )
+    gravityCrashDamage = Math.round(
+      gravityCrashDamage * (1 + BloodTestamentBuff)
+    )
   }
+
+  return (
+    calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.darkR,
+      gravityCrashDamage
+    ) +
+    calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.darkR,
+      darkCommandoDamage
+    )
+  )
 })
-export default class GravityCrash extends BaseSkillPage {
-  get skillMode() { return 'dual' as const }
-  basePower: number = BASE_POWER.GravityCrash
 
-  get damage() {
-    let darkCommandoDamage = this.DLBuff.includes('darkCommando')
-      ? calcDarkCommandoDamage(this.buffedMA)
-      : 0
-    let gravityCrashDamage = calcGravityCrashDamage(this.buffedMA, this.basePower)
-    if (this.DLBuff.includes('bloodTestament')) {
-      darkCommandoDamage = Math.round(
-        darkCommandoDamage * (1 + BloodTestamentBuff)
-      )
-      gravityCrashDamage = Math.round(
-        gravityCrashDamage * (1 + BloodTestamentBuff)
-      )
-    }
+const resMA = computed(() => {
+  const attackRatio = dlBuffs.value.includes('darkCommando')
+    ? SkillRatio.GravityCrash(localBasePower.value) + SkillRatio.DarkCommando()
+    : SkillRatio.GravityCrash(localBasePower.value)
+  const constStats = 49
+  const monsterDef =
+    calcMonsterDef(monster.value, 'magic') *
+    (dlBuffs.value.includes('darkCommando') ? 2 : 1)
 
-    return (
-      calcDamage(
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster.darkR,
-        gravityCrashDamage
-      ) +
-      calcDamage(
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster.darkR,
-        darkCommandoDamage
-      )
-    )
-  }
+  const buff = dlBuffs.value.includes('bloodTestament')
+    ? 1 + BloodTestamentBuff
+    : 1
 
-  get resMA() {
-    const attackRatio = this.DLBuff.includes('darkCommando')
-      ? SkillRatio.GravityCrash(this.basePower) + SkillRatio.DarkCommando()
-      : SkillRatio.GravityCrash(this.basePower)
-    const constStats = 49
-    const monsterDef =
-      calcMonsterDef(this.monster, 'magic') *
-      (this.DLBuff.includes('darkCommando') ? 2 : 1)
+  const needMA = calcNeedStats(
+    monsterHP.value,
+    monsterDef,
+    monster.value.darkR,
+    attackRatio,
+    buffedMA.value,
+    constStats,
+    buff
+  )
 
-    const buff = this.DLBuff.includes('bloodTestament')
-      ? 1 + BloodTestamentBuff
-      : 1
-
-    const needMA = calcNeedStats(
-      this.monsterHP,
-      monsterDef,
-      this.monster.darkR,
-      attackRatio,
-      this.buffedMA,
-      constStats,
-      buff
-    )
-
-    return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
-  }
-}
+  return Math.ceil(needMA / calcMABuffRatio(maBuffs.value))
+})
 </script>

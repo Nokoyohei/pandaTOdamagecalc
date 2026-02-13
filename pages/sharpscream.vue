@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <h1>Sharp Scream</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ap-buff :buff.sync="APBuff" />
-        <hv-buff :buff.sync="HVBuff" />
+        <APBuff v-model:buff="apBuffs" />
+        <HVBuff v-model:buff="hvBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -13,7 +13,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="12"
             :step="0.1"
@@ -23,29 +23,29 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="1020"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ap"
+        <StatsTextField
+          v-model:input-stats="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraStats.ap"
+          v-model:extra-stats="extraStats.ap"
           label="AP"
         />
-        <stats-text-field
-          :input-stats.sync="stats.hv"
+        <StatsTextField
+          v-model:input-stats="stats.hv"
           :need-stats="resHV"
           :buffed-stats="buffedHV"
-          :extra-stats.sync="extraStats.hv"
+          v-model:extra-stats="extraStats.hv"
           label="HV"
         />
       </v-col>
@@ -53,13 +53,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import ApBuff from '~/components/APBuff.vue'
-import HvBuff from '~/components/HVBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcSharpScreamDamage,
   calcDamage,
@@ -70,43 +64,35 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    ApBuff,
-    HvBuff,
-    StatsTextField
-  }
+const { stats, extraStats, monster, apBuffs, hvBuffs, buffedAP, buffedHV } = useSkillPage()
+
+const localBasePower = ref(BASE_POWER.SharpScream)
+
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'physical'),
+    monster.value.physicalR,
+    calcSharpScreamDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+  )
+)
+
+const needStats = computed(() =>
+  calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'physical'),
+    monster.value.physicalR,
+    SkillRatio.SharpScream(localBasePower.value),
+    buffedAP.value + buffedHV.value * 16,
+    0
+  )
+)
+
+const resAP = computed(() =>
+  Math.ceil(needStats.value / calcAPBuffRatio(apBuffs.value))
+)
+
+const resHV = computed(() => {
+  const needHV = needStats.value / 16
+  return Math.ceil(needHV / calcHVBuffRatio(hvBuffs.value))
 })
-export default class SharpScream extends BaseSkillPage {
-  basePower: number = BASE_POWER.SharpScream
-
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
-      calcSharpScreamDamage(this.buffedAP, this.buffedHV, this.basePower)
-    )
-  }
-
-  get needStats() {
-    return calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
-      SkillRatio.SharpScream(this.basePower),
-      this.buffedAP + this.buffedHV * 16,
-      0
-    )
-  }
-
-  get resAP() {
-    return Math.ceil(this.needStats / calcAPBuffRatio(this.APBuff))
-  }
-
-  get resHV() {
-    const needHV = this.needStats / 16
-    return Math.ceil(needHV / calcHVBuffRatio(this.HVBuff))
-  }
-}
 </script>

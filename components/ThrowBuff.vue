@@ -1,9 +1,9 @@
 <template>
   <v-row dense>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="precisePitch">
+      <v-switch v-model="buff" value="precisePitch">
         <template #label>
-          <img src="~/static/Bribe.gif" />
+          <img src="/Bribe.gif" />
           Precise Pitch
         </template>
       </v-switch>
@@ -11,13 +11,8 @@
   </v-row>
 </template>
 
-<script lang="ts">
-import { Component, Vue, PropSync } from 'nuxt-property-decorator'
-import { ThrowBuffName } from '~/types'
+<script setup lang="ts">
+import type { ThrowBuffName } from '~/types'
 
-@Component({})
-export default class ThrowBuff extends Vue {
-  @PropSync('buff', { required: true })
-  _buff!: ThrowBuffName[]
-}
+const buff = defineModel<ThrowBuffName[]>('buff', { required: true })
 </script>

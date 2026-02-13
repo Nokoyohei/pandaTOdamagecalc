@@ -1,5 +1,5 @@
 import BuffRatio from '~/utils/buffRatio'
-import { Monster, DebuffName, BossMonster, Status, Attributes } from '~/types'
+import type { Monster, DebuffName, BossMonster, Status, Attributes } from '~/types'
 import SkillRatio from '~/utils/skillRatio'
 
 export const initStatus = (): Status & Attributes => {

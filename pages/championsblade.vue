@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <h1>Champion's Blade</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ap-buff :buff.sync="APBuff" />
+        <APBuff v-model:buff="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -12,7 +12,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="980"
             :step="10"
@@ -22,26 +22,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="980"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ap"
+        <StatsTextField
+          v-model:input-stats="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraStats.ap"
+          v-model:extra-stats="extraStats.ap"
           label="AP"
         />
-        <stats-text-field
-          :input-stats.sync="stats.fire"
+        <StatsTextField
+          v-model:input-stats="stats.fire"
           :need-stats="resFire"
           label="Fire Attr"
         />
@@ -50,12 +50,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import ApBuff from '~/components/APBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcChampionsBladeDamage,
   calcDamage,
@@ -65,48 +60,40 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    ApBuff,
-    StatsTextField
-  }
+const { stats, extraStats, monster, apBuffs, buffedAP } = useSkillPage()
+
+const localBasePower = ref(BASE_POWER.ChampionsBlade)
+
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'physical'),
+    monster.value.physicalR,
+    calcChampionsBladeDamage(buffedAP.value, stats.value.fire, localBasePower.value)
+  )
+)
+
+const resAP = computed(() => {
+  const needAP = calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'physical'),
+    monster.value.physicalR,
+    SkillRatio.ChampionsBlade(stats.value.fire, localBasePower.value),
+    buffedAP.value,
+    0
+  )
+  return Math.ceil(needAP / calcAPBuffRatio(apBuffs.value))
 })
-export default class ChampionsBlade extends BaseSkillPage {
-  basePower: number = BASE_POWER.ChampionsBlade
 
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
-      calcChampionsBladeDamage(this.buffedAP, this.stats.fire, this.basePower)
-    )
-  }
-
-  get resAP() {
-    const needAP = calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
-      SkillRatio.ChampionsBlade(this.stats.fire, this.basePower),
-      this.buffedAP,
+const resFire = computed(() =>
+  Math.ceil(
+    calcNeedStats(
+      monster.value.hp,
+      calcMonsterDef(monster.value, 'physical'),
+      monster.value.physicalR,
+      buffedAP.value,
+      SkillRatio.ChampionsBlade(stats.value.fire, localBasePower.value),
       0
-    )
-
-    return Math.ceil(needAP / calcAPBuffRatio(this.APBuff))
-  }
-
-  get resFire() {
-    return Math.ceil(
-      calcNeedStats(
-        this.monster.hp,
-        calcMonsterDef(this.monster, 'physical'),
-        this.monster.physicalR,
-        this.buffedAP,
-        SkillRatio.ChampionsBlade(this.stats.fire, this.basePower),
-        0
-      ) * 100
-    )
-  }
-}
+    ) * 100
+  )
+)
 </script>

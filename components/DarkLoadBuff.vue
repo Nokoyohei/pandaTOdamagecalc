@@ -1,17 +1,17 @@
 <template>
   <v-row>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="darkCommando">
+      <v-switch v-model="buff" value="darkCommando">
         <template #label>
-          <img src="~/static/darkcommando.gif" />
+          <img src="/darkcommando.gif" />
           Dark Commando
         </template>
       </v-switch>
     </v-col>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="bloodTestament">
+      <v-switch v-model="buff" value="bloodTestament">
         <template #label>
-          <img src="~/static/bloodTestament.gif" />
+          <img src="/bloodTestament.gif" />
           Blood Testament
         </template>
       </v-switch>
@@ -19,13 +19,8 @@
   </v-row>
 </template>
 
-<script lang="ts">
-import { Component, Vue, PropSync } from 'nuxt-property-decorator'
-import { DLBuffName } from '~/types'
+<script setup lang="ts">
+import type { DLBuffName } from '~/types'
 
-@Component({})
-export default class DarkLoadBuff extends Vue {
-  @PropSync('buff', { required: true })
-  _buff!: DLBuffName[]
-}
+const buff = defineModel<DLBuffName[]>('buff', { required: true })
 </script>

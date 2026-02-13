@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <h1>Shooting Spree</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ac-buff :buff.sync="ACBuff" />
+        <ACBuff v-model:buff="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -12,7 +12,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="480"
             :step="10"
@@ -22,26 +22,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="480"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ac"
+        <StatsTextField
+          v-model:input-stats="stats.ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
-          :extra-stats.sync="extraStats.ac"
+          v-model:extra-stats="extraStats.ac"
           label="AC"
         />
-        <stats-text-field
-          :input-stats.sync="stats.gunAP"
+        <StatsTextField
+          v-model:input-stats="stats.gunAP"
           :need-stats="0"
           label="GunAP"
         />
@@ -50,12 +50,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import AcBuff from '~/components/ACBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcShootingSpreeDamage,
   calcDamage,
@@ -65,41 +60,32 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    AcBuff,
-    StatsTextField
-  }
-})
-export default class ShootingSpree extends BaseSkillPage {
-  basePower: number = BASE_POWER.ShootingSpree
+const { stats, extraStats, monster, acBuffs, buffedAC } = useSkillPage()
 
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'gun'),
-      this.monster.gunR,
-      calcShootingSpreeDamage(this.buffedAC * 20 + this.stats.gunAP, this.basePower)
-    )
-  }
+const localBasePower = ref(BASE_POWER.ShootingSpree)
 
-  get needStats() {
-    return calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'gun'),
-      this.monster.gunR,
-      SkillRatio.ShootingSpree(this.basePower),
-      this.buffedAC * 20 + this.stats.gunAP,
-      48 * 20
-    )
-  }
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'gun'),
+    monster.value.gunR,
+    calcShootingSpreeDamage(buffedAC.value * 20 + stats.value.gunAP, localBasePower.value)
+  )
+)
 
-  get resAC() {
-    return Math.ceil(this.needStats / calcACBuffRatio(this.ACBuff) / 20)
-  }
+const needStats = computed(() =>
+  calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'gun'),
+    monster.value.gunR,
+    SkillRatio.ShootingSpree(localBasePower.value),
+    buffedAC.value * 20 + stats.value.gunAP,
+    48 * 20
+  )
+)
 
-  get resGunAP() {
-    return this.needStats
-  }
-}
+const resAC = computed(() =>
+  Math.ceil(needStats.value / calcACBuffRatio(acBuffs.value) / 20)
+)
+
+const resGunAP = computed(() => needStats.value)
 </script>

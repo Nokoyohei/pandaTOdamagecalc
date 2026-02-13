@@ -1,38 +1,25 @@
 <template>
   <p>
     <span
-      :class="
-        `font-weight-bold text-center ${textColor}--text text--lighten-2 headline`
-      "
+      :class="`font-weight-bold text-center text-${textColor}-lighten-2 text-h5`"
     >
       {{ damage.toLocaleString() }}
     </span>
     <span
-      :class="
-        `font-weight-bold text-center ${textColor}--text text--lighten-2 headline `
-      "
+      :class="`font-weight-bold text-center text-${textColor}-lighten-2 text-h5`"
     >
       damage!
     </span>
   </p>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-
-@Component({})
-export default class DamageArea extends Vue {
-  @Prop({ required: true })
-  damage!: string
-
-  @Prop()
+<script setup lang="ts">
+const props = defineProps<{
+  damage: string | number
   color?: string
+}>()
 
-  get textColor() {
-    if (this.color == null) return 'red'
-    return this.color
-  }
-}
+const textColor = computed(() => props.color ?? 'red')
 </script>
 
 <style scoped>

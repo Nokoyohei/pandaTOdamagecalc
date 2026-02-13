@@ -1,4 +1,4 @@
-import { Monster, BossMonster } from '~/types'
+import type { Monster, BossMonster } from '~/types'
 
 const torobbie: Monster = {
   hp: 100000000,

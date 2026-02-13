@@ -1,31 +1,26 @@
 <template>
   <v-row dense>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="pumpingHeart">
+      <v-switch v-model="buff" value="pumpingHeart">
         <template #label>
-          <img src="~/static/bh.gif" />
+          <img src="/bh.gif" />
           Pumping Heart
         </template>
       </v-switch>
     </v-col>
     <v-col cols="6" md="5">
-      <v-switch v-model="_buff" value="adrenaline"
-        ><template #label>
-          <img src="~/static/adrenaline.gif" />
+      <v-switch v-model="buff" value="adrenaline">
+        <template #label>
+          <img src="/adrenaline.gif" />
           Adrenaline
-        </template></v-switch
-      >
+        </template>
+      </v-switch>
     </v-col>
   </v-row>
 </template>
 
-<script lang="ts">
-import { Component, Vue, PropSync } from 'nuxt-property-decorator'
-import { APBuffName } from '~/types'
+<script setup lang="ts">
+import type { APBuffName } from '~/types'
 
-@Component({})
-export default class ApBuff extends Vue {
-  @PropSync('buff', { required: true })
-  _buff!: APBuffName[]
-}
+const buff = defineModel<APBuffName[]>('buff', { required: true })
 </script>

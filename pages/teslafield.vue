@@ -1,23 +1,23 @@
 <template>
   <v-container>
     <h1>Tesla Field</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ma-buff :buff.sync="MABuff" />
+        <MABuff v-model:buff="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <stats-text-field
-          :input-stats.sync="stats.ma"
+        <StatsTextField
+          v-model:input-stats="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraStats.ma"
+          v-model:extra-stats="extraStats.ma"
           label="MA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.mp"
+        <StatsTextField
+          v-model:input-stats="stats.mp"
           :need-stats="resMP"
-          :extra-stats.sync="extraStats.mp"
+          v-model:extra-stats="extraStats.mp"
           label="MAX MP"
         />
       </v-col>
@@ -25,13 +25,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import MaBuff from '~/components/MABuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcTeslaFieldDamage,
   calcDamage,
@@ -41,44 +35,33 @@ import {
 } from '~/utils/calc'
 import SkillRatio from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    MaBuff,
-    StatsTextField,
-    DamageArea
-  }
-})
-export default class TeslaField extends BaseSkillPage {
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.elecR,
-      calcTeslaFieldDamage(this.buffedMA, this.stats.mp)
-    )
-  }
+const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
 
-  get resStat() {
-    return calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.elecR,
-      SkillRatio.TeslaField(),
-      this.buffedMA + Math.floor(this.stats.mp / 120),
-      0
-    )
-  }
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.elecR,
+    calcTeslaFieldDamage(buffedMA.value, stats.value.mp)
+  )
+)
 
-  get resMA() {
-    return Math.ceil(this.resStat / calcMABuffRatio(this.MABuff))
-  }
+const resStat = computed(() =>
+  calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.elecR,
+    SkillRatio.TeslaField(),
+    buffedMA.value + Math.floor(stats.value.mp / 120),
+    0
+  )
+)
 
-  get resMP() {
-    // Round to the nearest multiple of 120
-    return (
-      Math.ceil((this.resStat * 120 + this.stats.mp) / 120) * 120 -
-      this.stats.mp
-    )
-  }
-}
+const resMA = computed(() =>
+  Math.ceil(resStat.value / calcMABuffRatio(maBuffs.value))
+)
+
+const resMP = computed(() =>
+  Math.ceil((resStat.value * 120 + stats.value.mp) / 120) * 120 -
+  stats.value.mp
+)
 </script>

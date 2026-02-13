@@ -1,15 +1,15 @@
 <template>
   <v-container>
     <h1>Lucky Fist</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       :damage="damage"
-      :monster.sync="monster"
+      v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
-      :debuff.sync="debuffSkills"
+      v-model:debuff="debuffSkills"
     />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <lk-buff :buff.sync="LKBuff" />
+        <LKBuff v-model:buff="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -17,7 +17,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="880"
             :step="10"
@@ -27,22 +27,22 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="880"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.lk"
+        <StatsTextField
+          v-model:input-stats="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraStats.lk"
+          v-model:extra-stats="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -50,13 +50,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import LkBuff from '~/components/LKBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcLuckyFistDamage,
   calcDamage,
@@ -66,45 +60,36 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    LkBuff,
-    StatsTextField,
-    DamageArea
+const { stats, extraStats, monster, monsterHP, lkBuffs, debuffSkills, buffedLK, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
+
+const localBasePower = ref(BASE_POWER.LuckyFist)
+
+const debuffSkillsDef = [
+  {
+    value: 'ShieldBreaker',
+    name: 'Shield Breaker',
+    img: '/barrier_break.gif'
   }
+]
+
+const damage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    calcLuckyFistDamage(monster.value.hp, buffedLK.value, localBasePower.value)
+  )
 })
-export default class LuckyFist extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.LuckyFist
 
-  debuffSkillsDef = [
-    {
-      value: 'ShieldBreaker',
-      name: 'Shield Breaker',
-      img: require('~/static/barrier_break.gif')
-    }
-  ]
+const resLK = computed(() => {
+  const needLK = calcNeedStats(
+    monsterHP.value,
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    SkillRatio.LuckyFist(localBasePower.value),
+    monster.value.hp + buffedLK.value * 80,
+    0
+  )
 
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      calcLuckyFistDamage(this.monster.hp, this.buffedLK, this.basePower)
-    )
-  }
-
-  get resLK() {
-    const needLK = calcNeedStats(
-      this.monsterHP,
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      SkillRatio.LuckyFist(this.basePower),
-      this.monster.hp + this.buffedLK * 80,
-      0
-    )
-
-    return Math.ceil(needLK / calcLKBuffRatio(this.LKBuff) / 80)
-  }
-}
+  return Math.ceil(needLK / calcLKBuffRatio(lkBuffs.value) / 80)
+})
 </script>

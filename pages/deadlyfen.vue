@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <h1>Deadly Fen</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ma-buff :buff.sync="MABuff" />
-        <lk-buff :buff.sync="LKBuff" />
+        <MABuff v-model:buff="maBuffs" />
+        <LKBuff v-model:buff="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -13,7 +13,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="740"
             :step="10"
@@ -23,29 +23,29 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="740"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ma"
+        <StatsTextField
+          v-model:input-stats="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraStats.ma"
+          v-model:extra-stats="extraStats.ma"
           label="MA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.lk"
+        <StatsTextField
+          v-model:input-stats="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraStats.lk"
+          v-model:extra-stats="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -53,14 +53,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import MaBuff from '~/components/MABuff.vue'
-import LkBuff from '~/components/LKBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcDeadlyFenDamage,
   calcDamage,
@@ -71,43 +64,34 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    MaBuff,
-    LkBuff,
-    StatsTextField,
-    DamageArea
-  }
-})
-export default class DeadlyFen extends BaseSkillPage {
-  basePower: number = BASE_POWER.DeadlyFen
+const { stats, extraStats, monster, maBuffs, lkBuffs, buffedMA, buffedLK } = useSkillPage()
 
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.earthR,
-      calcDeadlyFenDamage(this.buffedMA, this.buffedLK, this.basePower)
-    )
-  }
+const localBasePower = ref(BASE_POWER.DeadlyFen)
 
-  get resStat() {
-    return calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.earthR,
-      SkillRatio.DeadlyFen(this.basePower),
-      this.buffedMA + this.buffedLK,
-      25
-    )
-  }
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.earthR,
+    calcDeadlyFenDamage(buffedMA.value, buffedLK.value, localBasePower.value)
+  )
+)
 
-  get resMA() {
-    return Math.ceil(this.resStat / calcMABuffRatio(this.MABuff))
-  }
+const resStat = computed(() =>
+  calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.earthR,
+    SkillRatio.DeadlyFen(localBasePower.value),
+    buffedMA.value + buffedLK.value,
+    25
+  )
+)
 
-  get resLK() {
-    return Math.ceil(this.resStat / calcLKBuffRatio(this.LKBuff))
-  }
-}
+const resMA = computed(() =>
+  Math.ceil(resStat.value / calcMABuffRatio(maBuffs.value))
+)
+
+const resLK = computed(() =>
+  Math.ceil(resStat.value / calcLKBuffRatio(lkBuffs.value))
+)
 </script>

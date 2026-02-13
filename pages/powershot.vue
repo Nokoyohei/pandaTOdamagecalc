@@ -1,15 +1,15 @@
 <template>
   <v-container>
     <h1>Power Shot</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       :damage="damage"
-      :monster.sync="monster"
+      v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
-      :debuff.sync="debuffSkills"
-    ></boss-monster-panel>
+      v-model:debuff="debuffSkills"
+    ></BossMonsterPanel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ac-buff :buff.sync="ACBuff" />
+        <ACBuff v-model:buff="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -17,7 +17,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="5000"
             :step="10"
@@ -27,26 +27,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="600"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ac"
+        <StatsTextField
+          v-model:input-stats="stats.ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
-          :extra-stats.sync="extraStats.ac"
+          v-model:extra-stats="extraStats.ac"
           label="AC"
         />
-        <stats-text-field
-          :input-stats.sync="stats.gunAP"
+        <StatsTextField
+          v-model:input-stats="stats.gunAP"
           :need-stats="0"
           label="GunAP"
         />
@@ -55,12 +55,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import AcBuff from '~/components/ACBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcPowerShotDamage,
   calcDamage,
@@ -70,50 +65,42 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    AcBuff,
-    StatsTextField
+const { stats, extraStats, monster, monsterHP, acBuffs, debuffSkills, buffedAC, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
+
+const localBasePower = ref(BASE_POWER.PowerShot)
+
+const debuffSkillsDef = [
+  {
+    value: 'ShieldBreaker',
+    name: 'Shield Breaker',
+    img: '/barrier_break.gif'
   }
+]
+
+const damage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(monster.value, 'gun'),
+    debuffedMonster.value.gunR,
+    calcPowerShotDamage(buffedAC.value * 20 + stats.value.gunAP, localBasePower.value)
+  )
 })
-export default class PowerShot extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.PowerShot
 
-  debuffSkillsDef = [
-    {
-      value: 'ShieldBreaker',
-      name: 'Shield Breaker',
-      img: require('~/static/barrier_break.gif')
-    }
-  ]
+const needStats = computed(() => {
+  return calcNeedStats(
+    monsterHP.value,
+    calcMonsterDef(monster.value, 'gun'),
+    debuffedMonster.value.gunR,
+    SkillRatio.PowerShot(localBasePower.value),
+    buffedAC.value * 20 + stats.value.gunAP,
+    48 * 20
+  )
+})
 
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'gun'),
-      this.debuffedMonster.gunR,
-      calcPowerShotDamage(this.buffedAC * 20 + this.stats.gunAP, this.basePower)
-    )
-  }
+const resAC = computed(() => {
+  return Math.ceil(needStats.value / calcACBuffRatio(acBuffs.value) / 20)
+})
 
-  get needStats() {
-    return calcNeedStats(
-      this.monsterHP,
-      calcMonsterDef(this.monster, 'gun'),
-      this.debuffedMonster.gunR,
-      SkillRatio.PowerShot(this.basePower),
-      this.buffedAC * 20 + this.stats.gunAP,
-      48 * 20
-    )
-  }
-
-  get resAC() {
-    return Math.ceil(this.needStats / calcACBuffRatio(this.ACBuff) / 20)
-  }
-
-  get resGunAP() {
-    return this.needStats
-  }
-}
+const resGunAP = computed(() => {
+  return needStats.value
+})
 </script>

@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <h1>Fan of Knives</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <da-buff :buff.sync="DABuff" />
-        <throw-buff :buff.sync="ThrowBuff" />
+        <DABuff v-model:buff="daBuffs" />
+        <ThrowBuff v-model:buff="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -13,7 +13,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="120"
             :step="1"
@@ -23,26 +23,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="1200"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.da"
+        <StatsTextField
+          v-model:input-stats="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraStats.da"
+          v-model:extra-stats="extraStats.da"
           label="DA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.throwAP"
+        <StatsTextField
+          v-model:input-stats="stats.throwAP"
           :need-stats="0"
           label="Throw AP"
         />
@@ -51,13 +51,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import DaBuff from '~/components/DABuff.vue'
-import ThrowBuff from '~/components/ThrowBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcFanOfKnicesDamage,
   calcDamage,
@@ -67,36 +61,27 @@ import {
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    DaBuff,
-    ThrowBuff,
-    StatsTextField
-  }
+const { stats, extraStats, monster, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage()
+
+const localBasePower = ref(BASE_POWER.FanOfKnives)
+
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'physical'),
+    monster.value.physicalR,
+    calcFanOfKnicesDamage(buffedDA.value, buffedThrowAP.value, localBasePower.value)
+  )
+)
+
+const resDA = computed(() => {
+  const needDA = calcNeedStats(
+    monster.value.hp,
+    calcMonsterDef(monster.value, 'physical'),
+    monster.value.physicalR,
+    SkillRatio.FanOfKnives(localBasePower.value),
+    buffedDA.value + buffedThrowAP.value / 10,
+    0
+  )
+  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value))
 })
-export default class FanOfKnives extends BaseSkillPage {
-  basePower: number = BASE_POWER.FanOfKnives
-
-  get damage() {
-    return calcDamage(
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
-      calcFanOfKnicesDamage(this.buffedDA, this.buffedThrowAP, this.basePower)
-    )
-  }
-
-  get resDA() {
-    const needDA = calcNeedStats(
-      this.monster.hp,
-      calcMonsterDef(this.monster, 'physical'),
-      this.monster.physicalR,
-      SkillRatio.FanOfKnives(this.basePower),
-      this.buffedDA + this.buffedThrowAP / 10,
-      0
-    )
-
-    return Math.ceil(needDA / calcDABuffRatio(this.DABuff))
-  }
-}
 </script>

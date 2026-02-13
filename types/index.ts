@@ -21,7 +21,7 @@ export interface Skill {
   name: string
   attr: attribute
   ratio: number
-  img: NodeRequire
+  img: string
 }
 
 export interface BossMonster {
@@ -97,5 +97,5 @@ export type DebuffName = 'ShieldBreaker' | 'RaionsSpace'
 export type skillPanel = {
   name: string
   value: string
-  img: NodeRequire
+  img: string
 }

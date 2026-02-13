@@ -1,16 +1,16 @@
 <template>
   <v-container>
     <h1>Poison Assault (Only Poison Damage)</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       :damage="damage"
       :damage-string="`${damage.toLocaleString()} * 30`"
-      :monster.sync="monster"
+      v-model:monster="monster"
     />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <da-buff :buff.sync="DABuff" />
-        <throw-buff :buff.sync="ThrowBuff" />
+        <DABuff v-model:buff="daBuffs" />
+        <ThrowBuff v-model:buff="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -18,7 +18,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="780"
             :step="10"
@@ -28,26 +28,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="780"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.da"
+        <StatsTextField
+          v-model:input-stats="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraStats.da"
+          v-model:extra-stats="extraStats.da"
           label="DA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.throwAP"
+        <StatsTextField
+          v-model:input-stats="stats.throwAP"
           :need-stats="0"
           label="Throw AP"
         />
@@ -56,48 +56,31 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import DaBuff from '~/components/DABuff.vue'
-import ThrowBuff from '~/components/ThrowBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcPoisonDamage,
   calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    DaBuff,
-    ThrowBuff,
-    StatsTextField,
-    DamageArea
-  }
+const { stats, extraStats, monster, monsterHP, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage({ skillMode: 'boss' })
+
+const localBasePower = ref(BASE_POWER.PoisonAssault)
+
+const poison = computed(() => {
+  return calcPoisonDamage(buffedDA.value, buffedThrowAP.value)
 })
-export default class PoisonAssault extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.PoisonAssault
 
-  get poison() {
-    return calcPoisonDamage(this.buffedDA, this.buffedThrowAP)
-  }
+const damage = computed(() => {
+  return calcPoisonDamage(buffedDA.value, buffedThrowAP.value, localBasePower.value)
+})
 
-  get damage() {
-    return calcPoisonDamage(this.buffedDA, this.buffedThrowAP, this.basePower)
-  }
+const resDA = computed(() => {
+  const needDA =
+    (monsterHP.value) /
+      (SkillRatio.PoisonAssault(localBasePower.value) * 0.412 * 30) -
+    (buffedDA.value * 16 + buffedThrowAP.value)
 
-  get resDA() {
-    const needDA =
-      (this.monsterHP) /
-        (SkillRatio.PoisonAssault(this.basePower) * 0.412 * 30) -
-      (this.buffedDA * 16 + this.buffedThrowAP)
-
-    return Math.ceil(needDA / calcDABuffRatio(this.DABuff) / 16)
-  }
-}
+  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value) / 16)
+})
 </script>

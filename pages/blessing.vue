@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Blessings</h1>
-    <farming-monster :damage="damage" :monster.sync="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" />
     <p class="text-center">Blessings</p>
     <v-layout justify-center>
       <v-btn-toggle
@@ -23,21 +23,21 @@
     </v-layout>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ac-buff :buff.sync="ACBuff" />
-        <lk-buff :buff.sync="LKBuff" />
+        <ACBuff v-model:buff="acBuffs" />
+        <LKBuff v-model:buff="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <stats-text-field
-          :input-stats.sync="stats.ac"
+        <StatsTextField
+          v-model:input-stats="stats.ac"
           :need-stats="resAC"
           :buffed-stats="buffedAC"
-          :extra-stats.sync="extraStats.ac"
+          v-model:extra-stats="extraStats.ac"
           label="AC"
-        /><stats-text-field
-          :input-stats.sync="stats.lk"
+        /><StatsTextField
+          v-model:input-stats="stats.lk"
           :need-stats="resLK"
           :buffed-stats="buffedLK"
-          :extra-stats.sync="extraStats.lk"
+          v-model:extra-stats="extraStats.lk"
           label="LK"
         />
       </v-col>
@@ -45,86 +45,70 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import FarmingMonster from '~/components/FarmingMonster.vue'
-import LkBuff from '~/components/LKBuff.vue'
-import AcBuff from '~/components/ACBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcBlessingDamage,
   calcDamage,
   calcMonsterDef
 } from '~/utils/calc'
-import { Skill } from '~/types'
+import type { Skill } from '~/types'
 import skillRatio from '~/utils/skillRatio'
 
-@Component({
-  components: {
-    FarmingMonster,
-    LkBuff,
-    AcBuff,
-    StatsTextField,
-    DamageArea
+const { stats, extraStats, monster, acBuffs, lkBuffs, buffedAC, buffedLK } = useSkillPage()
+
+const selectedBlessingSkills = ref<number[]>([])
+
+const BlessingSkills: Skill[] = [
+  {
+    value: 0,
+    name: "Salamander's Blessing",
+    attr: 'fireR',
+    ratio: skillRatio.FireBlessing(),
+    img: '/salamanderBlessing.gif'
+  },
+  {
+    value: 1,
+    name: "Raion's Blessing",
+    attr: 'elecR',
+    ratio: skillRatio.ElecBlessing(),
+    img: '/raionBlessing.gif'
+  },
+  {
+    value: 2,
+    name: "Gnome's Blessing",
+    attr: 'earthR',
+    ratio: skillRatio.EarthBlessing(),
+    img: '/gnomeBlessing.gif'
+  },
+  {
+    value: 3,
+    name: "Undine's Blessing",
+    attr: 'waterR',
+    ratio: skillRatio.WaterBlessing(),
+    img: '/undineBlessing.gif'
+  },
+  {
+    value: 4,
+    name: "Sylph's Blessing",
+    attr: 'windR',
+    ratio: skillRatio.WindBlessing(),
+    img: '/sylphBlessing.gif'
   }
-})
-export default class Blessing extends BaseSkillPage {
-  selectedBlessingSkills: number[] = []
+]
 
-  BlessingSkills: Skill[] = [
-    {
-      value: 0,
-      name: "Salamander's Blessing",
-      attr: 'fireR',
-      ratio: skillRatio.FireBlessing(),
-      img: require('~/static/salamanderBlessing.gif')
-    },
-    {
-      value: 1,
-      name: "Raion's Blessing",
-      attr: 'elecR',
-      ratio: skillRatio.ElecBlessing(),
-      img: require('~/static/raionBlessing.gif')
-    },
-    {
-      value: 2,
-      name: "Gnome's Blessing",
-      attr: 'earthR',
-      ratio: skillRatio.EarthBlessing(),
-      img: require('~/static/gnomeBlessing.gif')
-    },
-    {
-      value: 3,
-      name: "Undine's Blessing",
-      attr: 'waterR',
-      ratio: skillRatio.WaterBlessing(),
-      img: require('~/static/undineBlessing.gif')
-    },
-    {
-      value: 4,
-      name: "Sylph's Blessing",
-      attr: 'windR',
-      ratio: skillRatio.WindBlessing(),
-      img: require('~/static/sylphBlessing.gif')
-    }
-  ]
-
-  get damage() {
-    let damage = 0
-    this.selectedBlessingSkills.forEach((e: number) => {
-      damage += calcDamage(
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster[this.BlessingSkills[e].attr],
-        calcBlessingDamage(
-          this.buffedAC,
-          this.buffedLK,
-          this.BlessingSkills[e].ratio
-        )
+const damage = computed(() => {
+  let damage = 0
+  selectedBlessingSkills.value.forEach((e: number) => {
+    damage += calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value[BlessingSkills[e].attr],
+      calcBlessingDamage(
+        buffedAC.value,
+        buffedLK.value,
+        BlessingSkills[e].ratio
       )
-    })
-    return damage
-  }
-}
+    )
+  })
+  return damage
+})
 </script>

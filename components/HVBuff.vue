@@ -1,9 +1,9 @@
 <template>
   <v-row dense>
     <v-col cols="6" md="6">
-      <v-switch v-model="_buff" value="dodgeMaster">
+      <v-switch v-model="buff" value="dodgeMaster">
         <template #label>
-          <img src="~/static/su.gif" />
+          <img src="/su.gif" />
           Dodge Master
         </template>
       </v-switch>
@@ -11,13 +11,8 @@
   </v-row>
 </template>
 
-<script lang="ts">
-import { Component, Vue, PropSync } from 'nuxt-property-decorator'
-import { HVBuffName } from '~/types'
+<script setup lang="ts">
+import type { HVBuffName } from '~/types'
 
-@Component({})
-export default class HvBuff extends Vue {
-  @PropSync('buff', { required: true })
-  _buff!: HVBuffName[]
-}
+const buff = defineModel<HVBuffName[]>('buff', { required: true })
 </script>

@@ -1,16 +1,16 @@
 <template>
   <v-container>
     <h1>Chain of Knives</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       :damage="damage"
-      :monster.sync="monster"
+      v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
-      :debuff.sync="debuffSkills"
+      v-model:debuff="debuffSkills"
     />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <da-buff :buff.sync="DABuff" />
+        <DABuff v-model:buff="daBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -18,7 +18,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="1260"
             :step="10"
@@ -28,26 +28,26 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="1260"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.da"
+        <StatsTextField
+          v-model:input-stats="stats.da"
           :need-stats="resDA"
           :buffed-stats="buffedDA"
-          :extra-stats.sync="extraStats.da"
+          v-model:extra-stats="extraStats.da"
           label="DA"
         />
-        <stats-text-field
-          :input-stats.sync="stats.throwAP"
+        <StatsTextField
+          v-model:input-stats="stats.throwAP"
           :need-stats="0"
           label="Throw AP"
         />
@@ -56,13 +56,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import DaBuff from '~/components/DABuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcChainOfKnivesDamage,
   calcDamage,
@@ -71,52 +65,43 @@ import {
   calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import { skillPanel } from '~/types'
+import type { skillPanel } from '~/types'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    DaBuff,
-    StatsTextField,
-    DamageArea
+const { stats, extraStats, monster, monsterHP, daBuffs, debuffSkills, buffedDA, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
+
+const localBasePower = ref(BASE_POWER.ChainOfKnives)
+
+const debuffSkillsDef: skillPanel[] = [
+  {
+    value: 'ShieldBreaker',
+    name: 'Shield Breaker',
+    img: '/barrier_break.gif'
   }
+]
+
+const damage = computed(() => {
+  const chainOfKnivesDamage = calcChainOfKnivesDamage(
+    buffedDA.value,
+    stats.value.throwAP,
+    localBasePower.value
+  )
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    chainOfKnivesDamage
+  )
 })
-export default class ChainOfKnives extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.ChainOfKnives
 
-  debuffSkillsDef: skillPanel[] = [
-    {
-      value: 'ShieldBreaker',
-      name: 'Shield Breaker',
-      img: require('~/static/barrier_break.gif')
-    }
-  ]
+const resDA = computed(() => {
+  const needDA = calcNeedStats(
+    monsterHP.value,
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    SkillRatio.ChainOfKnives(localBasePower.value),
+    buffedDA.value * 16 + stats.value.throwAP * 6,
+    0
+  )
 
-  get damage() {
-    const chainOfKnivesDamage = calcChainOfKnivesDamage(
-      this.buffedDA,
-      this.stats.throwAP,
-      this.basePower
-    )
-    return calcDamage(
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      chainOfKnivesDamage
-    )
-  }
-
-  get resDA() {
-    const needDA = calcNeedStats(
-      this.monsterHP,
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      SkillRatio.ChainOfKnives(this.basePower),
-      this.buffedDA * 16 + this.stats.throwAP * 6,
-      0
-    )
-
-    return Math.ceil(needDA / calcDABuffRatio(this.DABuff) / 16)
-  }
-}
+  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value) / 16)
+})
 </script>

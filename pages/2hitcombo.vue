@@ -1,20 +1,20 @@
 <template>
   <v-container>
     <h1>2 Hit Combo</h1>
-    <boss-monster-panel
+    <BossMonsterPanel
       :damage="fisrtHitDamage + secondHitDamage"
       :damage-string="[
         `1st hit: ${fisrtHitDamage.toLocaleString()}`,
         `2nd hit: ${secondHitDamage.toLocaleString()}`
       ]"
-      :monster.sync="monster"
+      v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
-      :debuff.sync="debuffSkills"
-    ></boss-monster-panel>
+      v-model:debuff="debuffSkills"
+    ></BossMonsterPanel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ap-buff :buff.sync="APBuff" />
-        <hv-buff :buff.sync="HVBuff" />
+        <APBuff v-model:buff="apBuffs" />
+        <HVBuff v-model:buff="hvBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
         <v-card class="mb-4 pa-4">
@@ -22,7 +22,7 @@
             Base Power Adjustment
           </v-card-title>
           <v-slider
-            v-model="basePower"
+            v-model="localBasePower"
             :min="0"
             :max="1240"
             :step="10"
@@ -32,29 +32,29 @@
           >
             <template v-slot:append>
               <v-text-field
-                v-model.number="basePower"
+                v-model.number="localBasePower"
                 type="number"
                 :min="0"
                 :max="1240"
                 style="width: 80px"
-                dense
+                density="compact"
                 hide-details
               />
             </template>
           </v-slider>
         </v-card>
-        <stats-text-field
-          :input-stats.sync="stats.ap"
+        <StatsTextField
+          v-model:input-stats="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraStats.ap"
+          v-model:extra-stats="extraStats.ap"
           label="AP"
         />
-        <stats-text-field
-          :input-stats.sync="stats.hv"
+        <StatsTextField
+          v-model:input-stats="stats.hv"
           :need-stats="resHV"
           :buffed-stats="buffedHV"
-          :extra-stats.sync="extraStats.hv"
+          v-model:extra-stats="extraStats.hv"
           label="HV"
         />
       </v-col>
@@ -62,13 +62,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import ApBuff from '~/components/APBuff.vue'
-import HvBuff from '~/components/HVBuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
+<script setup lang="ts">
 import {
   calcFirstHitComboDamage,
   calcSecondHitComboDamage,
@@ -76,50 +70,41 @@ import {
   calcMonsterDef
 } from '~/utils/calc'
 import { BASE_POWER } from '~/utils/skillRatio'
-import { skillPanel } from '~/types'
+import type { skillPanel } from '~/types'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    ApBuff,
-    HvBuff,
-    StatsTextField
+const { stats, extraStats, monster, apBuffs, hvBuffs, debuffSkills, buffedAP, buffedHV, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
+
+const localBasePower = ref(BASE_POWER.HitCombo)
+
+const debuffSkillsDef: skillPanel[] = [
+  {
+    value: 'ShieldBreaker',
+    name: 'Shield Breaker',
+    img: '/barrier_break.gif'
   }
+]
+
+const fisrtHitDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    calcFirstHitComboDamage(buffedAP.value, localBasePower.value)
+  )
 })
-export default class HitCombo extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
-  basePower: number = BASE_POWER.HitCombo
 
-  debuffSkillsDef: skillPanel[] = [
-    {
-      value: 'ShieldBreaker',
-      name: 'Shield Breaker',
-      img: require('~/static/barrier_break.gif')
-    }
-  ]
+const secondHitDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    calcSecondHitComboDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+  )
+})
 
-  get fisrtHitDamage() {
-    return calcDamage(
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      calcFirstHitComboDamage(this.buffedAP, this.basePower)
-    )
-  }
+const resAP = computed(() => {
+  return 0
+})
 
-  get secondHitDamage() {
-    return calcDamage(
-      calcMonsterDef(this.debuffedMonster, 'physical'),
-      this.debuffedMonster.physicalR,
-      calcSecondHitComboDamage(this.buffedAP, this.buffedHV, this.basePower)
-    )
-  }
-
-  get resAP() {
-    return 0
-  }
-
-  get resHV() {
-    return 0
-  }
-}
+const resHV = computed(() => {
+  return 0
+})
 </script>

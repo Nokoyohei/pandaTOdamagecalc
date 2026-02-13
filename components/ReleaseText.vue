@@ -1,29 +1,21 @@
 <template>
   <div :class="color">
-    <v-list-item two-line class="text-left">
-      <v-list-item-content>
-        <div class="subtitle-2 mb-4 blue-grey--text">{{ date }}</div>
+    <v-list-item class="text-left">
+      <div>
+        <div class="text-subtitle-2 mb-4 text-blue-grey">{{ date }}</div>
         <v-list-item-title v-for="text in [texts].flat()" :key="text">
-          <p class="text-wrap">{{ text }}</p></v-list-item-title
-        >
-      </v-list-item-content>
+          <p class="text-wrap">{{ text }}</p>
+        </v-list-item-title>
+      </div>
     </v-list-item>
     <v-divider></v-divider>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
-
-@Component
-export default class ReleaseText extends Vue {
-  @Prop()
-  date!: string
-
-  @Prop()
-  texts!: string | string[]
-
-  @Prop()
-  color!: string
-}
+<script setup lang="ts">
+defineProps<{
+  date: string
+  texts: string | string[]
+  color: string
+}>()
 </script>

@@ -1,26 +1,26 @@
 <template>
   <v-container>
     <h1>Magical Soul</h1>
-    <boss-monster-panel :damage="damage" :monster.sync="monster" />
+    <BossMonsterPanel :damage="damage" v-model:monster="monster" />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
-        <ap-buff :buff.sync="APBuff" />
-        <ma-buff :buff.sync="MABuff" />
+        <APBuff v-model:buff="apBuffs" />
+        <MABuff v-model:buff="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <stats-text-field
-          :input-stats.sync="stats.ap"
+        <StatsTextField
+          v-model:input-stats="stats.ap"
           :need-stats="resAP"
           :buffed-stats="buffedAP"
-          :extra-stats.sync="extraStats.ap"
+          v-model:extra-stats="extraStats.ap"
           label="AP"
         />
-        <stats-text-field
-          :input-stats.sync="stats.ma"
+        <StatsTextField
+          v-model:input-stats="stats.ma"
           :need-stats="resMA"
           :buffed-stats="buffedMA"
-          :extra-stats.sync="extraStats.ma"
+          v-model:extra-stats="extraStats.ma"
           label="MA"
         />
       </v-col>
@@ -28,14 +28,7 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import BaseSkillPage from '~/utils/BaseSkillPage'
-import BossMonsterPanel from '~/components/BossMonsterPanel.vue'
-import ApBuff from '~/components/APBuff.vue'
-import MaBuff from '~/components/MABuff.vue'
-import StatsTextField from '~/components/StatsTextField.vue'
-import DamageArea from '~/components/DamageArea.vue'
+<script setup lang="ts">
 import {
   calcMagicalSoulDamage,
   calcDamage,
@@ -45,55 +38,44 @@ import {
   calcMABuffRatio
 } from '~/utils/calc'
 
-@Component({
-  components: {
-    BossMonsterPanel,
-    ApBuff,
-    MaBuff,
-    StatsTextField,
-    DamageArea
-  }
+const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, buffedAP, buffedMA } = useSkillPage({ skillMode: 'boss' })
+
+const damage = computed(() => {
+  const magicalSoulDamage = calcMagicalSoulDamage(
+    buffedAP.value,
+    buffedMA.value
+  )
+  return calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.noPropR,
+    magicalSoulDamage
+  )
 })
-export default class MagicalSoul extends BaseSkillPage {
-  get skillMode() { return 'boss' as const }
 
-  get damage() {
-    const magicalSoulDamage = calcMagicalSoulDamage(
-      this.buffedAP,
-      this.buffedMA
-    )
-    return calcDamage(
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.noPropR,
-      magicalSoulDamage
-    )
-  }
+const resAP = computed(() => {
+  const needAP = calcNeedStats(
+    monsterHP.value,
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.noPropR,
+    buffedMA.value / 100,
+    buffedAP.value,
+    0
+  )
 
-  get resAP() {
-    const needAP = calcNeedStats(
-      this.monsterHP,
-      calcMonsterDef(this.monster, 'magic'),
-      this.monster.noPropR,
-      this.buffedMA / 100,
-      this.buffedAP,
+  return Math.ceil(needAP / calcAPBuffRatio(apBuffs.value))
+})
+
+const resMA = computed(() => {
+  const needMA =
+    calcNeedStats(
+      monsterHP.value,
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.noPropR,
+      buffedAP.value,
+      buffedMA.value / 100,
       0
-    )
+    ) * 100
 
-    return Math.ceil(needAP / calcAPBuffRatio(this.APBuff))
-  }
-
-  get resMA() {
-    const needMA =
-      calcNeedStats(
-        this.monsterHP,
-        calcMonsterDef(this.monster, 'magic'),
-        this.monster.noPropR,
-        this.buffedAP,
-        this.buffedMA / 100,
-        0
-      ) * 100
-
-    return Math.ceil(needMA / calcMABuffRatio(this.MABuff))
-  }
-}
+  return Math.ceil(needMA / calcMABuffRatio(maBuffs.value))
+})
 </script>

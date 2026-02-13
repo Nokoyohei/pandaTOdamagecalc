@@ -1,19 +1,18 @@
 <template>
   <div>
-    <v-layout column justify-center align-center>
+    <div class="d-flex flex-column justify-center">
       <v-tabs
         v-model="tab"
         fixed-tabs
         centered
         center-active
-        background-color="#424242"
+        bg-color="#424242"
         hide-slider
-        icons-and-text
-        @change="changeSelectedMonster"
+        @update:model-value="changeSelectedMonster"
       >
-        <v-tooltip v-for="content in tabContents" :key="content.title" bottom>
-          <template v-slot:activator="{ on }">
-            <v-tab v-on="on">
+        <v-tooltip v-for="content in tabContents" :key="content.title" location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <v-tab v-bind="activatorProps">
               <img
                 :src="content.srcimg"
                 :height="content.height"
@@ -24,155 +23,128 @@
           {{ content.title }}
         </v-tooltip>
       </v-tabs>
-      <v-container fluid>
-        <v-tabs-items>
-          <v-card flat>
-            <ChartLine
-              :chart-data="chartData"
-              :options="chartOption"
-              :styles="chartStyles"
-            />
-          </v-card>
-        </v-tabs-items>
-      </v-container>
-      <damage-area :damage="damage" />
-    </v-layout>
+      <v-card flat>
+        <ChartLine
+          :chart-data="chartData"
+          :options="chartOption"
+          :styles="chartStyles"
+        />
+      </v-card>
+      <div class="text-center">
+        <DamageArea :damage="damage" />
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop, PropSync } from 'nuxt-property-decorator'
-import { ChartData, ChartOptions } from 'chart.js'
+<script setup lang="ts">
+import type { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
-import ChartLine from '~/components/ChartLine.vue'
-import DamageArea from '~/components/DamageArea.vue'
 import { torobbie, toilet, cora } from '~/utils/monsters'
-import { Monster } from '~/types'
+import type { Monster } from '~/types'
 
-@Component({
-  components: {
-    ChartLine,
-    DamageArea
+const props = defineProps<{
+  damage: number
+}>()
+
+const monster = defineModel<Monster>('monster', { required: true })
+
+const datanum = 100
+const tab = ref(0)
+
+const tabContents = [
+  {
+    srcimg: '/torobbie.gif',
+    height: '60%',
+    title: 'Torobbie',
+    alt: 'TOROBBIE'
+  },
+  {
+    srcimg: '/mac.gif',
+    height: '120%',
+    title: 'Haunted Toilet',
+    alt: 'HAUNTED TOILET'
+  },
+  {
+    srcimg: '/cora.gif',
+    height: '120%',
+    title: 'Cora Merrymaker',
+    alt: 'CORA MERRYMAKER'
   }
-})
-export default class FarmingMonster extends Vue {
-  @Prop({ required: true })
-  damage!: number
+]
 
-  @PropSync('monster', { required: true })
-  _monster!: Monster
+function changeSelectedMonster() {
+  monster.value = [torobbie, toilet, cora][tab.value]
+}
 
-  datanum = 100
-  tab = 0
+const dmgList = computed(() =>
+  [...makeArr(0, monster.value.hp * 1.2, datanum)].map((x) => Math.round(x))
+)
 
-  tabContents = [
+const chartData = computed<ChartData<'line'>>(() => ({
+  labels: dmgList.value,
+  datasets: [
     {
-      srcimg: require('~/static/torobbie.gif'),
-      height: '60%',
-      title: 'Torobbie',
-      alt: 'TOROBBIE'
-    },
-    {
-      srcimg: require('~/static/mac.gif'),
-      height: '120%',
-      title: 'Haunted Toilet',
-      alt: 'HAUNTED TOILET'
-    },
-    {
-      srcimg: require('~/static/cora.gif'),
-      height: '120%',
-      title: 'Cora Merrymaker',
-      alt: 'CORA MERRYMAKER'
-    },
-  ]
-
-  changeSelectedMonster() {
-    this._monster = [torobbie, toilet, cora][this.tab]
-  }
-
-  // Limit the drawing range to 0-monster.hp*1.2 so that the drawing of the graph is not corrupted
-  get dmgList() {
-    return [...makeArr(0, this._monster.hp * 1.2, this.datanum)].map((x) =>
-      Math.round(x)
-    )
-  }
-
-  get chartData(): ChartData {
-    return {
-      labels: this.dmgList,
-      datasets: [
+      label: 'your damage',
+      data: [
         {
-          label: 'your damage',
-          // scatter
-          data: [
-            {
-              // If you set a value that is not in dmgList, the graph will be corrupted, so set the value closest to the current damage as x
-              x:
-                this.dmgList.find((x) => x > this.damage) == null
-                  ? this.dmgList[this.dmgList.length - 1]
-                  : this.dmgList.find((x) => x > this.damage),
-              // Set the maximum value to monster.hp*1.2 because the graph will be corrupted if damage is too large
-              y:
-                this.damage > this._monster.hp * 1.2
-                  ? this._monster.hp * 1.2
-                  : this.damage
-            }
-          ],
-          // For usability, the color of the pointer will be green when damage is larger than monster.hp
-          pointBackgroundColor:
-            this.damage >= this._monster.hp ? 'green' : 'gray',
-          type: 'scatter',
-          radius: 8
-        },
-        {
-          // mosnter's HP line (horizontal line)
-          label: `Isabelle's hp`,
-          borderColor: 'red',
-          data: new Array<number>(this.datanum).fill(this._monster.hp),
-          radius: 0
-        },
-        {
-          // damage line (linear line)
-          label: 'DAMAGE',
-          data: this.dmgList,
-          radius: 0,
-          borderColor: 'orange'
+          x:
+            dmgList.value.find((x) => x > props.damage) == null
+              ? dmgList.value[dmgList.value.length - 1]
+              : dmgList.value.find((x) => x > props.damage)!,
+          y:
+            props.damage > monster.value.hp * 1.2
+              ? monster.value.hp * 1.2
+              : props.damage
         }
-      ]
+      ],
+      pointBackgroundColor:
+        props.damage >= monster.value.hp ? 'green' : 'gray',
+      type: 'scatter' as const,
+      pointRadius: 8
+    },
+    {
+      label: `Isabelle's hp`,
+      borderColor: 'red',
+      data: new Array<number>(datanum).fill(monster.value.hp),
+      pointRadius: 0
+    },
+    {
+      label: 'DAMAGE',
+      data: dmgList.value,
+      pointRadius: 0,
+      borderColor: 'orange'
     }
-  }
+  ]
+}))
 
-  private chartOption: ChartOptions = {
-    maintainAspectRatio: false,
+const chartOption = computed<ChartOptions<'line'>>(() => ({
+  maintainAspectRatio: false,
+  animation: false,
+  plugins: {
     legend: {
       display: false
     },
-    tooltips: {
+    tooltip: {
       callbacks: {
-        title: (_tooltipItem, _chart) => 'your damage',
-        label: (_tooltipItem, _chart) => this.damage.toLocaleString()
+        title: () => 'your damage',
+        label: () => props.damage.toLocaleString()
       }
+    }
+  },
+  scales: {
+    x: {
+      display: false
     },
-    scales: {
-      xAxes: [
-        {
-          display: false
-        }
-      ],
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true
-          }
-        }
-      ]
+    y: {
+      beginAtZero: true
     }
   }
+}))
 
-  private chartStyles = {
-    height: '100%',
-    width: '100%'
-  }
+const chartStyles = {
+  height: '400px',
+  width: '100%'
 }
 </script>
 
