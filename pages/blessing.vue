@@ -7,7 +7,6 @@
       <v-btn-toggle
         v-model="selectedBlessingSkills"
         multiple
-        mandatory
         bg-color="black"
       >
         <v-tooltip v-for="skill in BlessingSkills" :key="skill.name" location="bottom">
@@ -101,11 +100,11 @@ const damage = computed(() => {
   selectedBlessingSkills.value.forEach((e: number) => {
     damage += calcDamage(
       calcMonsterDef(monster.value, 'magic'),
-      monster.value[BlessingSkills[e].attr],
+      monster.value[BlessingSkills.value[e].attr],
       calcBlessingDamage(
         buffedAC.value,
         buffedLK.value,
-        BlessingSkills[e].ratio
+        BlessingSkills.value[e].ratio
       )
     )
   })

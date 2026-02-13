@@ -6,12 +6,12 @@ const LuckySevenBuff = 0.65
 const AuraOfLuckBuff = 0.18
 const FirstdAnniversaryBuff = 0.3
 const DodgeMasterBuff = 0.8
-const SixthSenseBuff = 0.65
+const SixthSenseBuff = 0.8
 const secondAnniversaryBuff = 0.4
-const GunBoosterBuff = 0.45
-const BullsEyeBuff = 0.45
+const GunBoosterBuff = 0.65
+const BullsEyeBuff = 0.65
 const EagleEyeBuff = 0.45
-const PrecisePitch = 10
+const PrecisePitch = 15
 
 export default {
   MistOfManaBuff,

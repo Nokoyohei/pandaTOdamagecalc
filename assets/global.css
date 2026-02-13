@@ -1,0 +1,33 @@
+/* Monster tabs - selected state (Vuetify 3: .v-tab--selected) */
+.v-tab--selected {
+  background: #616161 !important;
+  border-top: solid 3px #64b5f6 !important;
+  box-shadow: inset 0 3px 8px rgba(100, 181, 246, 0.3) !important;
+}
+
+/* v-btn-toggle - selected button (debuff, skills, blessings) */
+.v-btn-toggle > .v-btn.v-btn--active {
+  background-color: rgba(100, 181, 246, 0.25) !important;
+  box-shadow:
+    0 0 8px rgba(100, 181, 246, 0.5),
+    inset 0 0 6px rgba(100, 181, 246, 0.2) !important;
+  border: 1px solid #64b5f6 !important;
+}
+
+.v-btn-toggle > .v-btn.v-btn--active > .v-btn__overlay {
+  opacity: 0 !important;
+}
+
+.v-btn-toggle > .v-btn.v-btn--active img {
+  filter: drop-shadow(0 0 4px rgba(100, 181, 246, 0.8)) !important;
+}
+
+/* v-switch - ON state */
+.v-switch .v-selection-control--dirty .v-switch__track {
+  background-color: #1e88e5 !important;
+  opacity: 1 !important;
+}
+
+.v-switch .v-selection-control--dirty .v-label {
+  color: #90caf9 !important;
+}

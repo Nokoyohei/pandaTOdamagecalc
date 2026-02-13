@@ -154,9 +154,3 @@ const chartStyles = {
 }
 </script>
 
-<style scoped>
-.v-tab--active {
-  background: #616161;
-  border-top: solid 2px #90caf9;
-}
-</style>

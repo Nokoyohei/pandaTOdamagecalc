@@ -3,6 +3,8 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
   ssr: false,
 
+  css: ['~/assets/global.css'],
+
   app: {
     head: {
       titleTemplate: '%s - PandaTO damage calculator',
