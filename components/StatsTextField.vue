@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="mb-2">
     <v-col cols="12" :sm="3">
       <v-text-field
         v-if="extraStatsModel != null"

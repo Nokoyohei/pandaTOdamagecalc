@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-6">
     <div class="d-flex flex-column justify-center">
       <v-tabs
         v-model="tab"
@@ -31,15 +31,29 @@
           :styles="chartStyles"
         />
       </v-card>
-      <div class="text-center">
-        <DamageArea v-if="damageAreaMessage.length === 0" :damage="damage" />
-        <DamageArea
-          v-for="(mes, i) in damageAreaMessage"
-          v-else
-          :key="mes"
-          :damage="mes"
-          :color="textColor[i]"
-        />
+      <div class="d-flex justify-center align-center flex-wrap ga-4">
+        <div>
+          <DamageArea v-if="damageAreaMessage.length === 0" :damage="damage" />
+          <DamageArea
+            v-for="(mes, i) in damageAreaMessage"
+            v-else
+            :key="mes"
+            :damage="mes"
+            :color="textColor[i]"
+          />
+        </div>
+        <v-divider v-if="critMultiplier" vertical class="align-self-stretch" />
+        <div v-if="critMultiplier">
+          <DamageArea v-if="critDamageAreaMessage.length === 0" :damage="critDamage" color="yellow" label="critical" />
+          <DamageArea
+            v-for="mes in critDamageAreaMessage"
+            v-else
+            :key="mes"
+            :damage="mes"
+            color="yellow"
+            label="critical"
+          />
+        </div>
       </div>
       <div v-if="debuff" class="text-center">
         debuff:
@@ -81,12 +95,16 @@ const props = defineProps<{
   damage: number
   damageString?: string[] | string
   debuffSkillsDef?: skillPanel[]
+  critMultiplier?: number
+  critDamageString?: string[] | string
 }>()
 
 const monster = defineModel<Monster | BossMonster>('monster', { required: true })
 const debuff = defineModel<DebuffName[]>('debuff')
 
 const boss = computed(() => monster.value as BossMonster)
+
+const critDamage = computed(() => Math.floor(props.damage * (props.critMultiplier ?? 1)))
 
 const datanum = 100
 const tab = ref(0)
@@ -147,6 +165,11 @@ const tabContents = [
 const damageAreaMessage = computed(() => {
   if (props.damageString == null) return []
   return [props.damageString].flat()
+})
+
+const critDamageAreaMessage = computed(() => {
+  if (props.critDamageString == null) return []
+  return [props.critDamageString].flat()
 })
 
 function changeSelectedMonster() {

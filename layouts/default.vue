@@ -55,10 +55,6 @@
     <v-main>
       <slot />
     </v-main>
-
-    <v-footer>
-      <span>&copy; {{ new Date().getFullYear() }} noko</span>
-    </v-footer>
   </v-app>
 </template>
 

@@ -5,8 +5,9 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
+      :crit-multiplier="CRIT_MULTIPLIER.physical"
     />
-    <FarmingMonster v-else :damage="damage" v-model:monster="monster" />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.physical" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ap-buffs="apBuffs" />
@@ -39,6 +40,7 @@ import {
   calcAPBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })

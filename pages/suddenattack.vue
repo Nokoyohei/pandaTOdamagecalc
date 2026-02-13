@@ -6,6 +6,7 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
+      :crit-multiplier="CRIT_MULTIPLIER.physical"
     />
 
     <v-row>
@@ -51,6 +52,7 @@ import {
   calcLKBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, daBuffs, lkBuffs, debuffSkills, buffedAP, buffedDA, buffedLK, debuffedMonster } = useSkillPage({ skillMode: 'boss' })

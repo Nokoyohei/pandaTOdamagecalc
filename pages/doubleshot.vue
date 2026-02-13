@@ -7,6 +7,8 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
+      :crit-multiplier="CRIT_MULTIPLIER.gun"
+      :crit-damage-string="`${Math.floor(damage * CRIT_MULTIPLIER.gun).toLocaleString()} * 2`"
     ></BossMonsterPanel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -40,6 +42,7 @@ import {
   calcACBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, acBuffs, debuffSkills, buffedAC, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 

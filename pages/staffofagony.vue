@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Staff of Agony</h1>
-    <BossMonsterPanel :damage="damage" v-model:monster="monster" />
+    <BossMonsterPanel :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:dl-buffs="dlBuffs" />
@@ -36,6 +36,7 @@ import {
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = useSkillPage({ skillMode: 'boss' })
 

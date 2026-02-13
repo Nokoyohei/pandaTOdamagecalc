@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Blessings</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
     <p class="text-center">Blessings</p>
     <div class="d-flex justify-center">
       <v-btn-toggle
@@ -51,6 +51,7 @@ import {
 } from '~/utils/calc'
 import type { Skill } from '~/types'
 import skillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, acBuffs, lkBuffs, buffedAC, buffedLK } = useSkillPage()
 

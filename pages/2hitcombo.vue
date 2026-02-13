@@ -10,6 +10,11 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
+      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage-string="[
+        `1st hit: ${Math.floor(fisrtHitDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`,
+        `2nd hit: ${Math.floor(secondHitDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`
+      ]"
     ></BossMonsterPanel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -44,6 +49,7 @@ import {
   calcMonsterDef
 } from '~/utils/calc'
 import { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, apBuffs, hvBuffs, debuffSkills, buffedAP, buffedHV, debuffedMonster } = useSkillPage({ skillMode: 'boss' })

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Magical Soul</h1>
-    <BossMonsterPanel :damage="damage" v-model:monster="monster" />
+    <BossMonsterPanel :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -36,6 +36,7 @@ import {
   calcAPBuffRatio,
   calcMABuffRatio
 } from '~/utils/calc'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, buffedAP, buffedMA } = useSkillPage({ skillMode: 'boss' })
 

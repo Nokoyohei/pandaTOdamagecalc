@@ -2,7 +2,7 @@
   <v-container>
     <h1>Raging Storm</h1>
     <p>{{ cdamage }}</p>
-    <FarmingMonster :damage="damage" v-model:monster="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ac-buffs="acBuffs" v-model:ma-buffs="maBuffs" />
@@ -38,6 +38,7 @@ import {
   calcACBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, maBuffs, acBuffs, buffedMA, buffedAC } = useSkillPage()
 

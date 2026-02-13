@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Electro Attack</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" />
@@ -29,6 +29,7 @@ import {
   calcMABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
 

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-4 pa-4">
+  <v-card class="mb-6 pa-4">
     <v-card-title class="text-subtitle-1 pa-0 pb-2">
       Base Power Adjustment
     </v-card-title>

@@ -5,8 +5,9 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
+      :crit-multiplier="CRIT_MULTIPLIER.magic"
     />
-    <FarmingMonster v-else :damage="damage" v-model:monster="monster" />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -37,6 +38,7 @@ import {
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { mode, monster, stats, extraStats, maBuffs, dlBuffs, buffedMA, monsterHP } =
   useSkillPage({ skillMode: 'dual' })

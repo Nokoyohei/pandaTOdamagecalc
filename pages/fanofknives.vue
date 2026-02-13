@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Fan of Knives</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.physical" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
@@ -34,6 +34,7 @@ import {
   calcDABuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage()
 
