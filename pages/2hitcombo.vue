@@ -21,7 +21,10 @@
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:hv-buffs="hvBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.HitCombo" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly 2 Hit Combo</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -48,13 +51,20 @@ import {
   calcDamage,
   calcMonsterDef
 } from '~/utils/calc'
-import { BASE_POWER } from '~/utils/skillRatio'
+import { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, apBuffs, hvBuffs, debuffSkills, buffedAP, buffedHV, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.HitCombo)
+const localBasePower = ref<number>(BASE_POWER.HitCombo)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.HitCombo : BASE_POWER.HitCombo
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 
 const debuffSkillsDef: skillPanel[] = [
   {

@@ -1,10 +1,10 @@
 // Base Power defaults
 export const BASE_POWER = {
   DarkCommando: 1840,
-  GravityCrash: 9000,
+  GravityCrash: 900,
   CelestialStrike: 5000,
-  Scythe: 100,
-  StaffOfAgony: 65,
+  Scythe: 5500,
+  StaffOfAgony: 7500,
   FullHouse: 400,
   EarthquakeBlade: 440,
   SonicSlash: 1000,
@@ -38,12 +38,30 @@ export const BASE_POWER = {
   LadyLuck: 6
 } as const
 
+export const GODLY_BASE_POWER = {
+  SonicSlash: 1200,
+  GaleStrike: 350,
+  EarthquakeBlade: 1000,
+  GravityCrash: 20000,
+  Scythe: 10000,
+  StaffOfAgony: 15000,
+  ChainOfKnives: 4000,
+  PowerShot: 6000,
+  DoubleShot: 7000,
+  PoisonAssault: 2400,
+  Berserk: 1000,
+  OnePair: 10000,
+  HitCombo: 8000,
+  FullHouse: 2000,
+  FanOfKnives: 1500,
+} as const
+
 const DarkCommando = (basePower: number = BASE_POWER.DarkCommando) => basePower / 1000
-const GravityCrash = (basePower: number = BASE_POWER.GravityCrash) => basePower / 1000
+const GravityCrash = (basePower: number = BASE_POWER.GravityCrash) => basePower / 100
 const CelestialStrike = (skillNum: number, basePower: number = BASE_POWER.CelestialStrike) =>
   basePower / 1000 * (34 + skillNum) / 22.5
-const Scythe = (attr: number, basePower: number = BASE_POWER.Scythe) => basePower + (30 * attr / 100)
-const StaffOfAgony = (attr: number, basePower: number = BASE_POWER.StaffOfAgony) => basePower + (15 * attr) / 100
+const Scythe = (attr: number, basePower: number = BASE_POWER.Scythe) => basePower / 100 + (30 * attr / 100)
+const StaffOfAgony = (attr: number, basePower: number = BASE_POWER.StaffOfAgony) => basePower / 100 + (15 * attr) / 100
 const FullHouse = (basePower: number = BASE_POWER.FullHouse) => basePower / 100
 const EarthquakeBlade = (attr: number, basePower: number = BASE_POWER.EarthquakeBlade) => basePower / 100 + (attr * 2) / 100
 const SonicSlash = (attr: number, basePower: number = BASE_POWER.SonicSlash) => basePower / 100 + (attr * 3.5) / 100 //

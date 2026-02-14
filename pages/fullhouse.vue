@@ -7,7 +7,10 @@
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:lk-buffs="lkBuffs" v-model:hv-buffs="hvBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.FullHouse" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Full House</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -44,12 +47,19 @@ import {
   calcHVBuffRatio,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, apBuffs, lkBuffs, hvBuffs, buffedAP, buffedLK, buffedHV } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.FullHouse)
+const localBasePower = ref<number>(BASE_POWER.FullHouse)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.FullHouse : BASE_POWER.FullHouse
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 
 const idealDamage = computed(() =>
   calcFullHouseDamage(buffedAP.value, buffedLK.value, buffedHV.value, localBasePower.value)

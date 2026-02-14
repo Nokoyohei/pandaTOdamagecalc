@@ -27,7 +27,10 @@
         <BuffPanel v-model:ac-buffs="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.Berserk" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Berserk</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ac"
           :need-stats="resAC"
@@ -53,12 +56,19 @@ import {
   calcMonsterDef,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, acBuffs, buffedAC } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.Berserk)
+const localBasePower = ref<number>(BASE_POWER.Berserk)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.Berserk : BASE_POWER.Berserk
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 const sharpSense = ref<string[]>([])
 const effectiveCritMultiplier = computed(() => {
   if (sharpSense.value.includes('godlySharpSense')) return CRIT_MULTIPLIER.gun * GODLY_SHARP_SENSE_MULTIPLIER

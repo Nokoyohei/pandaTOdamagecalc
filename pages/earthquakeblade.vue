@@ -15,7 +15,10 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.EarthquakeBlade" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Earthquake Blade</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <stats-text-field
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -41,14 +44,21 @@ import {
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })
 
-const localBasePower = ref(BASE_POWER.EarthquakeBlade)
+const localBasePower = ref<number>(BASE_POWER.EarthquakeBlade)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.EarthquakeBlade : BASE_POWER.EarthquakeBlade
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 
 const debuffSkillsDef: skillPanel[] = [
   {

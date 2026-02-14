@@ -14,7 +14,10 @@
         <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.ChainOfKnives" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Chain of Knives</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.da"
           :need-stats="resDA"
@@ -40,13 +43,20 @@ import {
   calcMonsterDef,
   calcDABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, daBuffs, throwBuffs, debuffSkills, buffedDA, buffedThrowAP, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.ChainOfKnives)
+const localBasePower = ref<number>(BASE_POWER.ChainOfKnives)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.ChainOfKnives : BASE_POWER.ChainOfKnives
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 
 const debuffSkillsDef: skillPanel[] = [
   {

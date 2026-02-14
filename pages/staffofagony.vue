@@ -7,7 +7,10 @@
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:dl-buffs="dlBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.StaffOfAgony" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Staff of Agony</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -35,12 +38,19 @@ import {
   calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.StaffOfAgony)
+const localBasePower = ref<number>(BASE_POWER.StaffOfAgony)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.StaffOfAgony : BASE_POWER.StaffOfAgony
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 
 const idealStaffOfAgonyDamage = computed(() =>
   calcStaffOfAgony(buffedMA.value, stats.value.dark, localBasePower.value)

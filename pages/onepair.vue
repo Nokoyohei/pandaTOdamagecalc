@@ -19,7 +19,10 @@
         </v-switch>
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.OnePair" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly One Pair</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -48,13 +51,20 @@ import {
   calcAPBuffRatio,
   calcHVBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, hvBuffs, debuffSkills, buffedAP, buffedHV, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.OnePair)
+const localBasePower = ref<number>(BASE_POWER.OnePair)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.OnePair : BASE_POWER.OnePair
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 const buff = ref<'ladyluck' | null>(null)
 
 const debuffSkillsDef: skillPanel[] = [

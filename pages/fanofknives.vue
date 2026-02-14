@@ -7,7 +7,10 @@
         <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.FanOfKnives" />
+        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
+          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Fan of Knives</span></template>
+        </v-switch>
+        <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.da"
           :need-stats="resDA"
@@ -33,12 +36,19 @@ import {
   calcMonsterDef,
   calcDABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.FanOfKnives)
+const localBasePower = ref<number>(BASE_POWER.FanOfKnives)
+const isGodly = ref(false)
+const activeDefaultPower = computed(() =>
+  isGodly.value ? GODLY_BASE_POWER.FanOfKnives : BASE_POWER.FanOfKnives
+)
+watch(isGodly, () => {
+  localBasePower.value = activeDefaultPower.value
+})
 
 const idealDamage = computed(() =>
   calcFanOfKnicesDamage(buffedDA.value, buffedThrowAP.value, localBasePower.value)
