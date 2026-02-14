@@ -149,26 +149,17 @@ export const calcPowerShotDamage = (gunAP: number, basePower: number = 300) =>
 export const calcDoubleShotDamage = (gunAP: number, basePower: number = 480) =>
   Math.ceil((gunAP - 48 * 20) * SkillRatio.DoubleShot(basePower))
 
-// In Trickster, there is a spec that deals 2^32/100 damage for every 2^32 damage
-// if the resistance *idealDamage exceeds 2^31, with no resistance or defense
-// It's probably an overflow measure, but it feels to me like it's being handled the wrong way
+// Extra damage from int32 overflow in resist calculation
+// When effectiveIdeal * resist overflows 2^32, each overflow adds floor(2^32/100) damage
+export const EXTRA_DAMAGE_UNIT = Math.floor(2 ** 32 / 100)
+
 export const calcExtraDamage = (
-  idealDamage: number,
-  resistance: number,
-  extraMultiplier: number = 1
+  effectiveIdeal: number,
+  resistance: number
 ) => {
   if (resistance >= 100) return 0
-  const extraDamageNum = (idealDamage * resistance - 2 ** 31) / 2 ** 32
-  let extraDamage: number = 0
-  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
-  for (let i = 0; i < extraDamageNum; i++) {
-    // first extra damage is special case
-    if (i !== 0 && extraDamage + EXTRA_DAMAGE >= idealDamage * extraMultiplier)
-      break
-    extraDamage += EXTRA_DAMAGE
-  }
-
-  return extraDamage
+  const overflowCount = Math.floor(effectiveIdeal * resistance / 2 ** 32)
+  return overflowCount * EXTRA_DAMAGE_UNIT
 }
 
 // Calculate the debuffed monster's
@@ -222,15 +213,12 @@ export const calcDamage = (
   extraMultiplier = 1,
   damageMultiplier = 1
 ) => {
-  const extraDamage = calcExtraDamage(
-    idealDamage,
-    monsterResist,
-    extraMultiplier
-  )
+  const effectiveIdeal = idealDamage * extraMultiplier
+  const extraDamage = calcExtraDamage(effectiveIdeal, monsterResist)
   const damage = Math.floor(
-    ((100 - monsterResist) / 100) * (idealDamage * extraMultiplier - monsterDef)
+    ((100 - monsterResist) / 100) * (effectiveIdeal - monsterDef)
   )
-  return (Math.floor(damage + extraDamage < 0 ? 0 : damage + extraDamage) + 1) * damageMultiplier
+  return Math.max(0, damage + extraDamage) * damageMultiplier
 }
 
 // Calculate the missing status
@@ -261,47 +249,31 @@ export const calcNeedStats = (
   constStats = 49,
   extraMultiplier = 1
 ) => {
-  // If there is no overflow when calculating damage in Trickster
-  const resistance = (100 - monsterResist) / 100
-  const idealDamage = monsterHp / resistance + monsterDef
-  if (idealDamage * extraMultiplier * monsterResist <= 2 ** 31) {
-    return idealDamage / extraMultiplier / attackRatio + constStats - nowStats
+  const resistFactor = (100 - monsterResist) / 100
+
+  // No overflow case: effectiveIdeal * resist < 2^32
+  const noOverflowEffIdeal = monsterHp / resistFactor + monsterDef
+  if (noOverflowEffIdeal * monsterResist < 2 ** 32) {
+    return noOverflowEffIdeal / extraMultiplier / attackRatio + constStats - nowStats
   }
 
-  // If there is overflow when calculating damage in Trickster
-  const extraDamage = calcExtraDamage(monsterHp, monsterResist, extraMultiplier)
-  const EXTRA_DAMAGE = Math.floor(2 ** 32 / 100) * extraMultiplier
-  const calcIdealDamage = (extraNum: number) =>
-    (extraNum * 2 ** 32 + 2 ** 31) / monsterResist
-  const damage = (idealDamage: number) =>
-    (idealDamage * extraMultiplier - monsterDef) * resistance
-  let extraDamageNum = extraDamage / EXTRA_DAMAGE
-
-  // If the damage from the attack + overFlowDamage isn't enough to defeat monster,
-  // you'll need to strengthen your attack until the next overFlowDamage occurs.
-  if (
-    damage(calcIdealDamage(extraDamage / EXTRA_DAMAGE)) * extraMultiplier +
-      extraDamageNum * EXTRA_DAMAGE <
-    monsterHp
-  )
-    extraDamageNum++
-
-  // If defeat after one extra damage
-  let resHp = damage(2 ** 31 / monsterResist)
-  // If can not defeat after one extra damage
-  if (extraDamageNum !== 1) {
-    resHp =
-      extraDamageNum * EXTRA_DAMAGE * extraMultiplier <= monsterHp
-        ? damage(calcIdealDamage(extraDamageNum - 1))
-        : extraDamageNum * EXTRA_DAMAGE * extraMultiplier * resistance +
-          monsterDef
+  // With overflow: find minimum effectiveIdeal where
+  // floor(resistFactor * (effIdeal - def)) + floor(effIdeal * R / 2^32) * EXTRA_DAMAGE_UNIT >= hp
+  let bestEffIdeal = noOverflowEffIdeal
+  for (let n = 1; n < 200; n++) {
+    const minEffIdealForN = n * 2 ** 32 / monsterResist
+    // Extra damage alone covers monster HP
+    if (n * EXTRA_DAMAGE_UNIT >= monsterHp) {
+      bestEffIdeal = Math.min(bestEffIdeal, minEffIdealForN)
+      break
+    }
+    const neededForBase = (monsterHp - n * EXTRA_DAMAGE_UNIT) / resistFactor + monsterDef
+    const effIdeal = Math.max(minEffIdealForN, neededForBase)
+    if (effIdeal < bestEffIdeal) bestEffIdeal = effIdeal
+    if (minEffIdealForN > bestEffIdeal) break
   }
 
-  return (
-    (resHp / extraMultiplier / resistance + monsterDef) / attackRatio +
-    constStats -
-    nowStats
-  )
+  return bestEffIdeal / extraMultiplier / attackRatio + constStats - nowStats
 }
 
 export const calcLKBuffRatio = (

@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { toInt32, INT32_MAX } from '~/utils/calc'
+import { toInt32, INT32_MAX, EXTRA_DAMAGE_UNIT } from '~/utils/calc'
 
 const props = defineProps<{
   damage: string | number
@@ -22,7 +22,7 @@ const props = defineProps<{
 const label = computed(() => props.label ?? 'damage')
 
 const isOverflow = computed(() =>
-  typeof props.damage === 'number' && props.damage > INT32_MAX
+  typeof props.damage === 'number' && props.damage > INT32_MAX + EXTRA_DAMAGE_UNIT
 )
 
 const effectiveDamage = computed(() =>
