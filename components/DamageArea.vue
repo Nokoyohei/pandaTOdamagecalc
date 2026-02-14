@@ -4,10 +4,15 @@
     <div class="damage-number">
       {{ typeof damage === 'number' ? damage.toLocaleString() : damage }}
     </div>
+    <div v-if="isOverflow" class="damage-effective">
+      effective: {{ effectiveDamage.toLocaleString() }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { toInt32, INT32_MAX } from '~/utils/calc'
+
 const props = defineProps<{
   damage: string | number
   color?: string
@@ -15,6 +20,14 @@ const props = defineProps<{
 }>()
 
 const label = computed(() => props.label ?? 'damage')
+
+const isOverflow = computed(() =>
+  typeof props.damage === 'number' && props.damage > INT32_MAX
+)
+
+const effectiveDamage = computed(() =>
+  typeof props.damage === 'number' ? toInt32(props.damage) : 0
+)
 
 const glowColor = computed(() => {
   const map: Record<string, string> = {
@@ -51,5 +64,15 @@ const glowColor = computed(() => {
     0 0 14px currentColor;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.damage-effective {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #ff5252;
+  text-shadow:
+    0 0 6px #ff5252,
+    0 0 14px #ff5252;
+  margin-top: 2px;
 }
 </style>

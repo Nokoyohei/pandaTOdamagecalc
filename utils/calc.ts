@@ -198,9 +198,19 @@ export const calcMonsterDef = (
   return monster.hv * 30
 }
 
+// Simulate signed 32-bit integer overflow
+export const toInt32 = (n: number): number => {
+  const INT32_MAX = 2 ** 31 - 1
+  if (n >= -(INT32_MAX + 1) && n <= INT32_MAX) return n
+  const mod = ((n % 2 ** 32) + 2 ** 32) % 2 ** 32
+  return mod > INT32_MAX ? mod - 2 ** 32 : mod
+}
+
+export const INT32_MAX = 2 ** 31 - 1
+
 // Calculate the damage considering defensive and resistance
-/* 
-  args: 
+/*
+  args:
     monsterDef: effective defence -> calcMonsterDef
     monsterResist: monster's resistance for example fireR, waterR... etc.
     ideallDamage: Ideal damage against opponents with 0 defense and 0 resistance
