@@ -6,7 +6,7 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
-      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage="critDamage"
     ></BossMonsterPanel>
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -69,13 +69,25 @@ const isLadyLuck = computed(() => {
   return buff.value?.includes('ladyluck')
 })
 
-const damage = computed(() => {
-  return calcDamage(
+const idealDamage = computed(() =>
+  calcOnePairDamage(buffedAP.value, buffedHV.value, isLadyLuck.value, localBasePower.value)
+)
+
+const damage = computed(() =>
+  calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcOnePairDamage(buffedAP.value, buffedHV.value, isLadyLuck.value, localBasePower.value)
+    idealDamage.value
   )
-})
+)
+
+const critDamage = computed(() =>
+  calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    idealDamage.value * CRIT_MULTIPLIER.physical
+  )
+)
 
 const resStats = () => {
   const multiplier = isLadyLuck.value ? 1 + SkillRatio.LadyLuck() : 1

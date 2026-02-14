@@ -5,9 +5,9 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
-      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage="critDamage"
     />
-    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.physical" />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ap-buffs="apBuffs" />
@@ -55,11 +55,23 @@ const debuffSkillsDef = [
   }
 ]
 
+const idealDamage = computed(() => {
+  return calcTidalSlashDamage(buffedAP.value, stats.value.water, localBasePower.value)
+})
+
 const damage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcTidalSlashDamage(buffedAP.value, stats.value.water, localBasePower.value)
+    idealDamage.value
+  )
+})
+
+const critDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    idealDamage.value * CRIT_MULTIPLIER.physical
   )
 })
 

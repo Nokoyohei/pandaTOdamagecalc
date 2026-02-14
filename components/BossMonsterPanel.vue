@@ -42,8 +42,8 @@
             :color="textColor[i]"
           />
         </div>
-        <v-divider v-if="critMultiplier" vertical class="align-self-stretch" />
-        <div v-if="critMultiplier">
+        <v-divider v-if="critDamage != null" vertical class="align-self-stretch" />
+        <div v-if="critDamage != null">
           <DamageArea v-if="critDamageAreaMessage.length === 0" :damage="critDamage" color="yellow" label="critical" />
           <DamageArea
             v-for="mes in critDamageAreaMessage"
@@ -95,7 +95,7 @@ const props = defineProps<{
   damage: number
   damageString?: string[] | string
   debuffSkillsDef?: skillPanel[]
-  critMultiplier?: number
+  critDamage?: number
   critDamageString?: string[] | string
 }>()
 
@@ -103,8 +103,6 @@ const monster = defineModel<Monster | BossMonster>('monster', { required: true }
 const debuff = defineModel<DebuffName[]>('debuff')
 
 const boss = computed(() => monster.value as BossMonster)
-
-const critDamage = computed(() => Math.floor(props.damage * (props.critMultiplier ?? 1)))
 
 const datanum = 100
 const tab = ref(0)

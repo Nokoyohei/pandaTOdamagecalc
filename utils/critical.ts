@@ -5,3 +5,5 @@ export const CRIT_MULTIPLIER = {
 } as const
 
 export type CritType = keyof typeof CRIT_MULTIPLIER
+
+export const SHARP_SENSE_MULTIPLIER = 6.0

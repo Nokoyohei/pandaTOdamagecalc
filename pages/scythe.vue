@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Scythe</h1>
-    <BossMonsterPanel :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <BossMonsterPanel :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:dl-buffs="dlBuffs" />
@@ -42,31 +42,51 @@ const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = us
 
 const localBasePower = ref(BASE_POWER.Scythe)
 
-const damage = computed(() => {
-  const darkCommandoDamage = dlBuffs.value.includes('darkCommando')
+const idealScytheDamage = computed(() =>
+  calcScytheDamage(buffedMA.value, stats.value.dark, localBasePower.value)
+)
+
+const idealDarkCommandoDamage = computed(() =>
+  dlBuffs.value.includes('darkCommando')
     ? calcDarkCommandoDamage(buffedMA.value)
     : 0
-  const scytheDamage = calcScytheDamage(buffedMA.value, stats.value.dark, localBasePower.value)
+)
 
-  const buff = dlBuffs.value.includes('bloodTestament')
+const bossBuff = computed(() =>
+  dlBuffs.value.includes('bloodTestament')
     ? 1 + BloodTestamentBuff
     : 1
+)
 
-  return (
-    calcDamage(
-      calcMonsterDef(monster.value, 'magic'),
-      monster.value.darkR,
-      scytheDamage,
-      buff
-    ) +
-    calcDamage(
-      calcMonsterDef(monster.value, 'magic'),
-      monster.value.darkR,
-      darkCommandoDamage,
-      buff
-    )
+const damage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.darkR,
+    idealScytheDamage.value,
+    bossBuff.value
+  ) +
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.darkR,
+    idealDarkCommandoDamage.value,
+    bossBuff.value
   )
-})
+)
+
+const critDamage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.darkR,
+    idealScytheDamage.value * CRIT_MULTIPLIER.magic,
+    bossBuff.value
+  ) +
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.darkR,
+    idealDarkCommandoDamage.value * CRIT_MULTIPLIER.magic,
+    bossBuff.value
+  )
+)
 
 const resMA = computed(() => {
   const scytheRatio = SkillRatio.Scythe(stats.value.dark, localBasePower.value)

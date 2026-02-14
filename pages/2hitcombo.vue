@@ -10,10 +10,10 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
-      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage="critFirstHitDamage + critSecondHitDamage"
       :crit-damage-string="[
-        `1st hit: ${Math.floor(fisrtHitDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`,
-        `2nd hit: ${Math.floor(secondHitDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`
+        `1st hit: ${critFirstHitDamage.toLocaleString()}`,
+        `2nd hit: ${critSecondHitDamage.toLocaleString()}`
       ]"
     ></BossMonsterPanel>
     <v-row>
@@ -64,11 +64,19 @@ const debuffSkillsDef: skillPanel[] = [
   }
 ]
 
+const firstHitIdealDamage = computed(() => {
+  return calcFirstHitComboDamage(buffedAP.value, localBasePower.value)
+})
+
+const secondHitIdealDamage = computed(() => {
+  return calcSecondHitComboDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+})
+
 const fisrtHitDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcFirstHitComboDamage(buffedAP.value, localBasePower.value)
+    firstHitIdealDamage.value
   )
 })
 
@@ -76,7 +84,23 @@ const secondHitDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcSecondHitComboDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+    secondHitIdealDamage.value
+  )
+})
+
+const critFirstHitDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    firstHitIdealDamage.value * CRIT_MULTIPLIER.physical
+  )
+})
+
+const critSecondHitDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    secondHitIdealDamage.value * CRIT_MULTIPLIER.physical
   )
 })
 

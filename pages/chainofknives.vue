@@ -6,7 +6,7 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
-      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage="critDamage"
     />
 
     <v-row>
@@ -56,18 +56,29 @@ const debuffSkillsDef: skillPanel[] = [
   }
 ]
 
-const damage = computed(() => {
-  const chainOfKnivesDamage = calcChainOfKnivesDamage(
+const idealDamage = computed(() =>
+  calcChainOfKnivesDamage(
     buffedDA.value,
     buffedThrowAP.value,
     localBasePower.value
   )
-  return calcDamage(
+)
+
+const damage = computed(() =>
+  calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    chainOfKnivesDamage
+    idealDamage.value
   )
-})
+)
+
+const critDamage = computed(() =>
+  calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    idealDamage.value * CRIT_MULTIPLIER.physical
+  )
+)
 
 const resDA = computed(() => {
   const needDA = calcNeedStats(

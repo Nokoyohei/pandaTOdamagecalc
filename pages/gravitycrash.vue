@@ -5,9 +5,9 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
-      :crit-multiplier="CRIT_MULTIPLIER.magic"
+      :crit-damage="critDamage"
     />
-    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -69,6 +69,34 @@ const damage = computed(() => {
       calcMonsterDef(monster.value, 'magic'),
       monster.value.darkR,
       darkCommandoDamage
+    )
+  )
+})
+
+const critDamage = computed(() => {
+  let darkCommandoDamage = dlBuffs.value.includes('darkCommando')
+    ? calcDarkCommandoDamage(buffedMA.value)
+    : 0
+  let gravityCrashDamage = calcGravityCrashDamage(buffedMA.value, localBasePower.value)
+  if (dlBuffs.value.includes('bloodTestament')) {
+    darkCommandoDamage = Math.round(
+      darkCommandoDamage * (1 + BloodTestamentBuff)
+    )
+    gravityCrashDamage = Math.round(
+      gravityCrashDamage * (1 + BloodTestamentBuff)
+    )
+  }
+
+  return (
+    calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.darkR,
+      gravityCrashDamage * CRIT_MULTIPLIER.magic
+    ) +
+    calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value.darkR,
+      darkCommandoDamage * CRIT_MULTIPLIER.magic
     )
   )
 })

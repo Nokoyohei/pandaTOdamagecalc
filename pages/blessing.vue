@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Blessings</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <p class="text-center">Blessings</p>
     <div class="d-flex justify-center">
       <v-btn-toggle
@@ -106,6 +106,23 @@ const damage = computed(() => {
         buffedLK.value,
         BlessingSkills.value[e].ratio
       )
+    )
+  })
+  return damage
+})
+
+const critDamage = computed(() => {
+  let damage = 0
+  selectedBlessingSkills.value.forEach((e: number) => {
+    const idealDamage = calcBlessingDamage(
+      buffedAC.value,
+      buffedLK.value,
+      BlessingSkills.value[e].ratio
+    )
+    damage += calcDamage(
+      calcMonsterDef(monster.value, 'magic'),
+      monster.value[BlessingSkills.value[e].attr],
+      idealDamage * CRIT_MULTIPLIER.magic
     )
   })
   return damage

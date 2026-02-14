@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Tesla Field</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" />
@@ -41,11 +41,23 @@ const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
 
 const localBasePower = ref(BASE_POWER.TeslaField)
 
+const idealDamage = computed(() =>
+  calcTeslaFieldDamage(buffedMA.value, stats.value.mp, localBasePower.value)
+)
+
 const damage = computed(() =>
   calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.elecR,
-    calcTeslaFieldDamage(buffedMA.value, stats.value.mp, localBasePower.value)
+    idealDamage.value
+  )
+)
+
+const critDamage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.elecR,
+    idealDamage.value * CRIT_MULTIPLIER.magic
   )
 )
 

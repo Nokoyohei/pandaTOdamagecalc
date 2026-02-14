@@ -5,9 +5,9 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
-      :crit-multiplier="CRIT_MULTIPLIER.magic"
+      :crit-damage="critDamage"
     />
-    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" />
@@ -98,11 +98,23 @@ const lightSkills = [
   }
 ]
 
+const idealDamage = computed(() => {
+  return calcCelestialStrikeDamage(buffedMA.value, selectedLightSkills.value.length, localBasePower.value)
+})
+
 const damage = computed(() => {
   return calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.lightR,
-    calcCelestialStrikeDamage(buffedMA.value, selectedLightSkills.value.length, localBasePower.value)
+    idealDamage.value
+  )
+})
+
+const critDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.lightR,
+    idealDamage.value * CRIT_MULTIPLIER.magic
   )
 })
 

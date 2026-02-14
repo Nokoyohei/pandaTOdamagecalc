@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Magical Soul</h1>
-    <BossMonsterPanel :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <BossMonsterPanel :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
 
     <v-row>
       <v-col cols="12" md="5" order-md="1">
@@ -40,15 +40,26 @@ import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, buffedAP, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
-const damage = computed(() => {
-  const magicalSoulDamage = calcMagicalSoulDamage(
+const idealDamage = computed(() => {
+  return calcMagicalSoulDamage(
     buffedAP.value,
     buffedMA.value
   )
+})
+
+const damage = computed(() => {
   return calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.noPropR,
-    magicalSoulDamage
+    idealDamage.value
+  )
+})
+
+const critDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.noPropR,
+    idealDamage.value * CRIT_MULTIPLIER.magic
   )
 })
 

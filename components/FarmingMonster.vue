@@ -33,8 +33,8 @@
       </v-card>
       <div class="d-flex justify-center align-center flex-wrap ga-4">
         <DamageArea :damage="damage" />
-        <v-divider v-if="critMultiplier" vertical class="align-self-stretch" />
-        <DamageArea v-if="critMultiplier" :damage="critDamage" color="yellow" label="critical" />
+        <v-divider v-if="critDamage != null" vertical class="align-self-stretch" />
+        <DamageArea v-if="critDamage != null" :damage="critDamage" color="yellow" label="critical" />
       </div>
     </div>
   </div>
@@ -48,12 +48,10 @@ import type { Monster } from '~/types'
 
 const props = defineProps<{
   damage: number
-  critMultiplier?: number
+  critDamage?: number
 }>()
 
 const monster = defineModel<Monster>('monster', { required: true })
-
-const critDamage = computed(() => Math.floor(props.damage * (props.critMultiplier ?? 1)))
 
 const datanum = 100
 const tab = ref(0)

@@ -6,7 +6,7 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
-      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage="critDamage"
     />
 
     <v-row>
@@ -67,19 +67,30 @@ const debuffSkillsDef: skillPanel[] = [
   }
 ]
 
-const damage = computed(() => {
-  const suddenAttackDamage = calcSuddenAttackDamage(
+const idealDamage = computed(() =>
+  calcSuddenAttackDamage(
     buffedAP.value,
     buffedDA.value,
     buffedLK.value,
     localBasePower.value
   )
-  return calcDamage(
+)
+
+const damage = computed(() =>
+  calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    suddenAttackDamage
+    idealDamage.value
   )
-})
+)
+
+const critDamage = computed(() =>
+  calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    idealDamage.value * CRIT_MULTIPLIER.physical
+  )
+)
 
 const needStats = computed(() => {
   return calcNeedStats(

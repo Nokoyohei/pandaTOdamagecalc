@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Deadly Fen</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-multiplier="CRIT_MULTIPLIER.magic" />
+    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:lk-buffs="lkBuffs" />
@@ -43,11 +43,23 @@ const { stats, extraStats, monster, maBuffs, lkBuffs, buffedMA, buffedLK } = use
 
 const localBasePower = ref(BASE_POWER.DeadlyFen)
 
+const idealDamage = computed(() =>
+  calcDeadlyFenDamage(buffedMA.value, buffedLK.value, localBasePower.value)
+)
+
 const damage = computed(() =>
   calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.earthR,
-    calcDeadlyFenDamage(buffedMA.value, buffedLK.value, localBasePower.value)
+    idealDamage.value
+  )
+)
+
+const critDamage = computed(() =>
+  calcDamage(
+    calcMonsterDef(monster.value, 'magic'),
+    monster.value.earthR,
+    idealDamage.value * CRIT_MULTIPLIER.magic
   )
 )
 

@@ -11,11 +11,11 @@
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
-      :crit-multiplier="CRIT_MULTIPLIER.physical"
+      :crit-damage="critAvgDamage"
       :crit-damage-string="[
-        `maximum:${Math.floor(maxDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`,
-        `average:${Math.floor(avgDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`,
-        `minimum:${Math.floor(minDamage * CRIT_MULTIPLIER.physical).toLocaleString()}`
+        `maximum:${critMaxDamage.toLocaleString()}`,
+        `average:${critAvgDamage.toLocaleString()}`,
+        `minimum:${critMinDamage.toLocaleString()}`
       ]"
     ></BossMonsterPanel>
     <v-row>
@@ -64,11 +64,23 @@ const debuffSkillsDef = [
   }
 ]
 
+const maxIdealDamage = computed(() => {
+  return calcGaleStrikeDamage(buffedAP.value, stats.value.wind, localBasePower.value)
+})
+
+const minIdealDamage = computed(() => {
+  return calcGaleStrikeDamage(buffedAP.value, 0, localBasePower.value)
+})
+
+const avgIdealDamage = computed(() => {
+  return calcGaleStrikeDamage(buffedAP.value, stats.value.wind / 2, localBasePower.value)
+})
+
 const maxDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcGaleStrikeDamage(buffedAP.value, stats.value.wind, localBasePower.value)
+    maxIdealDamage.value
   )
 })
 
@@ -76,7 +88,7 @@ const minDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcGaleStrikeDamage(buffedAP.value, 0, localBasePower.value)
+    minIdealDamage.value
   )
 })
 
@@ -84,7 +96,31 @@ const avgDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    calcGaleStrikeDamage(buffedAP.value, stats.value.wind / 2, localBasePower.value)
+    avgIdealDamage.value
+  )
+})
+
+const critMaxDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    maxIdealDamage.value * CRIT_MULTIPLIER.physical
+  )
+})
+
+const critMinDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    minIdealDamage.value * CRIT_MULTIPLIER.physical
+  )
+})
+
+const critAvgDamage = computed(() => {
+  return calcDamage(
+    calcMonsterDef(debuffedMonster.value, 'physical'),
+    debuffedMonster.value.physicalR,
+    avgIdealDamage.value * CRIT_MULTIPLIER.physical
   )
 })
 
