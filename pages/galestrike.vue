@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Gale Strike</h1>
+    <h1>{{ isGodly ? 'Godly Gale Strike' : 'Gale Strike' }}</h1>
     <BossMonsterPanel
       :damage="avgDamage"
       :damage-string="[
@@ -23,9 +23,6 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Gale Strike</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ap"
@@ -57,11 +54,11 @@ import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, debuffSkills, buffedAP, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref<number>(BASE_POWER.GaleStrike)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.GaleStrike : BASE_POWER.GaleStrike
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })

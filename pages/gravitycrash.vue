@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Gravity Crash</h1>
+    <h1>{{ isGodly ? 'Godly Gravity Crash' : 'Gravity Crash' }}</h1>
     <BossMonsterPanel
       v-if="mode === 'boss'"
       :damage="damage"
@@ -14,9 +14,6 @@
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:dl-buffs="dlBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Gravity Crash</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <stats-text-field
           v-model:input-stats="stats.ma"
@@ -46,11 +43,11 @@ import { CRIT_MULTIPLIER } from '~/utils/critical'
 const { mode, monster, stats, extraStats, maBuffs, dlBuffs, buffedMA, monsterHP } =
   useSkillPage({ skillMode: 'dual' })
 
-const localBasePower = ref<number>(BASE_POWER.GravityCrash)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.GravityCrash : BASE_POWER.GravityCrash
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })

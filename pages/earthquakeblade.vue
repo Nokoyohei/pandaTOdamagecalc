@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Earthquake Blade</h1>
+    <h1>{{ isGodly ? 'Godly Earthquake Blade' : 'Earthquake Blade' }}</h1>
     <BossMonsterPanel
       v-if="mode === 'boss'"
       :damage="damage"
@@ -15,9 +15,6 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Earthquake Blade</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <stats-text-field
           v-model:input-stats="stats.ap"
@@ -51,11 +48,11 @@ import type { skillPanel } from '~/types'
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })
 
-const localBasePower = ref<number>(BASE_POWER.EarthquakeBlade)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.EarthquakeBlade : BASE_POWER.EarthquakeBlade
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })

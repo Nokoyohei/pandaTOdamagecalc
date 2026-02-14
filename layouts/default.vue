@@ -39,7 +39,7 @@
                 <template #prepend>
                   <v-img :src="skill.imgsrc" width="32" />
                 </template>
-                <v-list-item-title v-text="skill.title" />
+                <v-list-item-title :class="skill.godly ? 'godly-label' : ''" v-text="skill.title" />
               </v-list-item>
             </v-list>
           </v-expansion-panel-text>
@@ -69,9 +69,11 @@ const farmingMenu = [
     title: 'ATTACK TYPE',
     skills: [
       { imgsrc: '/earthquakeblade.gif', title: 'EARTHQUAKE BLADE', to: '/earthquakeblade' },
+      { imgsrc: '/earthquakeblade.gif', title: 'GODLY EARTHQUAKE BLADE', to: '/earthquakeblade?godly=true', godly: true },
       { imgsrc: '/championsblade.gif', title: "CHAMPION'S BLADE", to: '/championsblade' },
       { imgsrc: '/tidalslash.gif', title: 'TIDAL SLASH', to: '/tidalslash' },
-      { imgsrc: '/sonicslash.gif', title: 'SONIC SLASH', to: '/sonicslash' }
+      { imgsrc: '/sonicslash.gif', title: 'SONIC SLASH', to: '/sonicslash' },
+      { imgsrc: '/sonicslash.gif', title: 'GODLY SONIC SLASH', to: '/sonicslash?godly=true', godly: true }
     ]
   },
   {
@@ -89,6 +91,7 @@ const farmingMenu = [
       { imgsrc: '/deadlyfen.gif', title: 'DEADLY FEN', to: '/deadlyfen' },
       { imgsrc: '/salamanderBlessing.gif', title: 'BLESSINGS', to: '/blessing' },
       { imgsrc: '/hardgravity.gif', title: 'GRAVITY CRASH', to: '/gravitycrash' },
+      { imgsrc: '/hardgravity.gif', title: 'GODLY GRAVITY CRASH', to: '/gravitycrash?godly=true', godly: true },
       { imgsrc: '/celestialstrike.gif', title: 'CELESTIAL STRIKE', to: '/celestialstrike' }
     ]
   },
@@ -97,8 +100,10 @@ const farmingMenu = [
     title: 'SENSE TYPE',
     skills: [
       { imgsrc: '/fanofknives.gif', title: 'FAN OF KNIVES', to: '/fanofknives' },
+      { imgsrc: '/fanofknives.gif', title: 'GODLY FAN OF KNIVES', to: '/fanofknives?godly=true', godly: true },
       { imgsrc: '/shootingspree.gif', title: 'SHOOTING SPREE', to: '/shootingspree' },
-      { imgsrc: '/violenceshot.gif', title: 'BERSERK', to: '/berserk' }
+      { imgsrc: '/violenceshot.gif', title: 'BERSERK', to: '/berserk' },
+      { imgsrc: '/violenceshot.gif', title: 'GODLY BERSERK', to: '/berserk?godly=true', godly: true }
     ]
   },
   {
@@ -106,6 +111,7 @@ const farmingMenu = [
     title: 'CHARM TYPE',
     skills: [
       { imgsrc: '/fullhouse.gif', title: 'FULL HOUSE', to: '/fullhouse' },
+      { imgsrc: '/fullhouse.gif', title: 'GODLY FULL HOUSE', to: '/fullhouse?godly=true', godly: true },
       { imgsrc: '/sharpscream.gif', title: 'SHARP SCREAM', to: '/sharpscream' }
     ]
   }
@@ -117,10 +123,13 @@ const bossMenu = [
     title: 'ATTACK TYPE',
     skills: [
       { imgsrc: '/earthquakeblade.gif', title: 'EARTHQUAKE BLADE', to: '/earthquakeblade?mode=boss' },
+      { imgsrc: '/earthquakeblade.gif', title: 'GODLY EARTHQUAKE BLADE', to: '/earthquakeblade?mode=boss&godly=true', godly: true },
       { imgsrc: '/tidalslash.gif', title: 'TIDAL SLASH', to: '/tidalslash?mode=boss' },
       { imgsrc: '/sonicslash.gif', title: 'SONIC SLASH', to: '/sonicslash?mode=boss' },
+      { imgsrc: '/sonicslash.gif', title: 'GODLY SONIC SLASH', to: '/sonicslash?mode=boss&godly=true', godly: true },
       { imgsrc: '/tempeststrike.gif', title: 'TEMPEST STRIKE', to: '/tempeststrike' },
       { imgsrc: '/galestrike.gif', title: 'GALE STRIKE', to: '/galestrike' },
+      { imgsrc: '/galestrike.gif', title: 'GODLY GALE STRIKE', to: '/galestrike?godly=true', godly: true },
       { imgsrc: '/flamingfist.gif', title: 'FLAMING FIST', to: '/flamingfist' }
     ]
   },
@@ -130,8 +139,11 @@ const bossMenu = [
     skills: [
       { imgsrc: '/sr.gif', title: 'MAGICAL SOUL', to: '/magicalsoul' },
       { imgsrc: '/hellfulks.gif', title: 'SCYTHE', to: '/scythe' },
+      { imgsrc: '/hellfulks.gif', title: 'GODLY SCYTHE', to: '/scythe?godly=true', godly: true },
       { imgsrc: '/maristrident.gif', title: 'STAFF OF AGONY', to: '/staffofagony' },
+      { imgsrc: '/maristrident.gif', title: 'GODLY STAFF OF AGONY', to: '/staffofagony?godly=true', godly: true },
       { imgsrc: '/hardgravity.gif', title: 'GRAVITY CRASH', to: '/gravitycrash?mode=boss' },
+      { imgsrc: '/hardgravity.gif', title: 'GODLY GRAVITY CRASH', to: '/gravitycrash?mode=boss&godly=true', godly: true },
       { imgsrc: '/celestialstrike.gif', title: 'CELESTIAL STRIKE', to: '/celestialstrike?mode=boss' }
     ]
   },
@@ -140,11 +152,15 @@ const bossMenu = [
     title: 'SENSE TYPE',
     skills: [
       { imgsrc: '/chainofknives.gif', title: 'CHAIN OF KNIVES', to: '/chainofknives' },
+      { imgsrc: '/chainofknives.gif', title: 'GODLY CHAIN OF KNIVES', to: '/chainofknives?godly=true', godly: true },
       { imgsrc: '/suddenattack.gif', title: 'SUDDEN ATTACK', to: '/suddenattack' },
       { imgsrc: '/poison.gif', title: 'POISON ASSAULT', to: '/poisonassault' },
+      { imgsrc: '/poison.gif', title: 'GODLY POISON ASSAULT', to: '/poisonassault?godly=true', godly: true },
       { imgsrc: '/fotune_hit.gif', title: 'LUCKY FIST', to: '/luckyfist' },
       { imgsrc: '/power_shot.gif', title: 'POWER SHOT', to: '/powershot' },
-      { imgsrc: '/quick_shot.gif', title: 'DOUBLE SHOT', to: '/doubleshot' }
+      { imgsrc: '/power_shot.gif', title: 'GODLY POWER SHOT', to: '/powershot?godly=true', godly: true },
+      { imgsrc: '/quick_shot.gif', title: 'DOUBLE SHOT', to: '/doubleshot' },
+      { imgsrc: '/quick_shot.gif', title: 'GODLY DOUBLE SHOT', to: '/doubleshot?godly=true', godly: true }
     ]
   },
   {
@@ -152,7 +168,9 @@ const bossMenu = [
     title: 'CHARM TYPE',
     skills: [
       { imgsrc: '/jazzcombo.gif', title: '2 HIT COMBO', to: '/2hitcombo' },
-      { imgsrc: '/one_pair.gif', title: 'ONE PAIR', to: '/onepair' }
+      { imgsrc: '/jazzcombo.gif', title: 'GODLY 2 HIT COMBO', to: '/2hitcombo?godly=true', godly: true },
+      { imgsrc: '/one_pair.gif', title: 'ONE PAIR', to: '/onepair' },
+      { imgsrc: '/one_pair.gif', title: 'GODLY ONE PAIR', to: '/onepair?godly=true', godly: true }
     ]
   }
 ]

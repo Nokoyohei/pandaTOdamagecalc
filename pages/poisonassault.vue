@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Poison Assault (Only Poison Damage)</h1>
+    <h1>{{ isGodly ? 'Godly Poison Assault' : 'Poison Assault' }} (Only Poison Damage)</h1>
     <BossMonsterPanel
       :damage="damage"
       :damage-string="`${damage.toLocaleString()} * ${poisonTicks}`"
@@ -12,9 +12,6 @@
         <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Poison Assault</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.da"
@@ -42,11 +39,11 @@ import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
 
 const { stats, extraStats, monster, monsterHP, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref<number>(BASE_POWER.PoisonAssault)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.PoisonAssault : BASE_POWER.PoisonAssault
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 const poisonTicks = computed(() => isGodly.value ? 10 : 30)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value

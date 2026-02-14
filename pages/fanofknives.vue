@@ -1,15 +1,12 @@
 <template>
   <v-container>
-    <h1>Fan of Knives</h1>
+    <h1>{{ isGodly ? 'Godly Fan of Knives' : 'Fan of Knives' }}</h1>
     <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:da-buffs="daBuffs" v-model:throw-buffs="throwBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Fan of Knives</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.da"
@@ -41,11 +38,11 @@ import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage()
 
-const localBasePower = ref<number>(BASE_POWER.FanOfKnives)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.FanOfKnives : BASE_POWER.FanOfKnives
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Berserk</h1>
+    <h1>{{ isGodly ? 'Godly Berserk' : 'Berserk' }}</h1>
     <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <div class="d-flex justify-center mb-4">
       <v-btn-toggle v-model="sharpSense" multiple bg-color="black">
@@ -27,9 +27,6 @@
         <BuffPanel v-model:ac-buffs="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Berserk</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ac"
@@ -61,11 +58,11 @@ import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER }
 
 const { stats, extraStats, monster, acBuffs, buffedAC } = useSkillPage()
 
-const localBasePower = ref<number>(BASE_POWER.Berserk)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.Berserk : BASE_POWER.Berserk
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Double Shot</h1>
+    <h1>{{ isGodly ? 'Godly Double Shot' : 'Double Shot' }}</h1>
     <BossMonsterPanel
       :damage="damage"
       :damage-string="`${damage.toLocaleString()} * 2`"
@@ -35,9 +35,6 @@
         <BuffPanel v-model:ac-buffs="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
-          <template #label><span class="godly-label">Godly Double Shot</span></template>
-        </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField
           v-model:input-stats="stats.ac"
@@ -69,11 +66,11 @@ import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER }
 
 const { stats, extraStats, monster, monsterHP, acBuffs, debuffSkills, buffedAC, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref<number>(BASE_POWER.DoubleShot)
-const isGodly = ref(false)
+const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
   isGodly.value ? GODLY_BASE_POWER.DoubleShot : BASE_POWER.DoubleShot
 )
+const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
