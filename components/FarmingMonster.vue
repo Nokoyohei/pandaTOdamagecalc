@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import type { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
-import { torobbie, toilet, cora } from '~/utils/monsters'
+import { torobbie, toilet, cora, werepot } from '~/utils/monsters'
 import type { Monster } from '~/types'
 
 const props = defineProps<{
@@ -74,11 +74,17 @@ const tabContents = [
     height: '60',
     title: 'Cora Merrymaker',
     alt: 'CORA MERRYMAKER'
+  },
+  {
+    srcimg: '/werepot.gif',
+    height: '60',
+    title: 'Werepot M4',
+    alt: 'WEREPOT M4'
   }
 ]
 
 function changeSelectedMonster() {
-  monster.value = [torobbie, toilet, cora][tab.value]
+  monster.value = [torobbie, toilet, cora, werepot][tab.value]
 }
 
 const dmgList = computed(() =>

@@ -87,7 +87,11 @@ import {
   kevin,
   madray,
   koiosu,
-  chronos
+  chronos,
+  requiemHarbinger,
+  rosaspina,
+  punisherRosaspina,
+  ed
 } from '~/utils/monsters'
 import type { Monster, BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -157,6 +161,30 @@ const tabContents = [
     height: '76',
     title: 'Chronos',
     alt: 'CHRONOS'
+  },
+  {
+    srcimg: '/ed.gif',
+    height: '76',
+    title: 'Ed',
+    alt: 'ED'
+  },
+  {
+    srcimg: '/requiem.gif',
+    height: '68',
+    title: 'Requiem Harbinger G',
+    alt: 'REQUIEM HARBINGER G'
+  },
+  {
+    srcimg: '/rosaspina.gif',
+    height: '76',
+    title: 'Mystical Rosaspina',
+    alt: 'MYSTICAL ROSASPINA'
+  },
+  {
+    srcimg: '/rosaspina.gif',
+    height: '76',
+    title: 'Punisher Rosaspina',
+    alt: 'PUNISHER ROSASPINA'
   }
 ]
 
@@ -179,7 +207,11 @@ function changeSelectedMonster() {
     koiosu,
     madray,
     kevin,
-    chronos
+    chronos,
+    ed,
+    requiemHarbinger,
+    rosaspina,
+    punisherRosaspina,
   ][tab.value]
 }
 

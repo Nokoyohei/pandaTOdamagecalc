@@ -98,11 +98,11 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
   onBeforeMount(() => {
     if (skillMode === 'boss') {
       mode.value = 'boss'
-      monster.value = requiem
+      monster.value = bossTorrobie
     } else if (skillMode === 'dual') {
       mode.value = route.query.mode === 'boss' ? 'boss' : 'farming'
       if (mode.value === 'boss') {
-        monster.value = requiem
+        monster.value = bossTorrobie
       }
     }
 

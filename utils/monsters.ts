@@ -51,6 +51,23 @@ const cora: Monster = {
   gunR: 70
 }
 
+const werepot: Monster = {
+  hp: 100000,
+  dp: 100000,
+  md: 100000,
+  hv: 10000,
+  fireR: 80,
+  waterR: 80,
+  windR: 80,
+  earthR: 80,
+  elecR: 80,
+  lightR: 80,
+  darkR: 0,
+  noPropR: 80,
+  physicalR: 80,
+  gunR: 80
+}
+
 const bossTorrobie: BossMonster = {
   hp: 100000000,
   dp: 0,
@@ -203,10 +220,87 @@ const chronos: BossMonster = {
   gaugeNum: 5
 }
 
+const requiemHarbinger: BossMonster = {
+  hp: 200000000,
+  dp: 1400000,
+  md: 500000,
+  hv: 10000,
+  da: 50000,
+  fireR: 250,
+  waterR: 99,
+  windR: 99,
+  earthR: 99,
+  elecR: 99,
+  lightR: 99,
+  darkR: 80,
+  noPropR: 99,
+  physicalR: 96,
+  gunR: 99,
+  gaugeNum: 5
+}
+
+const rosaspina: BossMonster = {
+  hp: 200000000,
+  dp: 1400000,
+  md: 500000,
+  hv: 10000,
+  da: 50000,
+  fireR: 250,
+  waterR: 99,
+  windR: 99,
+  earthR: 99,
+  elecR: 99,
+  lightR: 99,
+  darkR: 85,
+  noPropR: 99,
+  physicalR: 99,
+  gunR: 99,
+  gaugeNum: 5
+}
+
+const punisherRosaspina: BossMonster = {
+  hp: 100000000000,
+  dp: 1000000,
+  md: 1000000,
+  hv: 55000,
+  da: 120000,
+  fireR: 250,
+  waterR: 99,
+  windR: 99,
+  earthR: 99,
+  elecR: 99,
+  lightR: 99,
+  darkR: 99,
+  noPropR: 99,
+  physicalR: 99,
+  gunR: 99,
+  gaugeNum: 5
+}
+
+const ed: BossMonster = {
+  hp: 200000000,
+  dp: 1400000,
+  md: 500000,
+  hv: 10000,
+  da: 50000,
+  fireR: 250,
+  waterR: 99,
+  windR: 99,
+  earthR: 99,
+  elecR: 99,
+  lightR: 99,
+  darkR: 80,
+  noPropR: 99,
+  physicalR: 96,
+  gunR: 99,
+  gaugeNum: 5
+}
+
 export {
   torobbie,
   toilet,
   cora,
+  werepot,
   requiem,
   bossTorrobie,
   predator,
@@ -214,5 +308,9 @@ export {
   kevin,
   madray,
   koiosu,
-  chronos
+  chronos,
+  requiemHarbinger,
+  rosaspina,
+  punisherRosaspina,
+  ed
 }
