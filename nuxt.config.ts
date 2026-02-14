@@ -21,7 +21,7 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Jacques+Francois+Shadow&display=swap'
+          href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Jacques+Francois+Shadow&family=Chakra+Petch:wght@600;700&display=swap'
         }
       ],
       script: [

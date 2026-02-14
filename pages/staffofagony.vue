@@ -7,8 +7,8 @@
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:dl-buffs="dlBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
-          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Staff of Agony</span></template>
+        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
+          <template #label><span class="godly-label">Godly Staff of Agony</span></template>
         </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <StatsTextField

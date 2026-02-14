@@ -24,37 +24,37 @@
           {{ content.title }}
         </v-tooltip>
       </v-tabs>
-      <v-card flat>
+      <v-card color="surface" rounded="lg" elevation="2">
         <ChartLine
           :chart-data="chartData"
           :options="chartOption"
           :styles="chartStyles"
         />
+        <div class="damage-bar d-flex justify-center align-center flex-wrap ga-8">
+          <div>
+            <DamageArea v-if="damageAreaMessage.length === 0" :damage="damage" />
+            <DamageArea
+              v-for="(mes, i) in damageAreaMessage"
+              v-else
+              :key="mes"
+              :damage="mes"
+              :color="textColor[i]"
+            />
+          </div>
+          <v-divider v-if="critDamage != null" vertical class="damage-divider" />
+          <div v-if="critDamage != null">
+            <DamageArea v-if="critDamageAreaMessage.length === 0" :damage="critDamage" color="yellow" label="critical" />
+            <DamageArea
+              v-for="mes in critDamageAreaMessage"
+              v-else
+              :key="mes"
+              :damage="mes"
+              color="yellow"
+              label="critical"
+            />
+          </div>
+        </div>
       </v-card>
-      <div class="d-flex justify-center align-center flex-wrap ga-4">
-        <div>
-          <DamageArea v-if="damageAreaMessage.length === 0" :damage="damage" />
-          <DamageArea
-            v-for="(mes, i) in damageAreaMessage"
-            v-else
-            :key="mes"
-            :damage="mes"
-            :color="textColor[i]"
-          />
-        </div>
-        <v-divider v-if="critDamage != null" vertical class="align-self-stretch" />
-        <div v-if="critDamage != null">
-          <DamageArea v-if="critDamageAreaMessage.length === 0" :damage="critDamage" color="yellow" label="critical" />
-          <DamageArea
-            v-for="mes in critDamageAreaMessage"
-            v-else
-            :key="mes"
-            :damage="mes"
-            color="yellow"
-            label="critical"
-          />
-        </div>
-      </div>
       <div v-if="debuff" class="text-center">
         debuff:
         <v-btn-toggle
@@ -215,11 +215,13 @@ function changeSelectedMonster() {
   ][tab.value]
 }
 
+const totalHp = computed(() => monster.value.hp * boss.value.gaugeNum)
+
 const dmgList = computed(() =>
   [
     ...makeArr(
       0,
-      monster.value.hp * boss.value.gaugeNum * 1.2,
+      totalHp.value * 1.2,
       datanum
     )
   ].map((x) => Math.round(x))
@@ -237,6 +239,28 @@ const hpBar = computed(() => {
   }))
 })
 
+const killLineAnnotations = computed(() => {
+  const annotations: Record<string, any> = {}
+  annotations['killLine'] = {
+    type: 'line',
+    yMin: totalHp.value,
+    yMax: totalHp.value,
+    borderColor: 'rgba(255, 82, 82, 0.7)',
+    borderWidth: 2,
+    borderDash: [6, 4],
+    label: {
+      display: true,
+      content: 'ONE SHOT LINE',
+      position: 'start',
+      backgroundColor: 'rgba(255, 82, 82, 0.8)',
+      color: '#fff',
+      font: { size: 11, weight: 'bold' },
+      padding: 4
+    }
+  }
+  return annotations
+})
+
 const chartData = computed<ChartData>(() => ({
   labels: dmgList.value,
   datasets: [
@@ -249,13 +273,13 @@ const chartData = computed<ChartData>(() => ({
               ? dmgList.value[dmgList.value.length - 1]
               : dmgList.value.find((x) => x > props.damage)!,
           y:
-            props.damage > monster.value.hp * boss.value.gaugeNum * 1.2
-              ? monster.value.hp * boss.value.gaugeNum * 1.2
+            props.damage > totalHp.value * 1.2
+              ? totalHp.value * 1.2
               : props.damage
         }
       ],
       pointBackgroundColor:
-        props.damage >= monster.value.hp * boss.value.gaugeNum
+        props.damage >= totalHp.value
           ? 'green'
           : 'gray',
       type: 'scatter' as const,
@@ -266,7 +290,18 @@ const chartData = computed<ChartData>(() => ({
       label: 'DAMAGE',
       data: dmgList.value,
       pointRadius: 0,
-      borderColor: 'orange'
+      borderColor: 'orange',
+      borderWidth: 3,
+      fill: true,
+      backgroundColor: (ctx: any) => {
+        const chart = ctx.chart
+        const { ctx: canvasCtx, chartArea } = chart
+        if (!chartArea) return 'rgba(255, 165, 0, 0.1)'
+        const gradient = canvasCtx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom)
+        gradient.addColorStop(0, 'rgba(255, 165, 0, 0.3)')
+        gradient.addColorStop(1, 'rgba(255, 165, 0, 0)')
+        return gradient
+      }
     }
   ]
 }))
@@ -279,10 +314,14 @@ const chartOption = computed<ChartOptions>(() => ({
       display: false
     },
     tooltip: {
+      backgroundColor: 'rgba(30, 41, 59, 0.9)',
       callbacks: {
         title: () => 'your damage',
         label: () => props.damage.toLocaleString()
       }
+    },
+    annotation: {
+      annotations: killLineAnnotations.value
     }
   },
   scales: {
@@ -290,7 +329,13 @@ const chartOption = computed<ChartOptions>(() => ({
       display: false
     },
     y: {
-      beginAtZero: true
+      beginAtZero: true,
+      grid: {
+        color: 'rgba(100, 181, 246, 0.1)'
+      },
+      ticks: {
+        color: '#90caf9'
+      }
     }
   }
 }))

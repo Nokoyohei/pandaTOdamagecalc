@@ -1,17 +1,57 @@
-/* Monster tabs - selected state (Vuetify 3: .v-tab--selected) */
+/* ============================================
+   Background
+   ============================================ */
+.v-application,
+.v-main {
+  background-color: #0f172a !important;
+}
+
+/* ============================================
+   Sidebar - active item
+   ============================================ */
+.v-navigation-drawer .v-list-item--active {
+  border-left: 3px solid #64b5f6 !important;
+  background: rgba(100, 181, 246, 0.15) !important;
+  color: #90caf9 !important;
+  font-weight: 600;
+}
+
+.v-navigation-drawer .v-list-item--active .v-icon {
+  filter: drop-shadow(0 0 4px rgba(100, 181, 246, 0.8));
+}
+
+.v-navigation-drawer .v-list-item:hover {
+  background: rgba(100, 181, 246, 0.08) !important;
+}
+
+/* ============================================
+   Monster tabs - selected state
+   ============================================ */
 .v-tab--selected {
   background: #616161 !important;
   border-top: solid 3px #64b5f6 !important;
   box-shadow: inset 0 3px 8px rgba(100, 181, 246, 0.3) !important;
 }
 
-/* v-btn-toggle - selected button (debuff, skills, blessings) */
+.v-tab--selected img {
+  filter: brightness(1.2) drop-shadow(0 0 6px rgba(100, 181, 246, 0.7)) !important;
+}
+
+.v-tabs {
+  border-radius: 12px 12px 0 0 !important;
+  overflow: hidden;
+}
+
+/* ============================================
+   v-btn-toggle - selected button
+   ============================================ */
 .v-btn-toggle > .v-btn.v-btn--active {
   background-color: rgba(100, 181, 246, 0.25) !important;
   box-shadow:
     0 0 8px rgba(100, 181, 246, 0.5),
     inset 0 0 6px rgba(100, 181, 246, 0.2) !important;
   border: 1px solid #64b5f6 !important;
+  transform: translateY(-1px);
 }
 
 .v-btn-toggle > .v-btn.v-btn--active > .v-btn__overlay {
@@ -19,15 +59,81 @@
 }
 
 .v-btn-toggle > .v-btn.v-btn--active img {
-  filter: drop-shadow(0 0 4px rgba(100, 181, 246, 0.8)) !important;
+  filter: drop-shadow(0 0 4px rgba(100, 181, 246, 0.8)) brightness(1.3) !important;
 }
 
-/* v-switch - ON state */
+/* ============================================
+   v-switch - ON state
+   ============================================ */
 .v-switch .v-selection-control--dirty .v-switch__track {
-  background-color: #1e88e5 !important;
+  background: linear-gradient(90deg, #1565C0, #1e88e5) !important;
   opacity: 1 !important;
+  box-shadow: 0 0 8px rgba(21, 101, 192, 0.5);
 }
 
 .v-switch .v-selection-control--dirty .v-label {
   color: #90caf9 !important;
+}
+
+.v-switch .v-selection-control--dirty img {
+  filter: drop-shadow(0 0 4px rgba(100, 181, 246, 0.8)) brightness(1.2) !important;
+}
+
+/* ============================================
+   Godly skill toggle label
+   ============================================ */
+.godly-label {
+  font-weight: 600;
+  color: #ffb300;
+}
+
+/* ============================================
+   Damage bar (below chart)
+   ============================================ */
+.damage-bar {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border-top: 1px solid rgba(100, 181, 246, 0.15);
+  padding: 16px 24px;
+}
+
+.damage-divider {
+  align-self: stretch;
+  opacity: 0.3;
+  border-color: rgba(100, 181, 246, 0.4) !important;
+}
+
+/* ============================================
+   StatsTextField - progress bar
+   Uses ::before (track) and ::after (fill) on
+   .v-field so the bar stays within the input
+   area, excluding prepend/append icons.
+   CSS variable --progress-pct is set by the
+   StatsTextField component via :style binding.
+   ============================================ */
+.has-progress .v-field {
+  position: relative;
+  overflow: visible !important;
+}
+
+.has-progress .v-field::before {
+  content: '' !important;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(100, 181, 246, 0.25);
+  z-index: 1;
+}
+
+.has-progress .v-field::after {
+  content: '' !important;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #42a5f5, #64b5f6);
+  width: var(--progress-pct, 0%);
+  z-index: 2;
+  transition: width 0.3s ease;
 }

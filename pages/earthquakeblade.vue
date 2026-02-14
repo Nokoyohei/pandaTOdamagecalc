@@ -15,8 +15,8 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <v-switch v-model="isGodly" color="purple" hide-details density="compact">
-          <template #label><span style="font-weight:bold;font-size:1.1rem;color:#d500f9">⚔ Godly Earthquake Blade</span></template>
+        <v-switch v-model="isGodly" color="amber-darken-3" hide-details density="compact">
+          <template #label><span class="godly-label">Godly Earthquake Blade</span></template>
         </v-switch>
         <BasePowerSlider v-model="localBasePower" :default-power="activeDefaultPower" />
         <stats-text-field

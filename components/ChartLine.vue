@@ -16,8 +16,10 @@ import {
   ScatterController,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 } from 'chart.js'
+import annotationPlugin from 'chartjs-plugin-annotation'
 import type { ChartData, ChartOptions } from 'chart.js'
 
 ChartJS.register(
@@ -29,7 +31,9 @@ ChartJS.register(
   ScatterController,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler,
+  annotationPlugin
 )
 
 defineProps<{

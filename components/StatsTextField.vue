@@ -26,6 +26,8 @@
       <v-text-field
         v-model="statsInput"
         :label="label"
+        :class="{ 'has-progress': showProgress }"
+        :style="showProgress ? { '--progress-pct': `${progressPercentage}%` } : undefined"
         @keyup="changeStatsField"
       >
         <template #prepend>
@@ -42,10 +44,10 @@
             = {{ buffedStats.toLocaleString() }}
           </div>
         </template>
-        <template v-if="needStats != null && needStats > 0" #append-inner>
-          <v-icon>mdi-arrow-right-bold</v-icon>
-          <div class="font-weight-bold text-center text-red-lighten-2">
-            need more {{ needStats.toLocaleString() }}
+        <template v-if="showProgress" #append-inner>
+          <div class="need-stats-text">
+            <div class="text-caption" style="opacity: 0.6">need</div>
+            <div class="font-weight-bold text-amber">{{ needStats!.toLocaleString() }}</div>
           </div>
         </template>
       </v-text-field>
@@ -66,6 +68,17 @@ const extraStatsModel = defineModel<number>('extraStats')
 const statsInput = ref('')
 const extraStatsInput = ref('')
 const inputFieldCols = extraStatsModel.value == null ? 12 : 9
+
+const showProgress = computed(() =>
+  props.needStats != null && props.needStats > 0
+)
+
+const progressPercentage = computed(() => {
+  if (props.buffedStats != null && props.needStats != null && props.needStats > 0) {
+    return (props.buffedStats / (props.buffedStats + props.needStats)) * 100
+  }
+  return 0
+})
 
 onMounted(() => {
   statsInput.value = inputStatsModel.value.toString()
@@ -91,3 +104,10 @@ function changeExtraStatsField() {
   extraStatsModel.value = parseInput(extraStatsInput.value, defaultValue)
 }
 </script>
+
+<style scoped>
+.need-stats-text {
+  text-align: center;
+  line-height: 1.2;
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
   <div class="damage-area my-2" :style="{ color: glowColor }">
     <div class="damage-label">{{ label }}</div>
-    <div class="damage-number">
+    <div class="damage-number" :class="{ 'damage-critical': isCritical }">
       {{ typeof damage === 'number' ? damage.toLocaleString() : damage }}
     </div>
     <div v-if="isOverflow" class="damage-effective">
@@ -20,6 +20,8 @@ const props = defineProps<{
 }>()
 
 const label = computed(() => props.label ?? 'damage')
+
+const isCritical = computed(() => props.label === 'critical')
 
 const isOverflow = computed(() =>
   typeof props.damage === 'number' && props.damage > INT32_MAX + EXTRA_DAMAGE_UNIT
@@ -42,7 +44,7 @@ const glowColor = computed(() => {
 
 <style scoped>
 .damage-area {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Chakra Petch', 'Roboto Mono', monospace;
   text-align: center;
   line-height: 1.1;
 }
@@ -54,6 +56,14 @@ const glowColor = computed(() => {
     0 0 8px currentColor,
     0 0 20px currentColor;
   letter-spacing: 2px;
+}
+
+.damage-critical {
+  font-size: 2.4rem;
+  text-shadow:
+    0 0 8px currentColor,
+    0 0 20px currentColor,
+    0 0 40px currentColor;
 }
 
 .damage-label {

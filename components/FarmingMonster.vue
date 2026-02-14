@@ -24,18 +24,18 @@
           {{ content.title }}
         </v-tooltip>
       </v-tabs>
-      <v-card flat>
+      <v-card color="surface" rounded="lg" elevation="2">
         <ChartLine
           :chart-data="chartData"
           :options="chartOption"
           :styles="chartStyles"
         />
+        <div class="damage-bar d-flex justify-center align-center flex-wrap ga-8">
+          <DamageArea :damage="damage" />
+          <v-divider v-if="critDamage != null" vertical class="damage-divider" />
+          <DamageArea v-if="critDamage != null" :damage="critDamage" color="yellow" label="critical" />
+        </div>
       </v-card>
-      <div class="d-flex justify-center align-center flex-wrap ga-4">
-        <DamageArea :damage="damage" />
-        <v-divider v-if="critDamage != null" vertical class="align-self-stretch" />
-        <DamageArea v-if="critDamage != null" :damage="critDamage" color="yellow" label="critical" />
-      </div>
     </div>
   </div>
 </template>
@@ -91,6 +91,26 @@ const dmgList = computed(() =>
   [...makeArr(0, monster.value.hp * 1.2, datanum)].map((x) => Math.round(x))
 )
 
+const killLineAnnotation = computed(() => ({
+  killLine: {
+    type: 'line' as const,
+    yMin: monster.value.hp,
+    yMax: monster.value.hp,
+    borderColor: 'rgba(255, 82, 82, 0.7)',
+    borderWidth: 2,
+    borderDash: [6, 4],
+    label: {
+      display: true,
+      content: 'ONE SHOT LINE',
+      position: 'start' as const,
+      backgroundColor: 'rgba(255, 82, 82, 0.8)',
+      color: '#fff',
+      font: { size: 11, weight: 'bold' as const },
+      padding: 4
+    }
+  }
+}))
+
 const chartData = computed<ChartData>(() => ({
   labels: dmgList.value,
   datasets: [
@@ -123,7 +143,18 @@ const chartData = computed<ChartData>(() => ({
       label: 'DAMAGE',
       data: dmgList.value,
       pointRadius: 0,
-      borderColor: 'orange'
+      borderColor: 'orange',
+      borderWidth: 3,
+      fill: true,
+      backgroundColor: (ctx: any) => {
+        const chart = ctx.chart
+        const { ctx: canvasCtx, chartArea } = chart
+        if (!chartArea) return 'rgba(255, 165, 0, 0.1)'
+        const gradient = canvasCtx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom)
+        gradient.addColorStop(0, 'rgba(255, 165, 0, 0.3)')
+        gradient.addColorStop(1, 'rgba(255, 165, 0, 0)')
+        return gradient
+      }
     }
   ]
 }))
@@ -136,10 +167,14 @@ const chartOption = computed<ChartOptions>(() => ({
       display: false
     },
     tooltip: {
+      backgroundColor: 'rgba(30, 41, 59, 0.9)',
       callbacks: {
         title: () => 'your damage',
         label: () => props.damage.toLocaleString()
       }
+    },
+    annotation: {
+      annotations: killLineAnnotation.value
     }
   },
   scales: {
@@ -147,7 +182,13 @@ const chartOption = computed<ChartOptions>(() => ({
       display: false
     },
     y: {
-      beginAtZero: true
+      beginAtZero: true,
+      grid: {
+        color: 'rgba(100, 181, 246, 0.1)'
+      },
+      ticks: {
+        color: '#90caf9'
+      }
     }
   }
 }))

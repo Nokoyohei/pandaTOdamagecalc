@@ -46,7 +46,7 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </v-navigation-drawer>
-    <v-app-bar>
+    <v-app-bar color="surface" flat>
       <v-toolbar-title style="cursor: pointer" @click="navigateTo('/')">
         {{ title }}
       </v-toolbar-title>

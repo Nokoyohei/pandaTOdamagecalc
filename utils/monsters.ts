@@ -259,7 +259,7 @@ const rosaspina: BossMonster = {
 }
 
 const punisherRosaspina: BossMonster = {
-  hp: 100000000000,
+  hp: 1000000000,
   dp: 1000000,
   md: 1000000,
   hv: 55000,
