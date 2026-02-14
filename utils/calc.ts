@@ -305,38 +305,47 @@ export const calcNeedStats = (
 }
 
 export const calcLKBuffRatio = (
-  LKBuff: ('luckySeven' | 'auraOfLuck' | 'firstAnniversary')[]
+  LKBuff: ('luckySeven' | 'auraOfLuck' | 'firstAnniversary' | 'godlyLuckySeven' | 'godlyAuraOfLuck')[]
 ) => {
   let buffRatio = 1
 
-  if (LKBuff.includes('luckySeven')) buffRatio += BuffRatio.LuckySevenBuff
-  if (LKBuff.includes('auraOfLuck')) buffRatio += BuffRatio.AuraOfLuckBuff
+  if (LKBuff.includes('godlyLuckySeven')) buffRatio += BuffRatio.GodlyLuckySevenBuff
+  else if (LKBuff.includes('luckySeven')) buffRatio += BuffRatio.LuckySevenBuff
+
+  if (LKBuff.includes('godlyAuraOfLuck')) buffRatio += BuffRatio.GodlyAuraOfLuckBuff
+  else if (LKBuff.includes('auraOfLuck')) buffRatio += BuffRatio.AuraOfLuckBuff
+
   if (LKBuff.includes('firstAnniversary'))
     buffRatio += BuffRatio.FirstdAnniversaryBuff
   return buffRatio
 }
 
-export const calcHVBuffRatio = (HVBuff: 'dodgeMaster'[]) => {
+export const calcHVBuffRatio = (HVBuff: ('dodgeMaster' | 'godlyDodgeMaster')[]) => {
   let buffRatio = 1
 
-  if (HVBuff.includes('dodgeMaster')) buffRatio += BuffRatio.DodgeMasterBuff
+  if (HVBuff.includes('godlyDodgeMaster')) buffRatio += BuffRatio.GodlyDodgeMasterBuff
+  else if (HVBuff.includes('dodgeMaster')) buffRatio += BuffRatio.DodgeMasterBuff
   return buffRatio
 }
 
-export const calcAPBuffRatio = (APBuff: ('pumpingHeart' | 'adrenaline')[]) => {
+export const calcAPBuffRatio = (APBuff: ('pumpingHeart' | 'adrenaline' | 'godlyAdrenaline')[]) => {
   let buffRatio = 1
 
   if (APBuff.includes('pumpingHeart')) buffRatio += BuffRatio.PumpingHeartBuff
-  if (APBuff.includes('adrenaline')) buffRatio += BuffRatio.AdrenalineBuff
+
+  if (APBuff.includes('godlyAdrenaline')) buffRatio += BuffRatio.GodlyAdrenalineBuff
+  else if (APBuff.includes('adrenaline')) buffRatio += BuffRatio.AdrenalineBuff
   return buffRatio
 }
 
 export const calcDABuffRatio = (
-  DABuff: ('sixthSense' | 'secondAnniversary')[]
+  DABuff: ('sixthSense' | 'secondAnniversary' | 'godlySixthSense')[]
 ) => {
   let buffRatio = 1
 
-  if (DABuff.includes('sixthSense')) buffRatio += BuffRatio.SixthSenseBuff
+  if (DABuff.includes('godlySixthSense')) buffRatio += BuffRatio.GodlySixthSenseBuff
+  else if (DABuff.includes('sixthSense')) buffRatio += BuffRatio.SixthSenseBuff
+
   if (DABuff.includes('secondAnniversary'))
     buffRatio += BuffRatio.secondAnniversaryBuff
   return buffRatio
@@ -349,20 +358,24 @@ export const calcThrowBuffRatio = (ThrowBuff: 'precisePitch'[]) => {
   return buffRatio
 }
 
-export const calcMABuffRatio = (MABuff: 'mistOfMana'[]) => {
+export const calcMABuffRatio = (MABuff: ('mistOfMana' | 'godlyMistOfMana')[]) => {
   let buffRatio = 1
 
-  if (MABuff.includes('mistOfMana')) buffRatio += BuffRatio.MistOfManaBuff
+  if (MABuff.includes('godlyMistOfMana')) buffRatio += BuffRatio.GodlyMistOfManaBuff
+  else if (MABuff.includes('mistOfMana')) buffRatio += BuffRatio.MistOfManaBuff
   return buffRatio
 }
 
 export const calcACBuffRatio = (
-  ACBuff: ('gunBooster' | 'bullsEye' | 'eagleEye')[]
+  ACBuff: ('gunBooster' | 'bullsEye' | 'eagleEye' | 'godlyBullsEye' | 'godlyEagleEye')[]
 ) => {
   let buffRatio = 1
 
-  if (ACBuff.includes('gunBooster') || ACBuff.includes('bullsEye'))
+  if (ACBuff.includes('godlyBullsEye')) buffRatio += BuffRatio.GodlyBullsEyeBuff
+  else if (ACBuff.includes('gunBooster') || ACBuff.includes('bullsEye'))
     buffRatio += BuffRatio.GunBoosterBuff
-  if (ACBuff.includes('eagleEye')) buffRatio += BuffRatio.EagleEyeBuff
+
+  if (ACBuff.includes('godlyEagleEye')) buffRatio += BuffRatio.GodlyEagleEyeBuff
+  else if (ACBuff.includes('eagleEye')) buffRatio += BuffRatio.EagleEyeBuff
   return buffRatio
 }

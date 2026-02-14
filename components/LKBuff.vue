@@ -9,10 +9,26 @@
       </v-switch>
     </v-col>
     <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyLuckySeven">
+        <template #label>
+          <img src="/lucky7.gif" />
+          Godly Lucky Seven
+        </template>
+      </v-switch>
+    </v-col>
+    <v-col cols="6" md="5">
       <v-switch v-model="buff" value="auraOfLuck">
         <template #label>
           <img src="/luckyday.gif" />
           Aura of Luck
+        </template>
+      </v-switch>
+    </v-col>
+    <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyAuraOfLuck">
+        <template #label>
+          <img src="/luckyday.gif" />
+          Godly Aura of Luck
         </template>
       </v-switch>
     </v-col>

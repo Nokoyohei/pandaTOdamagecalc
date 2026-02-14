@@ -56,14 +56,14 @@ export interface Attributes {
   throwAP: number
 }
 
-export type APBuffName = 'pumpingHeart' | 'adrenaline'
-export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye'
-export type LKBuffName = 'luckySeven' | 'auraOfLuck' | 'firstAnniversary'
+export type APBuffName = 'pumpingHeart' | 'adrenaline' | 'godlyAdrenaline'
+export type ACBuffName = 'gunBooster' | 'bullsEye' | 'eagleEye' | 'godlyBullsEye' | 'godlyEagleEye'
+export type LKBuffName = 'luckySeven' | 'auraOfLuck' | 'firstAnniversary' | 'godlyLuckySeven' | 'godlyAuraOfLuck'
 export type ThrowBuffName = 'precisePitch'
-export type DABuffName = 'sixthSense' | 'secondAnniversary'
-export type MABuffName = 'mistOfMana'
+export type DABuffName = 'sixthSense' | 'secondAnniversary' | 'godlySixthSense'
+export type MABuffName = 'mistOfMana' | 'godlyMistOfMana'
 export type DLBuffName = 'bloodTestament' | 'darkCommando'
-export type HVBuffName = 'dodgeMaster'
+export type HVBuffName = 'dodgeMaster' | 'godlyDodgeMaster'
 export type LightSkillName =
   | 'ArrowOfLight'
   | 'BasicHealing'

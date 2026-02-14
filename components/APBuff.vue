@@ -16,6 +16,14 @@
         </template>
       </v-switch>
     </v-col>
+    <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyAdrenaline">
+        <template #label>
+          <img src="/adrenaline.gif" />
+          Godly Adrenaline
+        </template>
+      </v-switch>
+    </v-col>
   </v-row>
 </template>
 

@@ -9,10 +9,26 @@
       </v-switch>
     </v-col>
     <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyBullsEye">
+        <template #label>
+          <img src="/be.gif" />
+          Godly Bull's Eye
+        </template>
+      </v-switch>
+    </v-col>
+    <v-col cols="6" md="5">
       <v-switch v-model="buff" value="eagleEye">
         <template #label>
           <img src="/hawk_eye.gif" />
           Eagle Eye
+        </template>
+      </v-switch>
+    </v-col>
+    <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyEagleEye">
+        <template #label>
+          <img src="/hawk_eye.gif" />
+          Godly Eagle Eye
         </template>
       </v-switch>
     </v-col>

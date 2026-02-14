@@ -20,6 +20,14 @@
           </template>
           <span>Sharp Sense</span>
         </v-tooltip>
+        <v-tooltip location="bottom">
+          <template #activator="{ props: activatorProps }">
+            <v-btn value="godlySharpSense" v-bind="activatorProps">
+              <img src="/sharpsense.gif" />
+            </v-btn>
+          </template>
+          <span>Godly Sharp Sense</span>
+        </v-tooltip>
       </v-btn-toggle>
     </div>
     <v-row>
@@ -54,15 +62,17 @@ import {
   calcACBuffRatio
 } from '~/utils/calc'
 import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
-import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
+import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, acBuffs, debuffSkills, buffedAC, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const localBasePower = ref(BASE_POWER.DoubleShot)
 const sharpSense = ref<string[]>([])
-const effectiveCritMultiplier = computed(() =>
-  CRIT_MULTIPLIER.gun * (sharpSense.value.length > 0 ? SHARP_SENSE_MULTIPLIER : 1)
-)
+const effectiveCritMultiplier = computed(() => {
+  if (sharpSense.value.includes('godlySharpSense')) return CRIT_MULTIPLIER.gun * GODLY_SHARP_SENSE_MULTIPLIER
+  if (sharpSense.value.includes('sharpSense')) return CRIT_MULTIPLIER.gun * SHARP_SENSE_MULTIPLIER
+  return CRIT_MULTIPLIER.gun
+})
 
 const debuffSkillsDef = [
   {

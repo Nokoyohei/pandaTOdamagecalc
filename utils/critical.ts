@@ -7,3 +7,4 @@ export const CRIT_MULTIPLIER = {
 export type CritType = keyof typeof CRIT_MULTIPLIER
 
 export const SHARP_SENSE_MULTIPLIER = 6.0
+export const GODLY_SHARP_SENSE_MULTIPLIER = 8.0

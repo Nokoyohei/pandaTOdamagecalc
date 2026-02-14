@@ -1,10 +1,18 @@
 <template>
   <v-row dense>
-    <v-col cols="6" md="6">
+    <v-col cols="6" md="5">
       <v-switch v-model="buff" value="dodgeMaster">
         <template #label>
           <img src="/su.gif" />
           Dodge Master
+        </template>
+      </v-switch>
+    </v-col>
+    <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyDodgeMaster">
+        <template #label>
+          <img src="/su.gif" />
+          Godly Dodge Master
         </template>
       </v-switch>
     </v-col>
