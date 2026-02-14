@@ -77,14 +77,16 @@ const critDamage = computed(() =>
   calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.darkR,
-    idealStaffOfAgonyDamage.value * CRIT_MULTIPLIER.magic,
-    bossBuff.value
+    idealStaffOfAgonyDamage.value,
+    bossBuff.value,
+    CRIT_MULTIPLIER.magic
   ) +
   calcDamage(
     calcMonsterDef(monster.value, 'magic'),
     monster.value.darkR,
-    idealDarkCommandoDamage.value * CRIT_MULTIPLIER.magic,
-    bossBuff.value
+    idealDarkCommandoDamage.value,
+    bossBuff.value,
+    CRIT_MULTIPLIER.magic
   )
 )
 

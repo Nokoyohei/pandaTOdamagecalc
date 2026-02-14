@@ -92,7 +92,9 @@ const critFirstHitDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    firstHitIdealDamage.value * CRIT_MULTIPLIER.physical
+    firstHitIdealDamage.value,
+    1,
+    CRIT_MULTIPLIER.physical
   )
 })
 
@@ -100,7 +102,9 @@ const critSecondHitDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    secondHitIdealDamage.value * CRIT_MULTIPLIER.physical
+    secondHitIdealDamage.value,
+    1,
+    CRIT_MULTIPLIER.physical
   )
 })
 

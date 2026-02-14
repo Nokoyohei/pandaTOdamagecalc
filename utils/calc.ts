@@ -76,7 +76,7 @@ export const calcRagingStormDamage = (ac: number, ma: number, basePower: number 
   Math.ceil((ac + ma - 49) * SkillRatio.RasingStorm(basePower))
 export const calcElectroAttackDamage = (ma: number, basePower: number = 376) =>
   Math.ceil((ma - 25) * SkillRatio.ElectroAttack(basePower))
-export const calcScytheDamage = (ma: number, dark: number, basePower: number = 45) =>
+export const calcScytheDamage = (ma: number, dark: number, basePower: number = 100) =>
   Math.ceil((ma - 49) * SkillRatio.Scythe(dark, basePower))
 export const calcStaffOfAgony = (ma: number, dark: number, basePower: number = 65) =>
   Math.ceil((ma - 49) * SkillRatio.StaffOfAgony(dark, basePower))

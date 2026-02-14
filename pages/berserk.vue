@@ -82,7 +82,9 @@ const critDamage = computed(() =>
   calcDamage(
     calcMonsterDef(monster.value, 'gun'),
     monster.value.gunR,
-    idealDamage.value * effectiveCritMultiplier.value
+    idealDamage.value,
+    1,
+    effectiveCritMultiplier.value
   )
 )
 

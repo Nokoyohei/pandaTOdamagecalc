@@ -3,7 +3,7 @@ export const BASE_POWER = {
   DarkCommando: 1840,
   GravityCrash: 9000,
   CelestialStrike: 5000,
-  Scythe: 55,
+  Scythe: 100,
   StaffOfAgony: 65,
   FullHouse: 400,
   EarthquakeBlade: 440,

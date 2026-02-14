@@ -104,7 +104,9 @@ const critMaxDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    maxIdealDamage.value * CRIT_MULTIPLIER.physical
+    maxIdealDamage.value,
+    1,
+    CRIT_MULTIPLIER.physical
   )
 })
 
@@ -112,7 +114,9 @@ const critMinDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    minIdealDamage.value * CRIT_MULTIPLIER.physical
+    minIdealDamage.value,
+    1,
+    CRIT_MULTIPLIER.physical
   )
 })
 
@@ -120,7 +124,9 @@ const critAvgDamage = computed(() => {
   return calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    avgIdealDamage.value * CRIT_MULTIPLIER.physical
+    avgIdealDamage.value,
+    1,
+    CRIT_MULTIPLIER.physical
   )
 })
 

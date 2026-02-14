@@ -122,7 +122,9 @@ const critDamage = computed(() => {
     damage += calcDamage(
       calcMonsterDef(monster.value, 'magic'),
       monster.value[BlessingSkills.value[e].attr],
-      idealDamage * CRIT_MULTIPLIER.magic
+      idealDamage,
+      1,
+      CRIT_MULTIPLIER.magic
     )
   })
   return damage

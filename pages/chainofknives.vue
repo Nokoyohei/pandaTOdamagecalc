@@ -76,7 +76,9 @@ const critDamage = computed(() =>
   calcDamage(
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
-    idealDamage.value * CRIT_MULTIPLIER.physical
+    idealDamage.value,
+    1,
+    CRIT_MULTIPLIER.physical
   )
 )
 
