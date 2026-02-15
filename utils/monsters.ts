@@ -68,6 +68,23 @@ const werepot: Monster = {
   gunR: 80
 }
 
+const tantalos: Monster = {
+  hp: 300000,
+  dp: 300000,
+  md: 300000,
+  hv: 15000,
+  fireR: 90,
+  waterR: 90,
+  windR: 90,
+  earthR: 90,
+  elecR: 90,
+  lightR: 90,
+  darkR: 90,
+  noPropR: 90,
+  physicalR: 90,
+  gunR: 90
+}
+
 const bossTorrobie: BossMonster = {
   hp: 100000000,
   dp: 0,
@@ -258,6 +275,25 @@ const rosaspina: BossMonster = {
   gaugeNum: 5
 }
 
+const trueGodKoiosu: BossMonster = {
+  hp: 200000000,
+  dp: 1400000,
+  md: 500000,
+  hv: 10000,
+  da: 50000,
+  fireR: 250,
+  waterR: 99,
+  windR: 99,
+  earthR: 99,
+  elecR: 99,
+  lightR: 99,
+  darkR: 85,
+  noPropR: 99,
+  physicalR: 99,
+  gunR: 99,
+  gaugeNum: 5
+}
+
 const punisherRosaspina: BossMonster = {
   hp: 1200000000,
   dp: 1000000,
@@ -301,6 +337,7 @@ export {
   toilet,
   cora,
   werepot,
+  tantalos,
   requiem,
   bossTorrobie,
   predator,
@@ -312,5 +349,6 @@ export {
   requiemHarbinger,
   rosaspina,
   punisherRosaspina,
+  trueGodKoiosu,
   ed
 }

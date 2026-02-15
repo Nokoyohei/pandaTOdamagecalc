@@ -91,6 +91,7 @@ import {
   requiemHarbinger,
   rosaspina,
   punisherRosaspina,
+  trueGodKoiosu,
   ed
 } from '~/utils/monsters'
 import type { Monster, BossMonster, DebuffName, skillPanel } from '~/types'
@@ -185,6 +186,12 @@ const tabContents = [
     height: '76',
     title: 'Punisher Rosaspina',
     alt: 'PUNISHER ROSASPINA'
+  },
+  {
+    srcimg: '/koiosu.gif',
+    height: '76',
+    title: 'True God of Steel Koiosu',
+    alt: 'TRUE GOD OF STEEL KOIOSU'
   }
 ]
 
@@ -212,6 +219,7 @@ function changeSelectedMonster() {
     requiemHarbinger,
     rosaspina,
     punisherRosaspina,
+    trueGodKoiosu,
   ][tab.value]
 }
 
