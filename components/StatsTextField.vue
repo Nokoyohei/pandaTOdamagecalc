@@ -15,7 +15,7 @@
                 >mdi-help-circle-outline</v-icon
               >
             </template>
-            <div>Enter the extra stats like set effect</div>
+            <div>Enter the extra stats like</div>
             <div>star power, scroll, etc. do not apply buffed</div>
           </v-tooltip>
         </template>

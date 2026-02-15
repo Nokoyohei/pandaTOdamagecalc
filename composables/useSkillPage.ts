@@ -112,10 +112,13 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
     if (Object.keys(savedExtraStats).length !== 0) extraStats.value = savedExtraStats
   })
 
-  onBeforeUnmount(() => {
-    localStorage.setItem('stats', JSON.stringify(stats.value))
-    localStorage.setItem('extraStats', JSON.stringify(extraStats.value))
-  })
+  watch(stats, (val) => {
+    localStorage.setItem('stats', JSON.stringify(val))
+  }, { deep: true })
+
+  watch(extraStats, (val) => {
+    localStorage.setItem('extraStats', JSON.stringify(val))
+  }, { deep: true })
 
   return {
     stats,
