@@ -9,6 +9,7 @@
     "build": "nuxi build",
     "generate": "nuxi generate",
     "preview": "nuxi preview",
+    "sync-data": "node scripts/gen-monster-list.mjs && node scripts/gen-skill-tables.mjs",
     "lint": "eslint --ext .js,.vue,.ts --ignore-path .gitignore ."
   },
   "dependencies": {

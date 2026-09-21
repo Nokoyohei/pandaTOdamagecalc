@@ -1,4 +1,5 @@
 import { ftol, f32, F32_0_01 } from '~/utils/x87'
+import { SKILL_TABLE, GODLY_SKILL_TABLE, MISC_SKILL_TABLE } from '~/utils/skillTable'
 
 /*
  * 各スキルが BattleHelper に渡す power を、サーバ実装と同じ形で組み立てる。
@@ -14,68 +15,16 @@ import { ftol, f32, F32_0_01 } from '~/utils/x87'
  * Ratio を百分率にしたもの（UI の刻みを整数に保つため）。
  */
 
-/** ESAction_* テーブルの該当行の値。魔法 = AP、物理・射撃 = Ratio × 100 */
-export const SKILL_POWER = {
-  // --- 魔法: P.AP ---
-  DarkCommando: 1840, // ESAction_DarkGhost.M_AP
-  GravityCrash: 900,
-  CelestialStrike: 5000, // ESAction_LightWeight.AP
-  Scythe: 5500,
-  StaffOfAgony: 7500,
-  Blessing: 1620, // power = ftol(AP × 0.5)
-  WindBlade: 2680,
-  RagingStorm: 2700,
-  ElectroAttack: 2510,
-  StaffOfThunder: 1500,
-  TeslaField: 1720,
-  DeadlyFen: 4000, // ESAction_SwampField.M_AP。power = ftol(M_AP × 0.5)
-  TornadoBlast: 1320,
-  Earthquake: 3500,
-  CleavingTerra: 2250,
-  // --- 物理・射撃: P.Ratio × 100 ---
-  FlamingFist: 530,
-  FullHouse: 400,
-  SharpScream: 340,
-  HitCombo: 2000,
-  OnePair: 3000,
-  LadyLuck: 6,
-  EarthquakeBlade: 440,
-  SonicSlash: 1000,
-  TidalSlash: 1000,
-  TempestStrike: 240,
-  GaleStrike: 260,
-  ChampionsBlade: 490,
-  FanOfKnives: 600,
-  ChainOfKnives: 2000,
-  PoisonAssault: 1200,
-  SuddenAttack: 2500,
-  LuckyFist: 100,
-  ShootingSpree: 245,
-  Berserk: 350,
-  PowerShot: 2000,
-  DoubleShot: 2000
-} as const
+/**
+ * ESAction_* テーブル最大レベル行の値（utils/skillTable.ts、scripts/gen-skill-tables.mjs が生成）。
+ * 魔法 = AP、物理・射撃 = Ratio × 100
+ */
+export const SKILL_POWER = SKILL_TABLE
 
-export const GODLY_SKILL_POWER = {
-  GravityCrash: 20000,
-  Scythe: 10000,
-  StaffOfAgony: 15000,
-  SonicSlash: 1200,
-  GaleStrike: 350,
-  EarthquakeBlade: 1000,
-  ChainOfKnives: 4000,
-  PowerShot: 6000,
-  DoubleShot: 7000,
-  PoisonAssault: 2400,
-  Berserk: 1000,
-  OnePair: 10000,
-  HitCombo: 8000,
-  FullHouse: 2000,
-  FanOfKnives: 1500
-} as const
+export const GODLY_SKILL_POWER = GODLY_SKILL_TABLE
 
 // 2 Hit Combo が参照するパッシブのスキルレベル（Power Blow 4001 / Volley Kick 4101、最大 11）
-export const HIT_COMBO_SKILL_LEVEL = 11
+export const HIT_COMBO_SKILL_LEVEL: number = MISC_SKILL_TABLE.hitComboPassiveLevel
 
 /*
  * 物理・射撃スキルの P.Ratio（テーブル値を実際の係数に直したもの）。
@@ -178,7 +127,7 @@ const CleavingTerra = (ap: number = SKILL_POWER.CleavingTerra) => ap
       power = AP + Lv × P.Ratio1 + P.Ratio2          (ESAction_FairyOfMagic: Ratio1 10, Ratio2 220)
 */
 const MagicalSoul = (attackerAp: number, level = 30) =>
-  attackerAp + Math.min(level, 30) * 10 + 220
+  attackerAp + Math.min(level, 30) * MISC_SKILL_TABLE.magicalSoulRatio1 + MISC_SKILL_TABLE.magicalSoulRatio2
 // Flaming Fist (1303) @0x73e640 / MA−0 : ftol(AP × (火属性/100 + P.Ratio))。魔法(火)→物理の 2 段
 const FlamingFist = (
   attackerAp: number,

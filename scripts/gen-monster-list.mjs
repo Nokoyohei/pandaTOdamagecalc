@@ -1,28 +1,33 @@
 // pandaTO-internal-bot の libconfig JSON から utils/monsterList.ts と public/monster/*.gif を生成する
-//   node scripts/gen-monster-list.mjs [<pandaTO-internal-bot dir>] [<client data dir>]
+//   node scripts/gen-monster-list.mjs [--bot=<pandaTO-internal-bot dir>] [--data=<client data dir>] [--no-gifs]
 //
 //   MonsterParamEx2.json     : ステータス・耐性
 //   BossMonsterparamEx.json  : LifeCnt（HP ゲージは LifeCnt + 1 本）
 //   CharacterInfo.json       : FileName（data\monster\monNNN.nri）
 //   <data>/monster/monNNN.nri: internal-bot の nri-converter.js で「正面を向いて動く」アニメ GIF にする
 //                              （--list / --anim-index が効く版の converter が必要）
-import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync, rmSync, readdirSync } from 'node:fs'
+//
+//   --no-gifs、またはクライアント素材 / converter が無いとき（CI）は GIF を作らず、
+//   すでに public/monster/ にあるものだけを参照する
+import { writeFileSync, copyFileSync, existsSync, mkdirSync, rmSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
+import { parseArgs, botDir, clientDataDir, loadTable } from './lib/internalBot.mjs'
 
-const bot = process.argv[2] ?? 'C:/Users/USER/Desktop/PandaTO2.0/pandaTO-internal-bot'
-const dataDir = process.argv[3] ?? 'C:/Users/USER/Desktop/PandaTO2.0/data'
-const load = (name) => JSON.parse(readFileSync(join(bot, 'json_output', name), 'utf8')).rows
+const args = parseArgs()
+const bot = botDir(args)
+const dataDir = clientDataDir(args)
 
-const monsters = load('MonsterParamEx2.json')
-const lifeCnt = new Map(load('BossMonsterparamEx.json').map((r) => [r.ID, Number(r.LifeCnt) || 0]))
-const charInfo = new Map(load('CharacterInfo.json').map((r) => [r.ID, r.FileName]))
+const monsters = loadTable(bot, 'MonsterParamEx2')
+const lifeCnt = new Map(loadTable(bot, 'BossMonsterparamEx').map((r) => [r.ID, Number(r.LifeCnt) || 0]))
+const charInfo = new Map(loadTable(bot, 'CharacterInfo').map((r) => [r.ID, r.FileName]))
 
 const converter = join(bot, 'nri-converter.js')
 const viewerGifDir = join(bot, 'viewer/public/nri/monster')
 const outDir = new URL('../public/monster/', import.meta.url)
 mkdirSync(outDir, { recursive: true })
+const makeGifs = !args.flags['no-gifs'] && existsSync(converter) && existsSync(join(dataDir, 'monster'))
 const tmp = join(tmpdir(), 'pandato-monster-gifs')
 rmSync(tmp, { recursive: true, force: true })
 mkdirSync(tmp, { recursive: true })
@@ -72,6 +77,12 @@ const imageOf = (id) => {
   const base = file.replace(/\\/g, '/').split('/').pop().replace(/\.nri$/i, '')
   if (done.has(base)) return done.get(base) ? base : ''
   const dst = new URL(`${base}.gif`, outDir)
+  if (!makeGifs) {
+    // GIF を作らない実行では既存ファイルの有無だけ見る
+    const ok = existsSync(dst)
+    done.set(base, ok)
+    return ok ? base : ''
+  }
   const nri = join(dataDir, 'monster', `${base}.nri`)
   let ok = false
   if (existsSync(nri)) {
@@ -128,4 +139,4 @@ ${tuples.join(',\n')}
 `
 writeFileSync(new URL('../utils/monsterList.ts', import.meta.url), out)
 rmSync(tmp, { recursive: true, force: true })
-console.log(`wrote utils/monsterList.ts (${monsters.length} rows); gifs: ${animated} animated, ${fallback} static fallback, ${readdirSync(outDir).length} files in public/monster/`)
+console.log(`wrote utils/monsterList.ts (${monsters.length} rows from ${bot}); gifs: ${makeGifs ? `${animated} animated, ${fallback} static fallback` : 'not regenerated'}, ${readdirSync(outDir).length} files in public/monster/`)

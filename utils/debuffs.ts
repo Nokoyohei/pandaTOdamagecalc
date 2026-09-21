@@ -1,4 +1,5 @@
 import { ftol } from '~/utils/x87'
+import { MISC_SKILL_TABLE } from '~/utils/skillTable'
 import type { AttackType } from '~/utils/calc'
 import type { Monster, BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -15,12 +16,12 @@ import type { Monster, BossMonster, DebuffName, skillPanel } from '~/types'
  *      属性ごとに 1 種類の耐性だけ下げる。100 超の耐性にも特別処理は無い
  */
 
-/** ESAction_* テーブル最大レベル行 */
+/** ESAction_* テーブル最大レベル行（utils/skillTable.ts、生成物） */
 export const DEBUFF_TABLE = {
   /** ESAction_BreakBarrier.Ratio (Lv11) */
-  shieldBreakerRatio: 0.8,
+  shieldBreakerRatio: MISC_SKILL_TABLE.shieldBreakerRatio,
   /** ESAction_*Area.RegiDown (Lv11) */
-  areaRegiDown: 0.18
+  areaRegiDown: MISC_SKILL_TABLE.areaRegiDown
 } as const
 
 export const SHIELD_BREAKER_CAP = 80

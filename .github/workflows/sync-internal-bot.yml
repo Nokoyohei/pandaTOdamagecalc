@@ -1,0 +1,72 @@
+name: Sync internal-bot data
+
+# pandaTO-internal-bot (Nokoyohei/pto-data-internal) のゲームデータ更新を取り込む。
+# internal-bot 側の update-data.yml が push 後に repository_dispatch (internal-bot-updated) を
+# 投げてくるので、それを受けてモンスター表とスキル表を再生成し、差分があればコミットする。
+#
+# 必要な secret:
+#   INTERNAL_BOT_TOKEN  pto-data-internal (private) を読める PAT (contents: read)
+#
+# モンスターの GIF はクライアント素材 (data/monster/*.nri) が要るのでここでは作らない
+# （ローカルで `npm run sync-data` を回したときだけ更新される）。
+
+on:
+  repository_dispatch:
+    types: [internal-bot-updated]
+  workflow_dispatch:
+
+concurrency:
+  group: sync-internal-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: internal-bot のデータをチェックアウト
+        # viewer/public 直下の JSON だけ。viewer/public/nri は 85,000 ファイルあるので除外する
+        uses: actions/checkout@v4
+        with:
+          repository: Nokoyohei/pto-data-internal
+          token: ${{ secrets.INTERNAL_BOT_TOKEN }}
+          path: internal-bot
+          sparse-checkout: |
+            /viewer/public/*.json
+          sparse-checkout-cone-mode: false
+          filter: blob:none
+          fetch-depth: 1
+
+      - name: Node.js セットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: モンスター表とスキル表を再生成
+        run: |
+          set -euo pipefail
+          node scripts/gen-monster-list.mjs --bot=internal-bot --no-gifs
+          node scripts/gen-skill-tables.mjs --bot=internal-bot
+
+      - name: 差分があればコミットして push
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add utils/monsterList.ts utils/skillTable.ts
+          if git diff --cached --quiet; then
+            echo "変更なし"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          SRC=$(git -C internal-bot rev-parse --short HEAD)
+          VER="${{ github.event.client_payload.version }}"
+          git commit -m "data: sync monster and skill tables from internal-bot ${SRC}${VER:+ (patch ${VER})}"
+          git push
