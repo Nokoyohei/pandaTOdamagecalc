@@ -149,7 +149,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
   shadow: {
     key: 'shadow',
     title: 'Shadow',
-    icon: '/shadow.gif',
+    icon: '/shadow_skill.gif',
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'dx'],
@@ -327,5 +327,3 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     ref: 'FUN_0073EDA0 @0x73ee3c: ftol((AP + HP / 8.0) × P.Ratio)'
   }
 }
-
-export { BOSS_SKILL_MENU } from '~/utils/bossSkillMenu'

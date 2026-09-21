@@ -59,7 +59,8 @@
 </template>
 
 <script setup>
-import { BOSS_SKILLS, BOSS_SKILL_MENU } from '~/utils/bossSkills'
+import { BOSS_SKILLS } from '~/utils/bossSkills'
+import { BOSS_SKILL_MENU } from '~/utils/bossSkillMenu'
 
 const rail = ref(true)
 const farmingPanel = ref([])
