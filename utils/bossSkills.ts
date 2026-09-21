@@ -142,9 +142,22 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'ac'],
-    table: { label: 'Ratio', default: 2000 },
+    table: { label: 'Ratio', default: 2000, godly: 10000 },
     power: (s, t) => ftol((s.ap + s.ac * 16) * ratio(t)),
     ref: 'ESA(0x6f8670) → exec 0x4FC → FUN_0073A0C0 @0x73a0ef: AC × 16 for skill 1304'
+  },
+  tetra_punch: {
+    key: 'tetra_punch',
+    title: 'Tetra Punch',
+    icon: '/tetra_punch.gif',
+    attackType: 'physical',
+    resist: 'physicalR',
+    stats: ['ap'],
+    table: { label: 'Ratio', default: 400, godly: 3000 },
+    power: (s, t) => ftol(s.ap * ratio(t)),
+    hits: () => 2,
+    note: 'Damage shown is per hit; two hits per cast',
+    ref: 'FUN_0073C940 @0x73c9eb / @0x73ca7f: FUN_006CDDC0 twice, ftol(AP × P.Ratio)'
   },
   shadow: {
     key: 'shadow',
@@ -177,6 +190,32 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     'ESADarkWhisper 0x6fbf80 @0x6fc1ba: (short)this+0xCC ← P.M_AP / MA−49 / Dark',
     'M_AP'
   ),
+  razor_gale: {
+    key: 'razor_gale',
+    title: 'Razor Gale',
+    icon: '/razor_gale.gif',
+    attackType: 'magic',
+    resist: 'windR',
+    stats: ['ma', 'ac'],
+    table: { label: 'AP', default: 2640 },
+    // maPenalty = 49 − AC なので MA + AC − 49 で効く（Raging Storm と同型）
+    power: (s, t) => magicAttackPower(t, s.ma + s.ac, 49),
+    ref: 'FUN_0073BB30 @0x73bc13: mov edx,0x31 ; sub edx,[AC] → maPenalty = 49 − AC / P.AP / Wind'
+  },
+  phoenix_rising: {
+    key: 'phoenix_rising',
+    title: 'Phoenix Rising',
+    icon: '/phoenix_rising.gif',
+    attackType: 'magic',
+    resist: 'fireR',
+    stats: ['ma'],
+    table: { label: 'AP', default: 4000 },
+    params: [{ key: 'ticks', label: 'Ticks', default: 10, hint: 'One tick every 2 s for Seconds (Lv11: 20 s)' }],
+    power: (s, t) => magicAttackPower(t, s.ma, 49),
+    hits: (_s, _t, p) => Math.max(1, Math.trunc(p.ticks)),
+    note: 'Damage shown is per tick. Each tick rolls its own critical',
+    ref: 'ESAFireBurnDo 0x6ebdc0 @0x6ebe07: (this+0xF4 ← P.AP) / MA−49 / Fire, bonus 1.0, every 2000 ms'
+  },
   godly_arrow_rush: magic(
     'godly_arrow_rush',
     'Godly Arrow Rush',
@@ -215,6 +254,35 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
   },
 
   /* ------------------------------------------------------------------ Charm */
+  beast_claw: {
+    key: 'beast_claw',
+    title: 'Beast Claw',
+    icon: '/beast_claw.gif',
+    attackType: 'physical',
+    resist: 'physicalR',
+    stats: ['ap'],
+    table: { label: 'Ratio', default: 600 },
+    power: (s, t) => ftol(s.ap * ratio(t)),
+    ref: 'FUN_00732FB0 @0x73304b → FUN_006CDDC0: ftol(AP × P.Ratio)'
+  },
+  fist_full_of_galders: {
+    key: 'fist_full_of_galders',
+    title: 'Fist Full of Galders',
+    icon: '/fist_full_of_galders.gif',
+    attackType: 'physical',
+    resist: 'none',
+    stats: [],
+    table: { label: 'Ratio', default: 920 },
+    params: [
+      { key: 'galder', label: 'Galder per hit', default: 100 },
+      { key: 'count', label: 'Hits', default: 4, hint: 'ESAction_GellderChainHit.Count (Lv11: 4). Needs Count × 100 galder' }
+    ],
+    power: (_s, t, p) => ftol(Math.max(p.galder, 0) * ratio(t)),
+    hits: (_s, _t, p) => Math.max(1, Math.trunc(p.count)),
+    ignoreDefense: true,
+    note: 'DP 0 and resistance ignored (propMask 0x200). Damage shown is per hit',
+    ref: 'FUN_0073D600 @0x73d6db (Count × 100 galder check) → FUN_0073DBB0: BH_Physical(ftol(galder × P.Ratio), DP 0, prop 0x200)'
+  },
   fatal_wound: {
     key: 'fatal_wound',
     title: 'Fatal Wound',

@@ -5,7 +5,7 @@
 export const BOSS_SKILL_MENU: { title: string; keys: string[] }[] = [
   {
     title: 'ATTACK TYPE',
-    keys: ['lacerator', 'piercing_wave', 'blazing_strike', 'inferno_blade', 'flash_cut', 'mega_flash_cut', 'shadow']
+    keys: ['tetra_punch', 'lacerator', 'piercing_wave', 'blazing_strike', 'inferno_blade', 'flash_cut', 'mega_flash_cut', 'shadow']
   },
   {
     title: 'MAGIC TYPE',
@@ -17,6 +17,8 @@ export const BOSS_SKILL_MENU: { title: string; keys: string[] }[] = [
       'radiant_strike',
       'aqua_bomb',
       'dragon_storm',
+      'razor_gale',
+      'phoenix_rising',
       'searing_light',
       'ghostly_whisper',
       'godly_arrow_rush'
@@ -25,7 +27,18 @@ export const BOSS_SKILL_MENU: { title: string; keys: string[] }[] = [
   { title: 'SENSE TYPE', keys: ['butt_plate', 'poison_pouch'] },
   {
     title: 'CHARM TYPE',
-    keys: ['fatal_wound', 'card_strike', 'impelling_rage', 'power_charging', 'wild_nail', 'furious_galder_throw', 'raging_nail', 'heavy_hit']
+    keys: [
+      'beast_claw',
+      'fatal_wound',
+      'card_strike',
+      'impelling_rage',
+      'power_charging',
+      'wild_nail',
+      'fist_full_of_galders',
+      'furious_galder_throw',
+      'raging_nail',
+      'heavy_hit'
+    ]
   }
 ]
 
