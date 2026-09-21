@@ -11,6 +11,8 @@ import {
   initExtraStatus
 } from '~/utils/calc'
 import { calcDebuffedMonster } from '~/utils/debuffs'
+import { HIT_CHECK_KEY, skillHitSource, calcHitCheck } from '~/utils/hitCheck'
+import type { HitCheck } from '~/utils/hitCheck'
 import type {
   Monster,
   BossMonster,
@@ -97,6 +99,30 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
     calcDebuffedMonster(monster.value, debuffSkills.value, debuffCaster.value)
   )
 
+  // 命中率と確定ヒットに必要な AC / LK。ページ（ルート名）からスキルを特定し、
+  // BossMonsterPanel / FarmingMonster が inject して表示する
+  const isGodly = useGodly()
+  const hitCheck = computed<HitCheck | null>(() => {
+    const source = skillHitSource(
+      String(route.name ?? ''),
+      typeof route.params.skill === 'string' ? route.params.skill : undefined,
+      isGodly.value,
+      stats.value
+    )
+    if (!source) return null
+    return calcHitCheck(
+      source,
+      {
+        ac: buffedAC.value,
+        lk: buffedLK.value,
+        acBuffRatio: calcACBuffRatio(acBuffs.value),
+        lkBuffRatio: calcLKBuffRatio(lkBuffs.value)
+      },
+      monster.value
+    )
+  })
+  provide(HIT_CHECK_KEY, hitCheck)
+
   onBeforeMount(() => {
     if (skillMode === 'boss') {
       mode.value = 'boss'
@@ -145,6 +171,7 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
     buffedAC,
     buffedThrowAP,
     monsterHP,
-    debuffedMonster
+    debuffedMonster,
+    hitCheck
   }
 }

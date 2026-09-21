@@ -19,6 +19,7 @@ const torobbie: Monster = {
   dp: 0,
   md: 0,
   hv: 0,
+  lk: 0,
   fireR: 0,
   waterR: 0,
   windR: 0,

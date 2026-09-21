@@ -34,6 +34,7 @@ export const monsterFromRow = (row: MonsterRow): BossMonster => ({
   dp: row[5],
   md: row[6],
   hv: row[7],
+  lk: row[21],
   da: row[8],
   fireR: row[9],
   waterR: row[10],
