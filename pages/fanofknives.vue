@@ -74,9 +74,9 @@ const resDA = computed(() => {
     calcMonsterDef(monster.value, 'physical'),
     monster.value.physicalR,
     SkillRatio.FanOfKnives(localBasePower.value),
-    buffedDA.value + buffedThrowAP.value / 10,
+    buffedDA.value * 10 + buffedThrowAP.value,
     0
   )
-  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value))
+  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value) / 10)
 })
 </script>

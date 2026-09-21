@@ -94,7 +94,7 @@ const resDA = computed(() => {
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
     SkillRatio.ChainOfKnives(localBasePower.value),
-    buffedDA.value * 16 + buffedThrowAP.value * 6,
+    buffedDA.value * 16 + buffedThrowAP.value,
     0
   )
 

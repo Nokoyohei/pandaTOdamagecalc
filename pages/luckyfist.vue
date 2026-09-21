@@ -76,10 +76,10 @@ const resLK = computed(() => {
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
     SkillRatio.LuckyFist(localBasePower.value),
-    monster.value.hp + buffedLK.value * 80,
+    buffedLK.value * 8 + monster.value.hp * 0.1,
     0
   )
 
-  return Math.ceil(needLK / calcLKBuffRatio(lkBuffs.value) / 80)
+  return Math.ceil(needLK / calcLKBuffRatio(lkBuffs.value) / 8)
 })
 </script>

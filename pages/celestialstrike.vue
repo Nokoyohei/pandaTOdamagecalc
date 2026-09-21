@@ -20,7 +20,8 @@
           <v-tooltip v-for="skill in lightSkills" :key="skill.name" location="bottom">
             <template #activator="{ props: activatorProps }">
               <v-btn :value="skill.value" v-bind="activatorProps">
-                <img :src="skill.img" />
+                <img v-if="skill.img" :src="skill.img" />
+                <span v-else class="text-caption">{{ skill.name }}</span>
               </v-btn>
             </template>
             <span>{{ skill.name }}</span>
@@ -60,7 +61,13 @@ const localBasePower = ref(SKILL_POWER.CelestialStrike)
 
 const selectedLightSkills = ref<LightSkillName[]>([])
 
-const lightSkills = [
+// サーバは習得済みスキルのうち eSkillSymbolType == 7 の個数を数える（FUN_0067F700）。
+// SkillParam2 で該当するプレイヤースキルはこの 9 つ
+const lightSkills: { value: LightSkillName; name: string; img?: string }[] = [
+  {
+    value: 'LightPact',
+    name: 'Light Pact'
+  },
   {
     value: 'ArrowOfLight',
     name: 'Arrow of Light',
@@ -72,28 +79,31 @@ const lightSkills = [
     img: '/emergency.gif'
   },
   {
-    value: 'BasicHealing',
-    name: 'Basic Healing',
-    img: '/treatment.gif'
-  },
-  {
     value: 'LightWave',
     name: 'Light Wave',
     img: '/plasma_shock.gif'
   },
   {
-    value: 'RadientStrike',
-    name: 'Radient Strike',
+    value: 'BasicHealing',
+    name: 'Basic Healing',
+    img: '/treatment.gif'
+  },
+  {
+    value: 'LightShield',
+    name: 'Light Shield'
+  },
+  {
+    value: 'RadiantStrike',
+    name: 'Radiant Strike',
     img: '/shining_burst.gif'
   },
   {
-    value: 'HeartsGrace',
-    name: "Heart's Grase",
-    img: '/force_field.gif'
+    value: 'MedCure',
+    name: 'Med. Cure'
   },
   {
-    value: 'SealingLight',
-    name: 'Sealing Light',
+    value: 'SearingLight',
+    name: 'Searing Light',
     img: '/holylance.gif'
   }
 ]
