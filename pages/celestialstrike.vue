@@ -20,8 +20,7 @@
           <v-tooltip v-for="skill in lightSkills" :key="skill.name" location="bottom">
             <template #activator="{ props: activatorProps }">
               <v-btn :value="skill.value" v-bind="activatorProps">
-                <img v-if="skill.img" :src="skill.img" />
-                <span v-else class="text-caption">{{ skill.name }}</span>
+                <img :src="skill.img" />
               </v-btn>
             </template>
             <span>{{ skill.name }}</span>
@@ -62,11 +61,13 @@ const localBasePower = ref(SKILL_POWER.CelestialStrike)
 const selectedLightSkills = ref<LightSkillName[]>([])
 
 // サーバは習得済みスキルのうち eSkillSymbolType == 7 の個数を数える（FUN_0067F700）。
-// SkillParam2 で該当するプレイヤースキルはこの 9 つ
-const lightSkills: { value: LightSkillName; name: string; img?: string }[] = [
+// SkillParam2 で該当するプレイヤースキルはこの 9 つ。
+// アイコンは SkillParam2.FileName の .nri を BundleNum で切り出したもの
+const lightSkills: { value: LightSkillName; name: string; img: string }[] = [
   {
     value: 'LightPact',
-    name: 'Light Pact'
+    name: 'Light Pact',
+    img: '/light_pact.gif'
   },
   {
     value: 'ArrowOfLight',
@@ -90,7 +91,8 @@ const lightSkills: { value: LightSkillName; name: string; img?: string }[] = [
   },
   {
     value: 'LightShield',
-    name: 'Light Shield'
+    name: 'Light Shield',
+    img: '/light_shield.gif'
   },
   {
     value: 'RadiantStrike',
@@ -99,7 +101,8 @@ const lightSkills: { value: LightSkillName; name: string; img?: string }[] = [
   },
   {
     value: 'MedCure',
-    name: 'Med. Cure'
+    name: 'Med. Cure',
+    img: '/med_cure.gif'
   },
   {
     value: 'SearingLight',
