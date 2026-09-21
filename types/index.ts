@@ -20,7 +20,7 @@ export interface Skill {
   value: number
   name: string
   attr: attribute
-  ratio: number
+  power: number
   img: string
 }
 

@@ -43,20 +43,19 @@
 
 <script setup lang="ts">
 import {
-  calcGaleStrikeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, debuffSkills, buffedAP, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.GaleStrike : BASE_POWER.GaleStrike
+  isGodly.value ? GODLY_SKILL_POWER.GaleStrike : SKILL_POWER.GaleStrike
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -72,15 +71,15 @@ const debuffSkillsDef = [
 ]
 
 const maxIdealDamage = computed(() => {
-  return calcGaleStrikeDamage(buffedAP.value, stats.value.wind, localBasePower.value)
+  return SkillPower.GaleStrike(buffedAP.value, stats.value.wind, localBasePower.value)
 })
 
 const minIdealDamage = computed(() => {
-  return calcGaleStrikeDamage(buffedAP.value, 0, localBasePower.value)
+  return SkillPower.GaleStrike(buffedAP.value, 0, localBasePower.value)
 })
 
 const avgIdealDamage = computed(() => {
-  return calcGaleStrikeDamage(buffedAP.value, stats.value.wind / 2, localBasePower.value)
+  return SkillPower.GaleStrike(buffedAP.value, stats.value.wind / 2, localBasePower.value)
 })
 
 const maxDamage = computed(() => {

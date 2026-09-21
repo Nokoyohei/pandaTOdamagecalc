@@ -7,7 +7,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:hv-buffs="hvBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.SharpScream" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.SharpScream" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -29,22 +29,21 @@
 
 <script setup lang="ts">
 import {
-  calcSharpScreamDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcHVBuffRatio,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, apBuffs, hvBuffs, buffedAP, buffedHV } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.SharpScream)
+const localBasePower = ref(SKILL_POWER.SharpScream)
 
 const idealDamage = computed(() =>
-  calcSharpScreamDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+  SkillPower.SharpScream(buffedAP.value, buffedHV.value, localBasePower.value)
 )
 
 const damage = computed(() =>

@@ -13,7 +13,7 @@
         <BuffPanel v-model:lk-buffs="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.LuckyFist" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.LuckyFist" />
         <StatsTextField
           v-model:input-stats="stats.lk"
           :need-stats="resLK"
@@ -28,18 +28,17 @@
 
 <script setup lang="ts">
 import {
-  calcLuckyFistDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcLKBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, lkBuffs, debuffSkills, buffedLK, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.LuckyFist)
+const localBasePower = ref(SKILL_POWER.LuckyFist)
 
 const debuffSkillsDef = [
   {
@@ -50,7 +49,7 @@ const debuffSkillsDef = [
 ]
 
 const idealDamage = computed(() =>
-  calcLuckyFistDamage(monster.value.hp, buffedLK.value, localBasePower.value)
+  SkillPower.LuckyFist(monster.value.hp, buffedLK.value, localBasePower.value)
 )
 
 const damage = computed(() =>

@@ -43,12 +43,10 @@
 
 <script setup lang="ts">
 import {
-  calcFirstHitComboDamage,
-  calcSecondHitComboDamage,
   calcDamage,
   calcMonsterDef
 } from '~/utils/calc'
-import { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
@@ -56,7 +54,7 @@ const { stats, extraStats, monster, apBuffs, hvBuffs, debuffSkills, buffedAP, bu
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.HitCombo : BASE_POWER.HitCombo
+  isGodly.value ? GODLY_SKILL_POWER.HitCombo : SKILL_POWER.HitCombo
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -72,11 +70,11 @@ const debuffSkillsDef: skillPanel[] = [
 ]
 
 const firstHitIdealDamage = computed(() => {
-  return calcFirstHitComboDamage(buffedAP.value, localBasePower.value)
+  return SkillPower.FirstHitCombo(buffedAP.value, localBasePower.value)
 })
 
 const secondHitIdealDamage = computed(() => {
-  return calcSecondHitComboDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+  return SkillPower.SecondHitCombo(buffedAP.value, buffedHV.value, localBasePower.value)
 })
 
 const fisrtHitDamage = computed(() => {

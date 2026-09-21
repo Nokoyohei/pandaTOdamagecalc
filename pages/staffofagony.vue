@@ -27,22 +27,21 @@
 
 <script setup lang="ts">
 import {
-  calcDarkCommandoDamage,
-  calcStaffOfAgony,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.StaffOfAgony : BASE_POWER.StaffOfAgony
+  isGodly.value ? GODLY_SKILL_POWER.StaffOfAgony : SKILL_POWER.StaffOfAgony
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -50,12 +49,16 @@ watch(isGodly, () => {
 })
 
 const idealStaffOfAgonyDamage = computed(() =>
-  calcStaffOfAgony(buffedMA.value, stats.value.dark, localBasePower.value)
+  magicAttackPower(
+    SkillPower.StaffOfAgony(stats.value.dark, localBasePower.value),
+    buffedMA.value,
+    49
+  )
 )
 
 const idealDarkCommandoDamage = computed(() =>
   dlBuffs.value.includes('darkCommando')
-    ? calcDarkCommandoDamage(buffedMA.value)
+    ? magicAttackPower(SkillPower.DarkCommando(), buffedMA.value, 49)
     : 0
 )
 
@@ -98,9 +101,11 @@ const critDamage = computed(() =>
 )
 
 const resMA = computed(() => {
-  const attackRatio = dlBuffs.value.includes('darkCommando')
-    ? SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value) + SkillRatio.DarkCommando()
-    : SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value)
+  const agonyPower = SkillPower.StaffOfAgony(stats.value.dark, localBasePower.value)
+  const attackRatio =
+    (dlBuffs.value.includes('darkCommando')
+      ? agonyPower + SkillPower.DarkCommando()
+      : agonyPower) / 100
   const constStats = 49
   const monsterDef =
     calcMonsterDef(monster.value, 'magic') *
@@ -124,9 +129,11 @@ const resMA = computed(() => {
 })
 
 const resDark = computed(() => {
-  const attackRatio = dlBuffs.value.includes('darkCommando')
-    ? SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value) + SkillRatio.DarkCommando()
-    : SkillRatio.StaffOfAgony(stats.value.dark, localBasePower.value)
+  const agonyPower = SkillPower.StaffOfAgony(stats.value.dark, localBasePower.value)
+  const attackRatio =
+    (dlBuffs.value.includes('darkCommando')
+      ? agonyPower + SkillPower.DarkCommando()
+      : agonyPower) / 100
   const constStats = 49
   const monsterDef =
     calcMonsterDef(monster.value, 'magic') *

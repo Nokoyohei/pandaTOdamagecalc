@@ -27,22 +27,21 @@
 
 <script setup lang="ts">
 import {
-  calcDarkCommandoDamage,
-  calcScytheDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, maBuffs, dlBuffs, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.Scythe : BASE_POWER.Scythe
+  isGodly.value ? GODLY_SKILL_POWER.Scythe : SKILL_POWER.Scythe
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -50,12 +49,16 @@ watch(isGodly, () => {
 })
 
 const idealScytheDamage = computed(() =>
-  calcScytheDamage(buffedMA.value, stats.value.dark, localBasePower.value)
+  magicAttackPower(
+    SkillPower.Scythe(stats.value.dark, localBasePower.value),
+    buffedMA.value,
+    49
+  )
 )
 
 const idealDarkCommandoDamage = computed(() =>
   dlBuffs.value.includes('darkCommando')
-    ? calcDarkCommandoDamage(buffedMA.value)
+    ? magicAttackPower(SkillPower.DarkCommando(), buffedMA.value, 49)
     : 0
 )
 
@@ -98,10 +101,11 @@ const critDamage = computed(() =>
 )
 
 const resMA = computed(() => {
-  const scytheRatio = SkillRatio.Scythe(stats.value.dark, localBasePower.value)
-  const attackRatio = dlBuffs.value.includes('darkCommando')
-    ? scytheRatio + SkillRatio.DarkCommando()
-    : scytheRatio
+  const scythePower = SkillPower.Scythe(stats.value.dark, localBasePower.value)
+  const attackRatio =
+    (dlBuffs.value.includes('darkCommando')
+      ? scythePower + SkillPower.DarkCommando()
+      : scythePower) / 100
   const constStats = 49
   const monsterDef =
     calcMonsterDef(monster.value, 'magic') *
@@ -125,10 +129,11 @@ const resMA = computed(() => {
 })
 
 const resDark = computed(() => {
-  const scytheRatio = SkillRatio.Scythe(stats.value.dark, localBasePower.value)
-  const attackRatio = dlBuffs.value.includes('darkCommando')
-    ? scytheRatio + SkillRatio.DarkCommando()
-    : scytheRatio
+  const scythePower = SkillPower.Scythe(stats.value.dark, localBasePower.value)
+  const attackRatio =
+    (dlBuffs.value.includes('darkCommando')
+      ? scythePower + SkillPower.DarkCommando()
+      : scythePower) / 100
   const constStats = 49
   const monsterDef =
     calcMonsterDef(monster.value, 'magic') *

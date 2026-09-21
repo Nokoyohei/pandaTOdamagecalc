@@ -35,13 +35,12 @@
 
 <script setup lang="ts">
 import {
-  calcEarthquakeBladeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
@@ -50,7 +49,7 @@ const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSk
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.EarthquakeBlade : BASE_POWER.EarthquakeBlade
+  isGodly.value ? GODLY_SKILL_POWER.EarthquakeBlade : SKILL_POWER.EarthquakeBlade
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -66,7 +65,7 @@ const debuffSkillsDef: skillPanel[] = [
 ]
 
 const idealDamage = computed(() => {
-  return calcEarthquakeBladeDamage(buffedAP.value, stats.value.soil, localBasePower.value)
+  return SkillPower.EarthquakeBlade(buffedAP.value, stats.value.soil, localBasePower.value)
 })
 
 const damage = computed(() => {

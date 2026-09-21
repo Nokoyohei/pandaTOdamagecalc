@@ -55,20 +55,19 @@
 
 <script setup lang="ts">
 import {
-  calcDoubleShotDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, acBuffs, debuffSkills, buffedAC, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.DoubleShot : BASE_POWER.DoubleShot
+  isGodly.value ? GODLY_SKILL_POWER.DoubleShot : SKILL_POWER.DoubleShot
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -90,7 +89,7 @@ const debuffSkillsDef = [
 ]
 
 const idealDamage = computed(() =>
-  calcDoubleShotDamage(buffedAC.value * 20 + stats.value.gunAP, localBasePower.value)
+  SkillPower.DoubleShot(buffedAC.value, stats.value.gunAP, localBasePower.value)
 )
 
 const damage = computed(() => {

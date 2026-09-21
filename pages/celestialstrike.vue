@@ -28,7 +28,7 @@
         </v-btn-toggle>
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.CelestialStrike" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.CelestialStrike" />
         <stats-text-field
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -43,20 +43,20 @@
 
 <script setup lang="ts">
 import {
-  calcCelestialStrikeDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { LightSkillName } from '~/types'
 
 const { mode, monster, stats, extraStats, maBuffs, buffedMA, monsterHP } =
   useSkillPage({ skillMode: 'dual' })
 
-const localBasePower = ref(BASE_POWER.CelestialStrike)
+const localBasePower = ref(SKILL_POWER.CelestialStrike)
 
 const selectedLightSkills = ref<LightSkillName[]>([])
 
@@ -99,7 +99,11 @@ const lightSkills = [
 ]
 
 const idealDamage = computed(() => {
-  return calcCelestialStrikeDamage(buffedMA.value, selectedLightSkills.value.length, localBasePower.value)
+  return magicAttackPower(
+    SkillPower.CelestialStrike(selectedLightSkills.value.length, localBasePower.value),
+    buffedMA.value,
+    25
+  )
 })
 
 const damage = computed(() => {
@@ -125,7 +129,7 @@ const resMA = computed(() => {
     monsterHP.value,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.lightR,
-    SkillRatio.CelestialStrike(selectedLightSkills.value.length, localBasePower.value),
+    SkillPower.CelestialStrike(selectedLightSkills.value.length, localBasePower.value) / 100,
     buffedMA.value,
     25
   )

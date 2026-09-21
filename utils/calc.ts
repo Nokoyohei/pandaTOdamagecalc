@@ -1,6 +1,8 @@
 import BuffRatio from '~/utils/buffRatio'
 import type { Monster, DebuffName, BossMonster, Status, Attributes } from '~/types'
-import SkillRatio from '~/utils/skillRatio'
+import { ftol, f32, toInt32, INT32_MAX, F32_0_9, F32_0_75, F32_0_01 } from '~/utils/x87'
+
+export { ftol, f32, toInt32, INT32_MAX, F32_0_9, F32_0_75, F32_0_01 }
 
 export const initStatus = (): Status & Attributes => {
   return {
@@ -65,35 +67,21 @@ export const makeArr = (
  * 出典: SPEC/04_damage.md, SPEC/generated/server/battlehelper_annot.asm
  * ==========================================================================*/
 
-export const INT32_MAX = 2 ** 31 - 1
-
-// 符号付き 32bit 整数への折り返し
-export const toInt32 = (n: number): number => {
-  if (n >= -(INT32_MAX + 1) && n <= INT32_MAX) return n
-  const mod = ((n % 2 ** 32) + 2 ** 32) % 2 ** 32
-  return mod > INT32_MAX ? mod - 2 ** 32 : mod
-}
-
-/*
-  MSVC の _ftol (FUN_008a7cf0)。
-  丸めモードを truncate に切り替えて fistp qword し、下位 32bit (eax) を int として返す。
-  つまり「0 方向への切り捨て」＋「32bit 折り返し」。
-*/
-export const ftol = (x: number): number => toInt32(Math.trunc(x))
-
-/*
-  x87 の fstp DWORD PTR（float32 への書き戻し）。
-  ダメージ計算の中間値は全て float(32bit) のスタック変数を経由するので、
-  16,777,216 を超える領域では実際に精度が落ちる。
-*/
-export const f32 = (x: number): number => Math.fround(x)
-
-// .rdata の浮動小数定数（いずれも float リテラルを double に広げたもの）
-export const F32_0_9 = Math.fround(0.9) // 0x97AFA8 : 魔法防御 MD の係数
-export const F32_0_75 = 0.75 // 0x95E0E8 : 物理防御 DP の係数
-export const F32_0_01 = Math.fround(0.01) // 0x935660 : 属性耐性の百分率
-
 export type AttackType = 'magic' | 'physical' | 'gun'
+
+/*
+  魔法スキルの攻撃力 FUN_0059D3E0。
+
+      fild power ; fmul 1.0
+      fild MA    ; fdiv 100.0
+      fmulp                       -> power × (MA − maPenalty) / 100
+
+  power は ESAction_* テーブル由来の整数（utils/skillPower.ts）。
+  maPenalty はスキル固有の定数（Scythe 49 / Searing Light 25 など）。
+  float32 への丸めと防御の減算は rawDamage 側で行われる。
+*/
+export const magicAttackPower = (power: number, ma: number, maPenalty = 0) =>
+  (power * (ma - maPenalty)) / 100
 
 /*
   ダメージ本体。
@@ -157,113 +145,6 @@ export const applyResistance = (damage: number, resistance: number) => {
 // 折り返し 1 回あたりのダメージ増分 = 2^32 * 0.01f
 export const EXTRA_DAMAGE_UNIT = Math.trunc(2 ** 32 * F32_0_01)
 
-/* ============================================================================
- * スキルごとの攻撃力（防御・耐性を引く前の値）
- *
- * 丸めはゲーム側の経路に合わせている。
- *   魔法 : ESA* が組み立てた整数 power を FUN_0059D3E0 が MA/100 倍するだけなので
- *          ここでは丸めない（float32 への丸めは rawDamage 側で行われる）
- *   物理 : 呼び出し側が atkPower = ftol(AP * ratio) を作るので ftol
- *   射撃 : FUN_0059D440 が式全体を 1 回で切り捨てるのでここでは丸めない
- * ==========================================================================*/
-
-// --- 魔法系 -----------------------------------------------------------------
-export const calcDarkCommandoDamage = (ma: number, basePower: number = 184) =>
-  (ma - 49) * SkillRatio.DarkCommando(basePower)
-export const calcGravityCrashDamage = (ma: number, basePower: number = 900) =>
-  (ma - 49) * SkillRatio.GravityCrash(basePower)
-export const calcCelestialStrikeDamage = (ma: number, skillNum: number, basePower: number = 550) =>
-  (ma - 25) * SkillRatio.CelestialStrike(skillNum, basePower)
-export const calcBlessingDamage = (ac: number, lk: number, ratio: number) =>
-  (ac + lk) * ratio
-export const calcCleavingTerraDamage = (ma: number, basePower: number = 337) =>
-  (ma - 25) * SkillRatio.CleavingTerra(basePower)
-export const calcWindBladeDamage = (ma: number, basePower: number = 268) =>
-  (ma - 49) * SkillRatio.WindBlade(basePower)
-export const calcRagingStormDamage = (ac: number, ma: number, basePower: number = 360) =>
-  (ac + ma - 49) * SkillRatio.RasingStorm(basePower)
-export const calcElectroAttackDamage = (ma: number, basePower: number = 376) =>
-  (ma - 25) * SkillRatio.ElectroAttack(basePower)
-export const calcScytheDamage = (ma: number, dark: number, basePower: number = 100) =>
-  (ma - 49) * SkillRatio.Scythe(dark, basePower)
-export const calcStaffOfAgony = (ma: number, dark: number, basePower: number = 65) =>
-  (ma - 49) * SkillRatio.StaffOfAgony(dark, basePower)
-export const calcMagicalSoulDamage = (ap: number, ma: number) => ap * (ma / 100)
-export const calcStaffOfThunderDamage = (ma: number, basePower: number = 510) =>
-  (ma - 25) * SkillRatio.StaffOfThunder(basePower)
-export const calcTeslaFieldDamage = (ma: number, mp: number, basePower: number = 430) =>
-  (ma + Math.floor(mp / 120)) * SkillRatio.TeslaField(basePower)
-export const calcDeadlyFenDamage = (ma: number, lk: number, basePower: number = 368) =>
-  (ma + lk - 25) * SkillRatio.DeadlyFen(basePower)
-export const calcTornadoBlastDamage = (ma: number, basePower: number = 330) =>
-  (ma - 49) * SkillRatio.TornadoBlast(basePower)
-export const calcEarthquakeDamage = (ma: number, basePower: number = 495) =>
-  (ma - 25) * SkillRatio.Earthquake(basePower)
-export const calcFlamingFistDamage = (ap: number, fire: number, ma: number, basePower: number = 570) =>
-  (ap * SkillRatio.FlamingFist(fire, basePower) * ma) / 100
-
-// --- 物理系 -----------------------------------------------------------------
-export const calcFullHouseDamage = (ap: number, lk: number, hv: number, basePower: number = 800) =>
-  ftol((ap + (lk + hv) * 8) * SkillRatio.FullHouse(basePower))
-export const calcSharpScreamDamage = (ap: number, hv: number, basePower: number = 510) =>
-  ftol((ap + hv * 16) * SkillRatio.SharpScream(basePower))
-export const calcFirstHitComboDamage = (ap: number, basePower: number = 620) =>
-  ftol(ap * (11 * 0.6 + 3) * SkillRatio.FirstHitCombo(basePower))
-export const calcSecondHitComboDamage = (ap: number, hv: number, basePower: number = 620) =>
-  ftol((ap + hv * 16) * (11 * 0.6 + 3) * SkillRatio.SecondHitCombo(basePower))
-export const calcOnePairDamage = (
-  ap: number,
-  hv: number,
-  isLadyLuck?: boolean,
-  basePower: number = 690,
-  ladyLuckPower: number = 6
-) => {
-  const onePairDamage = ftol((ap + hv * 8) * SkillRatio.OnePair(basePower))
-  return isLadyLuck
-    ? ftol(onePairDamage * (1 + SkillRatio.LadyLuck(ladyLuckPower)))
-    : onePairDamage
-}
-
-export const calcEarthquakeBladeDamage = (ap: number, soil: number, basePower: number = 440) =>
-  ftol(ap * SkillRatio.EarthquakeBlade(soil, basePower))
-export const calcSonicSlashDamage = (ap: number, water: number, basePower: number = 700) =>
-  ftol(ap * SkillRatio.SonicSlash(water, basePower))
-export const calcTidalSlashDamage = (ap: number, water: number, basePower: number = 550) =>
-  ftol(ap * SkillRatio.TidalSlash(water, basePower))
-export const calcTempestStrikeDamage = (ap: number, wind: number, basePower: number = 240) =>
-  ftol(ap * SkillRatio.TempestStrike(wind, basePower))
-export const calcGaleStrikeDamage = (ap: number, wind: number, basePower: number = 260) =>
-  ftol(ap * SkillRatio.GaleStrike(wind, basePower))
-export const calcChampionsBladeDamage = (ap: number, fire: number, basePower: number = 490) =>
-  ftol(ap * SkillRatio.ChampionsBlade(fire, basePower))
-
-export const calcFanOfKnicesDamage = (da: number, throwAp: number, basePower: number = 600) =>
-  ftol((da + throwAp / 10) * SkillRatio.FanOfKnives(basePower))
-export const calcChainOfKnivesDamage = (da: number, throwAp: number, basePower: number = 630) =>
-  ftol((da * 16 + throwAp * 6) * SkillRatio.ChainOfKnives(basePower))
-export const calcPoisonAssaultDamage = (da: number, throwAp: number, basePower: number = 390) =>
-  ftol(da * 16 * SkillRatio.PoisonAssault(basePower)) + throwAp
-export const calcSuddenAttackDamage = (ap: number, da: number, lk: number, basePower: number = 840) =>
-  ftol(((da + lk) * 16 + ap) * SkillRatio.SuddenAttack(basePower))
-export const calcLuckyFistDamage = (enemyHp: number, lk: number, basePower: number = 440) =>
-  ftol((enemyHp + lk * 80) * SkillRatio.LuckyFist(basePower))
-
-// 毒の継続ダメージは防御・耐性を通さず直接適用される
-export const calcPoisonDamage = (da: number, throwAp: number, basePower: number = 390) =>
-  ftol((da * 16 + throwAp) * 0.412 * SkillRatio.PoisonAssault(basePower))
-
-// --- 射撃系 -----------------------------------------------------------------
-export const calcShootingSpreeDamage = (gunAP: number, basePower: number = 240) =>
-  (gunAP - 48 * 20) * SkillRatio.ShootingSpree(basePower)
-export const calcBerserkDamage = (gunAP: number, basePower: number = 350) =>
-  (gunAP - 48 * 20) * SkillRatio.Berserk(basePower)
-export const calcPowerShotDamage = (gunAP: number, basePower: number = 300) =>
-  (gunAP - 48 * 20) * SkillRatio.PowerShot(basePower)
-export const calcDoubleShotDamage = (gunAP: number, basePower: number = 480) =>
-  (gunAP - 48 * 20) * SkillRatio.DoubleShot(basePower)
-
-/* ========================================================================== */
-
 // Calculate the debuffed monster's
 export const calcDebuffedMonster = (
   monster: Monster | BossMonster,
@@ -303,27 +184,26 @@ export const calcMonsterDef = (
   args:
     monsterDef     : 実効防御 -> calcMonsterDef
     monsterResist  : 対象の属性耐性（fireR, waterR ...）
-    idealDamage    : 防御・耐性 0 の相手に与える攻撃力
+    attackPower    : スキルの power（物理・射撃）または magicAttackPower の戻り値
     extraMultiplier: 攻撃力そのものに掛かる倍率（Blood Testament など）
     critMultiplier : クリティカル倍率。ゲームと同じく「防御を引く前」に掛かる
     attackType     : 省略可。魔法だけはクリティカルでも下限 0（FUN_0059D3E0）
 
-  ※ 魔法スキルのクリティカルは厳密には ftol(power * 1.1f) と power 側を
-     切り捨ててから MA/100 倍する（FUN_0059C230 @0x59c3a7）。ここでは power を
-     分離して保持していないため攻撃力側に 1.1f を掛けている。差は最大で MA/100 程度。
+  ※ 魔法スキルのクリティカルは厳密には ftol(power × 1.1f) と power 側を
+     切り捨ててから MA/100 倍する（FUN_0059C230 @0x59c3a7）。ここでは攻撃力側に
+     1.1f を掛けている。差は最大で MA/100 程度。
 */
 export const calcDamage = (
   monsterDef: number,
   monsterResist: number,
-  idealDamage: number,
+  attackPower: number,
   extraMultiplier = 1,
   critMultiplier = 1,
   attackType?: AttackType
 ) => {
-  const attackPower = idealDamage * extraMultiplier
   const isCritical = critMultiplier !== 1 && attackType !== 'magic'
   return applyResistance(
-    rawDamage(attackPower, monsterDef, critMultiplier, isCritical),
+    rawDamage(attackPower * extraMultiplier, monsterDef, critMultiplier, isCritical),
     monsterResist
   )
 }
@@ -335,7 +215,8 @@ export const calcDamage = (
     monsterHp      : 対象の最大 HP
     monsterDef     : 実効防御 -> calcMonsterDef
     monsterResist  : 対象の属性耐性
-    attackRatio    : スキル倍率 -> skillRatio
+    perStat        : ステータス 1 につき増える攻撃力
+                     （魔法なら power/100、物理・射撃なら P.Ratio）
     nowStats       : 現在ダメージを出しているときのステータス
     constStats     : 最後に引く定数。例えば Gravity Crash なら 49
     extraMultiplier: 攻撃力に直接掛かる倍率（現状 Blood Testament のみ）
@@ -348,12 +229,12 @@ export const calcNeedStats = (
   monsterHp: number,
   monsterDef: number,
   monsterResist: number,
-  attackRatio: number,
+  perStat: number,
   nowStats: number,
   constStats = 49,
   extraMultiplier = 1
 ) => {
-  if (attackRatio <= 0 || extraMultiplier <= 0) return Infinity
+  if (perStat <= 0 || extraMultiplier <= 0) return Infinity
 
   const resist = Math.trunc(monsterResist)
   // 耐性 100 以上はダメージが通らない（FUN_0059C6F0 の吸収）
@@ -391,7 +272,7 @@ export const calcNeedStats = (
 
   // raw = ftol(f32(攻撃力) - f32(防御)) を満たす最小の攻撃力
   const attackPower = bestRaw + f32(monsterDef)
-  return attackPower / extraMultiplier / attackRatio + constStats - nowStats
+  return attackPower / extraMultiplier / perStat + constStats - nowStats
 }
 
 export const calcLKBuffRatio = (

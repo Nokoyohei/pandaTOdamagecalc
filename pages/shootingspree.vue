@@ -27,7 +27,7 @@
         <BuffPanel v-model:ac-buffs="acBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.ShootingSpree" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.ShootingSpree" />
         <StatsTextField
           v-model:input-stats="stats.ac"
           :need-stats="resAC"
@@ -47,18 +47,17 @@
 
 <script setup lang="ts">
 import {
-  calcShootingSpreeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, acBuffs, buffedAC } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.ShootingSpree)
+const localBasePower = ref(SKILL_POWER.ShootingSpree)
 const sharpSense = ref<string[]>([])
 const effectiveCritMultiplier = computed(() => {
   if (sharpSense.value.includes('godlySharpSense')) return CRIT_MULTIPLIER.gun * GODLY_SHARP_SENSE_MULTIPLIER
@@ -67,7 +66,7 @@ const effectiveCritMultiplier = computed(() => {
 })
 
 const idealDamage = computed(() =>
-  calcShootingSpreeDamage(buffedAC.value * 20 + stats.value.gunAP, localBasePower.value)
+  SkillPower.ShootingSpree(buffedAC.value, stats.value.gunAP, localBasePower.value)
 )
 
 const damage = computed(() =>

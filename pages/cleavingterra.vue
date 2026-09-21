@@ -7,7 +7,7 @@
         <BuffPanel v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.CleavingTerra" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.CleavingTerra" />
         <StatsTextField
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -22,21 +22,21 @@
 
 <script setup lang="ts">
 import {
-  calcCleavingTerraDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.CleavingTerra)
+const localBasePower = ref(SKILL_POWER.CleavingTerra)
 
 const idealDamage = computed(() =>
-  calcCleavingTerraDamage(buffedMA.value, localBasePower.value)
+  magicAttackPower(SkillPower.CleavingTerra(localBasePower.value), buffedMA.value, 25)
 )
 
 const damage = computed(() =>
@@ -62,7 +62,7 @@ const resMA = computed(() => {
     monster.value.hp,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.earthR,
-    SkillRatio.CleavingTerra(localBasePower.value),
+    SkillPower.CleavingTerra(localBasePower.value) / 100,
     buffedMA.value,
     25
   )

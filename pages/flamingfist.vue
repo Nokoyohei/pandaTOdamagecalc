@@ -13,7 +13,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.FlamingFist" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.FlamingFist" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -40,20 +40,20 @@
 
 <script setup lang="ts">
 import {
-  calcFlamingFistDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, debuffSkills, buffedAP, buffedMA, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.FlamingFist)
+const localBasePower = ref(SKILL_POWER.FlamingFist)
 
 const debuffSkillsDef: skillPanel[] = [
   {
@@ -64,7 +64,11 @@ const debuffSkillsDef: skillPanel[] = [
 ]
 
 const idealDamage = computed(() => {
-  return calcFlamingFistDamage(buffedAP.value, stats.value.fire, buffedMA.value, localBasePower.value)
+  return magicAttackPower(
+    SkillPower.FlamingFist(buffedAP.value, stats.value.fire, localBasePower.value),
+    buffedMA.value,
+    0
+  )
 })
 
 const damage = computed(() => {

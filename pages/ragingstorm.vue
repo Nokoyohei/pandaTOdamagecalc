@@ -8,7 +8,7 @@
         <BuffPanel v-model:ac-buffs="acBuffs" v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.RasingStorm" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.RagingStorm" />
         <StatsTextField
           v-model:input-stats="stats.ac"
           :need-stats="resAC"
@@ -30,22 +30,26 @@
 
 <script setup lang="ts">
 import {
-  calcRagingStormDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, maBuffs, acBuffs, buffedMA, buffedAC } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.RasingStorm)
+const localBasePower = ref(SKILL_POWER.RagingStorm)
 
 const idealDamage = computed(() =>
-  calcRagingStormDamage(stats.value.ac, buffedMA.value, localBasePower.value)
+  magicAttackPower(
+    SkillPower.RagingStorm(localBasePower.value),
+    buffedMA.value + stats.value.ac,
+    49
+  )
 )
 
 const damage = computed(() =>
@@ -71,7 +75,7 @@ const needStat = () =>
     monster.value.hp,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.windR,
-    SkillRatio.RasingStorm(localBasePower.value),
+    SkillPower.RagingStorm(localBasePower.value) / 100,
     buffedMA.value + buffedAC.value,
     49
   )

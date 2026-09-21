@@ -33,13 +33,12 @@
 
 <script setup lang="ts">
 import {
-  calcSonicSlashDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { skillPanel } from '~/types'
 
@@ -48,7 +47,7 @@ const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSk
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.SonicSlash : BASE_POWER.SonicSlash
+  isGodly.value ? GODLY_SKILL_POWER.SonicSlash : SKILL_POWER.SonicSlash
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -64,7 +63,7 @@ const debuffSkillsDef: skillPanel[] = [
 ]
 
 const idealDamage = computed(() => {
-  return calcSonicSlashDamage(buffedAP.value, stats.value.water, localBasePower.value)
+  return SkillPower.SonicSlash(buffedAP.value, stats.value.water, localBasePower.value)
 })
 
 const damage = computed(() => {

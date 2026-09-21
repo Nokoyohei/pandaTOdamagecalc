@@ -47,20 +47,19 @@
 
 <script setup lang="ts">
 import {
-  calcBerserkDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, acBuffs, buffedAC } = useSkillPage()
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.Berserk : BASE_POWER.Berserk
+  isGodly.value ? GODLY_SKILL_POWER.Berserk : SKILL_POWER.Berserk
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -74,7 +73,7 @@ const effectiveCritMultiplier = computed(() => {
 })
 
 const idealDamage = computed(() =>
-  calcBerserkDamage(buffedAC.value * 20 + stats.value.gunAP, localBasePower.value)
+  SkillPower.Berserk(buffedAC.value, stats.value.gunAP, localBasePower.value)
 )
 
 const damage = computed(() =>

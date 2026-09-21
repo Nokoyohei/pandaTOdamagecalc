@@ -7,7 +7,7 @@
         <BuffPanel v-model:ma-buffs="maBuffs" v-model:lk-buffs="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.DeadlyFen" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.DeadlyFen" />
         <StatsTextField
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -29,22 +29,26 @@
 
 <script setup lang="ts">
 import {
-  calcDeadlyFenDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio,
   calcLKBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, maBuffs, lkBuffs, buffedMA, buffedLK } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.DeadlyFen)
+const localBasePower = ref(SKILL_POWER.DeadlyFen)
 
 const idealDamage = computed(() =>
-  calcDeadlyFenDamage(buffedMA.value, buffedLK.value, localBasePower.value)
+  magicAttackPower(
+    SkillPower.DeadlyFen(localBasePower.value),
+    buffedMA.value + buffedLK.value,
+    25
+  )
 )
 
 const damage = computed(() =>
@@ -70,7 +74,7 @@ const resStat = computed(() =>
     monster.value.hp,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.earthR,
-    SkillRatio.DeadlyFen(localBasePower.value),
+    SkillPower.DeadlyFen(localBasePower.value) / 100,
     buffedMA.value + buffedLK.value,
     25
   )
