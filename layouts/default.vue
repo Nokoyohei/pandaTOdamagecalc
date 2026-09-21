@@ -147,7 +147,10 @@ const bossMenu = [
       { imgsrc: '/maristrident.gif', title: 'GODLY STAFF OF AGONY', to: '/staffofagony?godly=true', godly: true },
       { imgsrc: '/hardgravity.gif', title: 'GRAVITY CRASH', to: '/gravitycrash?mode=boss' },
       { imgsrc: '/hardgravity.gif', title: 'GODLY GRAVITY CRASH', to: '/gravitycrash?mode=boss&godly=true', godly: true },
-      { imgsrc: '/celestialstrike.gif', title: 'CELESTIAL STRIKE', to: '/celestialstrike?mode=boss' }
+      { imgsrc: '/celestialstrike.gif', title: 'CELESTIAL STRIKE', to: '/celestialstrike?mode=boss' },
+      { imgsrc: '/raizin.gif', title: 'STAFF OF THUNDER', to: '/staffofthunder?mode=boss' },
+      { imgsrc: '/earthshaker.gif', title: 'EARTHQUAKE', to: '/earthquake?mode=boss' },
+      { imgsrc: '/tempest.gif', title: 'RAGING STORM', to: '/ragingstorm?mode=boss' }
     ]
   },
   {
