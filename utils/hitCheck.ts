@@ -7,7 +7,7 @@ import {
   GODLY_BOSS_SKILL_APPLY_RATIO
 } from '~/utils/skillTable'
 import type { AttackType } from '~/utils/calc'
-import type { Monster } from '~/types'
+import type { Monster, Status, Attributes, LKBuffName, ACBuffName } from '~/types'
 import type { InjectionKey, Ref } from 'vue'
 
 /*
@@ -17,7 +17,7 @@ import type { InjectionKey, Ref } from 'vue'
  *      hit = clamp(ftol((AC − HV_tgt × 2.5 + 40) × 1.2 × bonus), 20, 100)  → rand() % 100 < hit
  *  魔法スキル FUN_0059BEB0
  *      hit = clamp(ftol((LK − LK_tgt + 90) × 1.2 × bonus), 20, 100)
- *      さらに FUN_0059D370 の回避 min(LK_tgt × 0.5, 50)% が別に入る（攻撃側のステータスでは消せない）
+ *      （FUN_0059D370 の回避 min(LK_tgt × 0.5, 50)% は攻撃側では消せないので表示しない）
  *  射撃 FUN_0059D500
  *      (LK − LK_tgt + 80) < rand() % 100 で外れ。bonus は掛からない
  *
@@ -35,8 +35,6 @@ export const magicHitRate = (lk: number, targetLk: number, bonus: number) =>
 
 // rand() % 100 は 0〜99。X = LK − LK_tgt + 80 に対して r ≤ X で命中なので X + 1 通り
 export const gunHitRate = (lk: number, targetLk: number) => clamp(lk - targetLk + 81, 0, 100)
-
-export const magicDodgeRate = (targetLk: number) => Math.min(targetLk * 0.5, 50)
 
 /** rate(stat) が 100 になる最小の整数ステータス */
 const minStatFor = (rate: (stat: number) => number, estimate: number) => {
@@ -60,50 +58,66 @@ export interface HitCheck {
   bonus: number
   /** 現在の命中率 (%) */
   hitRate: number
-  /** 確定ヒットに必要なステータス（バフ前の入力値ベース） */
-  need: { stat: 'AC' | 'LK'; value: number; now: number }
-  /** 魔法のみ: 対象の LK による回避率 (%) */
-  dodge?: number
+  /** 確定ヒットに必要なバフ後ステータスと、いまのバフ後の値 */
+  need: { stat: 'ac' | 'lk'; value: number; now: number }
+  /** ページ側にその入力欄とバフがすでにあるか（無ければ HitCheckPanel が出す） */
+  ownsStat: boolean
 }
 
-export const HIT_CHECK_KEY: InjectionKey<Ref<HitCheck | null>> = Symbol('hitCheck')
+/** useSkillPage が provide し、BossMonsterPanel / FarmingMonster の HitCheckPanel が使う */
+export interface HitCheckContext {
+  hitCheck: Ref<HitCheck | null>
+  stats: Ref<Status & Attributes>
+  extraStats: Ref<Status>
+  lkBuffs: Ref<LKBuffName[]>
+  acBuffs: Ref<ACBuffName[]>
+  lkBuffRatio: Ref<number>
+  acBuffRatio: Ref<number>
+}
+
+export const HIT_CHECK_KEY: InjectionKey<HitCheckContext> = Symbol('hitCheck')
 
 type SkillKey = keyof typeof SKILL_APPLY_RATIO
-type PageHit = { key: SkillKey; attackType: AttackType | ((stats: { fire: number }) => AttackType) }
+type PageHit = {
+  key: SkillKey
+  attackType: AttackType | ((stats: { fire: number }) => AttackType)
+  /** ページが自分で入力欄とバフを出しているステータス */
+  own?: ('ac' | 'lk')[]
+}
 
 /** pages/<route>.vue → 使うスキルと攻撃種別 */
 const PAGE_SKILL: Record<string, PageHit> = {
   '2hitcombo': { key: 'HitCombo', attackType: 'physical' },
-  berserk: { key: 'Berserk', attackType: 'gun' },
-  blessing: { key: 'Blessing', attackType: 'magic' },
+  berserk: { key: 'Berserk', attackType: 'gun', own: ['ac'] },
+  blessing: { key: 'Blessing', attackType: 'magic', own: ['ac', 'lk'] },
   celestialstrike: { key: 'CelestialStrike', attackType: 'magic' },
   chainofknives: { key: 'ChainOfKnives', attackType: 'physical' },
   championsblade: { key: 'ChampionsBlade', attackType: 'physical' },
   cleavingterra: { key: 'CleavingTerra', attackType: 'magic' },
-  deadlyfen: { key: 'DeadlyFen', attackType: 'magic' },
-  doubleshot: { key: 'DoubleShot', attackType: 'gun' },
+  deadlyfen: { key: 'DeadlyFen', attackType: 'magic', own: ['lk'] },
+  doubleshot: { key: 'DoubleShot', attackType: 'gun', own: ['ac'] },
   earthquake: { key: 'Earthquake', attackType: 'magic' },
   earthquakeblade: { key: 'EarthquakeBlade', attackType: 'physical' },
   electroattack: { key: 'ElectroAttack', attackType: 'magic' },
   fanofknives: { key: 'FanOfKnives', attackType: 'physical' },
   // 火属性があるときは火魔法判定（pages/flamingfist.vue と同じ分岐）
   flamingfist: { key: 'FlamingFist', attackType: (s) => (s.fire > 0 ? 'magic' : 'physical') },
-  fullhouse: { key: 'FullHouse', attackType: 'physical' },
+  fullhouse: { key: 'FullHouse', attackType: 'physical', own: ['lk'] },
   galestrike: { key: 'GaleStrike', attackType: 'physical' },
   gravitycrash: { key: 'GravityCrash', attackType: 'magic' },
-  luckyfist: { key: 'LuckyFist', attackType: 'physical' },
+  luckyfist: { key: 'LuckyFist', attackType: 'physical', own: ['lk'] },
   magicalsoul: { key: 'MagicalSoul', attackType: 'magic' },
   onepair: { key: 'OnePair', attackType: 'physical' },
   poisonassault: { key: 'PoisonAssault', attackType: 'physical' },
-  powershot: { key: 'PowerShot', attackType: 'gun' },
-  ragingstorm: { key: 'RagingStorm', attackType: 'magic' },
+  powershot: { key: 'PowerShot', attackType: 'gun', own: ['ac'] },
+  ragingstorm: { key: 'RagingStorm', attackType: 'magic', own: ['ac'] },
   scythe: { key: 'Scythe', attackType: 'magic' },
   sharpscream: { key: 'SharpScream', attackType: 'physical' },
-  shootingspree: { key: 'ShootingSpree', attackType: 'gun' },
+  shootingspree: { key: 'ShootingSpree', attackType: 'gun', own: ['ac'] },
   sonicslash: { key: 'SonicSlash', attackType: 'physical' },
   staffofagony: { key: 'StaffOfAgony', attackType: 'magic' },
   staffofthunder: { key: 'StaffOfThunder', attackType: 'magic' },
-  suddenattack: { key: 'SuddenAttack', attackType: 'physical' },
+  suddenattack: { key: 'SuddenAttack', attackType: 'physical', own: ['lk'] },
   tempeststrike: { key: 'TempestStrike', attackType: 'physical' },
   teslafield: { key: 'TeslaField', attackType: 'magic' },
   tidalslash: { key: 'TidalSlash', attackType: 'physical' },
@@ -120,50 +134,71 @@ export function skillHitSource(
   bossSkillKey: string | undefined,
   isGodly: boolean,
   stats: { fire: number }
-): { attackType: AttackType; bonus: number } | null {
+): HitSource | null {
   if (routeName === 'boss-skill' && bossSkillKey) {
     const def = BOSS_SKILLS[bossSkillKey]
     if (!def) return null
     const godly = isGodly && def.table.godly != null ? lookup(GODLY_BOSS_SKILL_APPLY_RATIO, bossSkillKey) : undefined
     const bonus = godly ?? lookup(BOSS_SKILL_APPLY_RATIO, bossSkillKey)
-    return bonus == null ? null : { attackType: def.attackType, bonus }
+    if (bonus == null) return null
+    return { attackType: def.attackType, bonus, ownsStat: def.stats.includes(hitStatOf(def.attackType)) }
   }
   const page = PAGE_SKILL[routeName]
   if (!page) return null
   const godly = isGodly ? lookup(GODLY_SKILL_APPLY_RATIO, page.key) : undefined
   const bonus = godly ?? SKILL_APPLY_RATIO[page.key]
   const attackType = typeof page.attackType === 'function' ? page.attackType(stats) : page.attackType
-  return { attackType, bonus }
+  return { attackType, bonus, ownsStat: page.own?.includes(hitStatOf(attackType)) ?? false }
 }
 
+export interface HitSource {
+  attackType: AttackType
+  bonus: number
+  ownsStat: boolean
+}
+
+/** 命中判定に使う攻撃側ステータス */
+export const hitStatOf = (attackType: AttackType): 'ac' | 'lk' => (attackType === 'physical' ? 'ac' : 'lk')
+
 export function calcHitCheck(
-  source: { attackType: AttackType; bonus: number },
-  attacker: { ac: number; lk: number; acBuffRatio: number; lkBuffRatio: number },
+  source: HitSource,
+  attacker: { ac: number; lk: number },
   target: Monster
 ): HitCheck {
-  const { attackType, bonus } = source
+  const { attackType, bonus, ownsStat } = source
   if (attackType === 'physical') {
     const targetHv = Math.max(target.hv, 0)
     return {
       attackType,
       bonus,
+      ownsStat,
       hitRate: physicalHitRate(attacker.ac, targetHv, bonus),
-      need: { stat: 'AC', value: Math.ceil(needAcForSureHit(targetHv, bonus) / attacker.acBuffRatio), now: attacker.ac }
+      need: { stat: 'ac', value: needAcForSureHit(targetHv, bonus), now: attacker.ac }
     }
   }
   if (attackType === 'gun') {
     return {
       attackType,
       bonus: 1,
+      ownsStat,
       hitRate: gunHitRate(attacker.lk, target.lk),
-      need: { stat: 'LK', value: Math.ceil(needLkForSureGunHit(target.lk) / attacker.lkBuffRatio), now: attacker.lk }
+      need: { stat: 'lk', value: needLkForSureGunHit(target.lk), now: attacker.lk }
     }
   }
   return {
     attackType,
     bonus,
+    ownsStat,
     hitRate: magicHitRate(attacker.lk, target.lk, bonus),
-    need: { stat: 'LK', value: Math.ceil(needLkForSureHit(target.lk, bonus) / attacker.lkBuffRatio), now: attacker.lk },
-    dodge: magicDodgeRate(target.lk)
+    need: { stat: 'lk', value: needLkForSureHit(target.lk, bonus), now: attacker.lk }
   }
+}
+
+/*
+  バフ後で need に届くために、バフ前の入力値をあといくら増やせばよいか。
+  useSkillPage の buffed* と同じ floor((入力 − extra) × ratio) + extra を逆算する
+*/
+export const needInputDelta = (need: number, input: number, extra: number, buffRatio: number) => {
+  const required = Math.ceil((need - extra) / buffRatio) + extra
+  return Math.max(0, required - input)
 }

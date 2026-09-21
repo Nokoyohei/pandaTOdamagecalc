@@ -110,18 +110,17 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
       stats.value
     )
     if (!source) return null
-    return calcHitCheck(
-      source,
-      {
-        ac: buffedAC.value,
-        lk: buffedLK.value,
-        acBuffRatio: calcACBuffRatio(acBuffs.value),
-        lkBuffRatio: calcLKBuffRatio(lkBuffs.value)
-      },
-      monster.value
-    )
+    return calcHitCheck(source, { ac: buffedAC.value, lk: buffedLK.value }, monster.value)
   })
-  provide(HIT_CHECK_KEY, hitCheck)
+  provide(HIT_CHECK_KEY, {
+    hitCheck,
+    stats,
+    extraStats,
+    lkBuffs,
+    acBuffs,
+    lkBuffRatio: computed(() => calcLKBuffRatio(lkBuffs.value)),
+    acBuffRatio: computed(() => calcACBuffRatio(acBuffs.value))
+  })
 
   onBeforeMount(() => {
     if (skillMode === 'boss') {

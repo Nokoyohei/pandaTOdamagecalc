@@ -36,7 +36,7 @@
           <v-divider v-if="critDamage != null" vertical class="damage-divider" />
           <DamageArea v-if="critDamage != null" :damage="critDamage" color="yellow" label="critical" />
         </div>
-        <HitCheckLine v-if="hitCheck" :hit="hitCheck" />
+        <HitCheckPanel v-if="hit" :ctx="hit" />
       </v-card>
     </div>
   </div>
@@ -57,7 +57,7 @@ const props = defineProps<{
 const monster = defineModel<Monster>('monster', { required: true })
 
 // useSkillPage が provide する命中判定（ページによっては無い）
-const hitCheck = inject(HIT_CHECK_KEY, null)
+const hit = inject(HIT_CHECK_KEY, null)
 
 const datanum = 100
 const tab = ref<number | null>(0)
