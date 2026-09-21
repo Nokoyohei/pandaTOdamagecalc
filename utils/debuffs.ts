@@ -57,10 +57,11 @@ export const shieldBreakerAmount = (da: number, ratio: number = DEBUFF_TABLE.shi
   Math.min(ftol((da * ratio + 20) / 3), SHIELD_BREAKER_CAP)
 
 // FUN_006FA520: ratio = min((MA / 400 + 0.3) × RegiDown, 0.5)、amount = max(ftol(耐性 × ratio), 1)
-export const areaAmount = (resist: number, ma: number, regiDown: number = DEBUFF_TABLE.areaRegiDown) => {
-  const ratio = Math.min((ma / 400 + 0.3) * regiDown, 0.5)
-  return Math.max(ftol(resist * ratio), 1)
-}
+export const areaRatio = (ma: number, regiDown: number = DEBUFF_TABLE.areaRegiDown) =>
+  Math.min((ma / 400 + 0.3) * regiDown, 0.5)
+
+export const areaAmount = (resist: number, ma: number, regiDown: number = DEBUFF_TABLE.areaRegiDown) =>
+  Math.max(ftol(resist * areaRatio(ma, regiDown)), 1)
 
 /** デバフを掛けた後のモンスター */
 export const calcDebuffedMonster = <T extends Monster | BossMonster>(

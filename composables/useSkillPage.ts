@@ -91,12 +91,10 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
       : monster.value.hp
   )
 
-  // デバフの量は術者（= 入力中のキャラ）の DA / MA で決まる
+  // デバフの量は掛ける側の DA / MA で決まる（BossMonsterPanel のデバフ欄で入力）
+  const debuffCaster = useDebuffCaster()
   const debuffedMonster = computed(() =>
-    calcDebuffedMonster(monster.value, debuffSkills.value, {
-      da: buffedDA.value,
-      ma: buffedMA.value
-    })
+    calcDebuffedMonster(monster.value, debuffSkills.value, debuffCaster.value)
   )
 
   onBeforeMount(() => {

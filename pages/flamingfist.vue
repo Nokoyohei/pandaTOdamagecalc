@@ -55,33 +55,43 @@ const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, debuffSkills, b
 
 const localBasePower = ref(SKILL_POWER.FlamingFist)
 
-const debuffSkillsDef = debuffDefsFor('magic', 'fireR')
+// FUN_0073E640 @0x73e705: 術者の火属性が 0 より大きければ火魔法 (BH_MagicSkill, MA−0)、
+// 0 なら物理 (BH_Physical, PhysicalR) として同じ power を投げる
+const isFireMagic = computed(() => stats.value.fire > 0)
 
-const idealDamage = computed(() => {
-  return magicAttackPower(
-    SkillPower.FlamingFist(buffedAP.value, stats.value.fire, localBasePower.value),
-    buffedMA.value,
-    0
-  )
-})
+const debuffSkillsDef = computed(() =>
+  isFireMagic.value ? debuffDefsFor('magic', 'fireR') : debuffDefsFor('physical', 'physicalR')
+)
 
-const damage = computed(() => {
-  return calcDamage(
-    calcMonsterDef(debuffedMonster.value, 'magic'),
-    debuffedMonster.value.fireR,
-    idealDamage.value
-  )
-})
+const power = computed(() =>
+  SkillPower.FlamingFist(buffedAP.value, stats.value.fire, localBasePower.value)
+)
 
-const critDamage = computed(() => {
-  return calcDamage(
-    calcMonsterDef(debuffedMonster.value, 'magic'),
-    debuffedMonster.value.fireR,
-    idealDamage.value,
-    1,
-    CRIT_MULTIPLIER.magic
-  )
-})
+const idealDamage = computed(() =>
+  isFireMagic.value ? magicAttackPower(power.value, buffedMA.value, 0) : power.value
+)
+
+const hitDamage = (critical: boolean) =>
+  isFireMagic.value
+    ? calcDamage(
+        calcMonsterDef(debuffedMonster.value, 'magic'),
+        debuffedMonster.value.fireR,
+        idealDamage.value,
+        1,
+        critical ? CRIT_MULTIPLIER.magic : 1,
+        'magic'
+      )
+    : calcDamage(
+        calcMonsterDef(debuffedMonster.value, 'physical'),
+        debuffedMonster.value.physicalR,
+        idealDamage.value,
+        1,
+        critical ? CRIT_MULTIPLIER.physical : 1,
+        'physical'
+      )
+
+const damage = computed(() => hitDamage(false))
+const critDamage = computed(() => hitDamage(true))
 
 const resAP = computed(() => {
   const needAP = calcNeedStats(

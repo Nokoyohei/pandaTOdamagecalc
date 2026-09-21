@@ -1,4 +1,4 @@
-import { ftol, f32 } from '~/utils/x87'
+import { ftol, f32, F32_0_01 } from '~/utils/x87'
 
 /*
  * 各スキルが BattleHelper に渡す power を、サーバ実装と同じ形で組み立てる。
@@ -82,8 +82,9 @@ export const HIT_COMBO_SKILL_LEVEL = 11
  * power が「ステータス × Ratio」なので、必要ステータスの逆算にはこちらを使う。
  */
 export const SkillRatio = {
+  // @0x73e6d7: 火属性 × 0.01f（0x935660）+ P.Ratio
   FlamingFist: (fire: number, ratio: number = SKILL_POWER.FlamingFist) =>
-    ratio / 100 + fire / 100,
+    ratio / 100 + fire * F32_0_01,
   FullHouse: (ratio: number = SKILL_POWER.FullHouse) => ratio / 100,
   SharpScream: (ratio: number = SKILL_POWER.SharpScream) => ratio / 100,
   HitCombo: (ratio: number = SKILL_POWER.HitCombo) => ratio / 100,
