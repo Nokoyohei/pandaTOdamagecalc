@@ -4,6 +4,7 @@
     <BossMonsterPanel
       :damage="fisrtHitDamage + secondHitDamage"
       :damage-string="[
+        `${(fisrtHitDamage + secondHitDamage).toLocaleString()} total`,
         `1st hit: ${fisrtHitDamage.toLocaleString()}`,
         `2nd hit: ${secondHitDamage.toLocaleString()}`
       ]"
@@ -12,6 +13,7 @@
       v-model:debuff="debuffSkills"
       :crit-damage="critFirstHitDamage + critSecondHitDamage"
       :crit-damage-string="[
+        `${(critFirstHitDamage + critSecondHitDamage).toLocaleString()} total`,
         `1st hit: ${critFirstHitDamage.toLocaleString()}`,
         `2nd hit: ${critSecondHitDamage.toLocaleString()}`
       ]"
@@ -43,40 +45,32 @@
 
 <script setup lang="ts">
 import {
-  calcFirstHitComboDamage,
-  calcSecondHitComboDamage,
   calcDamage,
   calcMonsterDef
 } from '~/utils/calc'
-import { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, apBuffs, hvBuffs, debuffSkills, buffedAP, buffedHV, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.HitCombo : BASE_POWER.HitCombo
+  isGodly.value ? GODLY_SKILL_POWER.HitCombo : SKILL_POWER.HitCombo
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const firstHitIdealDamage = computed(() => {
-  return calcFirstHitComboDamage(buffedAP.value, localBasePower.value)
+  return SkillPower.FirstHitCombo(buffedAP.value, localBasePower.value)
 })
 
 const secondHitIdealDamage = computed(() => {
-  return calcSecondHitComboDamage(buffedAP.value, buffedHV.value, localBasePower.value)
+  return SkillPower.SecondHitCombo(buffedAP.value, buffedHV.value, localBasePower.value)
 })
 
 const fisrtHitDamage = computed(() => {

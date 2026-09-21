@@ -24,7 +24,7 @@
         <BuffPanel v-model:ac-buffs="acBuffs" v-model:lk-buffs="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.Blessing" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.Blessing" />
         <StatsTextField
           v-model:input-stats="stats.ac"
           :buffed-stats="buffedAC"
@@ -44,17 +44,17 @@
 
 <script setup lang="ts">
 import {
-  calcBlessingDamage,
+  magicAttackPower,
   calcDamage,
   calcMonsterDef
 } from '~/utils/calc'
 import type { Skill } from '~/types'
-import skillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, acBuffs, lkBuffs, buffedAC, buffedLK } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.Blessing)
+const localBasePower = ref(SKILL_POWER.Blessing)
 const selectedBlessingSkills = ref<number[]>([])
 
 const BlessingSkills = computed<Skill[]>(() => [
@@ -62,35 +62,35 @@ const BlessingSkills = computed<Skill[]>(() => [
     value: 0,
     name: "Salamander's Blessing",
     attr: 'fireR',
-    ratio: skillRatio.FireBlessing(localBasePower.value),
+    power: SkillPower.Blessing(localBasePower.value),
     img: '/salamanderBlessing.gif'
   },
   {
     value: 1,
     name: "Raion's Blessing",
     attr: 'elecR',
-    ratio: skillRatio.ElecBlessing(localBasePower.value),
+    power: SkillPower.Blessing(localBasePower.value),
     img: '/raionBlessing.gif'
   },
   {
     value: 2,
     name: "Gnome's Blessing",
     attr: 'earthR',
-    ratio: skillRatio.EarthBlessing(localBasePower.value),
+    power: SkillPower.Blessing(localBasePower.value),
     img: '/gnomeBlessing.gif'
   },
   {
     value: 3,
     name: "Undine's Blessing",
     attr: 'waterR',
-    ratio: skillRatio.WaterBlessing(localBasePower.value),
+    power: SkillPower.Blessing(localBasePower.value),
     img: '/undineBlessing.gif'
   },
   {
     value: 4,
     name: "Sylph's Blessing",
     attr: 'windR',
-    ratio: skillRatio.WindBlessing(localBasePower.value),
+    power: SkillPower.Blessing(localBasePower.value),
     img: '/sylphBlessing.gif'
   }
 ])
@@ -101,10 +101,10 @@ const damage = computed(() => {
     damage += calcDamage(
       calcMonsterDef(monster.value, 'magic'),
       monster.value[BlessingSkills.value[e].attr],
-      calcBlessingDamage(
-        buffedAC.value,
-        buffedLK.value,
-        BlessingSkills.value[e].ratio
+      magicAttackPower(
+        BlessingSkills.value[e].power,
+        buffedAC.value + buffedLK.value,
+        0
       )
     )
   })
@@ -114,10 +114,10 @@ const damage = computed(() => {
 const critDamage = computed(() => {
   let damage = 0
   selectedBlessingSkills.value.forEach((e: number) => {
-    const idealDamage = calcBlessingDamage(
-      buffedAC.value,
-      buffedLK.value,
-      BlessingSkills.value[e].ratio
+    const idealDamage = magicAttackPower(
+      BlessingSkills.value[e].power,
+      buffedAC.value + buffedLK.value,
+      0
     )
     damage += calcDamage(
       calcMonsterDef(monster.value, 'magic'),

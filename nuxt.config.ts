@@ -1,4 +1,5 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import { BOSS_SKILL_KEYS } from './utils/bossSkillMenu'
 
 export default defineNuxtConfig({
   ssr: false,
@@ -57,7 +58,11 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    preset: 'static'
+    preset: 'static',
+    prerender: {
+      // pages/boss/[skill].vue は動的ルートなので明示する（godly=true はクエリなので同じファイル）
+      routes: BOSS_SKILL_KEYS.map((key) => `/boss/${key}`)
+    }
   },
 
   compatibilityDate: '2024-07-01'

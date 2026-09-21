@@ -5,6 +5,8 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
+      :debuff-skills-def="debuffSkillsDef"
+      v-model:debuff="debuffSkills"
       :crit-damage="critDamage"
     />
     <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
@@ -13,7 +15,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.TidalSlash" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.TidalSlash" />
         <stats-text-field
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -33,30 +35,24 @@
 
 <script setup lang="ts">
 import {
-  calcTidalSlashDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })
 
-const localBasePower = ref(BASE_POWER.TidalSlash)
+const localBasePower = ref(SKILL_POWER.TidalSlash)
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() => {
-  return calcTidalSlashDamage(buffedAP.value, stats.value.water, localBasePower.value)
+  return SkillPower.TidalSlash(buffedAP.value, stats.value.water, localBasePower.value)
 })
 
 const damage = computed(() => {

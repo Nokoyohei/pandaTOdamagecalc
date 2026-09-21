@@ -71,6 +71,28 @@
             <span>{{ skill.name }}</span>
           </v-tooltip>
         </v-btn-toggle>
+        <div v-if="showCasterDA || showCasterMA" class="d-flex justify-center flex-wrap ga-4 mt-3">
+          <v-text-field
+            v-if="showCasterDA"
+            v-model.number="debuffCaster.da"
+            type="number"
+            label="Shield Breaker caster DA"
+            :hint="`-${shieldBreakerAmount(debuffCaster.da)} PhysicalR / GunR (max 80 at DA 275+)`"
+            persistent-hint
+            density="compact"
+            style="max-width: 260px"
+          />
+          <v-text-field
+            v-if="showCasterMA"
+            v-model.number="debuffCaster.ma"
+            type="number"
+            label="Area caster MA"
+            :hint="`-${Math.round(areaRatio(debuffCaster.ma) * 100)}% of the resistance (max 50% at MA 991+)`"
+            persistent-hint
+            density="compact"
+            style="max-width: 260px"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -79,6 +101,7 @@
 <script setup lang="ts">
 import type { ChartData, ChartOptions } from 'chart.js'
 import { makeArr } from '~/utils/calc'
+import { shieldBreakerAmount, areaRatio } from '~/utils/debuffs'
 import {
   requiem,
   bossTorrobie,
@@ -106,6 +129,11 @@ const props = defineProps<{
 
 const monster = defineModel<Monster | BossMonster>('monster', { required: true })
 const debuff = defineModel<DebuffName[]>('debuff')
+
+// デバフを掛ける側のステータス（useSkillPage の debuffedMonster と共有）
+const debuffCaster = useDebuffCaster()
+const showCasterDA = computed(() => debuff.value?.includes('ShieldBreaker') ?? false)
+const showCasterMA = computed(() => debuff.value?.some((d) => d !== 'ShieldBreaker') ?? false)
 
 const boss = computed(() => monster.value as BossMonster)
 

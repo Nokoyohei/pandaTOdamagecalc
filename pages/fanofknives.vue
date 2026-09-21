@@ -27,20 +27,19 @@
 
 <script setup lang="ts">
 import {
-  calcFanOfKnicesDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcDABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage()
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.FanOfKnives : BASE_POWER.FanOfKnives
+  isGodly.value ? GODLY_SKILL_POWER.FanOfKnives : SKILL_POWER.FanOfKnives
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -48,7 +47,7 @@ watch(isGodly, () => {
 })
 
 const idealDamage = computed(() =>
-  calcFanOfKnicesDamage(buffedDA.value, buffedThrowAP.value, localBasePower.value)
+  SkillPower.FanOfKnives(buffedDA.value, buffedThrowAP.value, localBasePower.value)
 )
 
 const damage = computed(() =>
@@ -75,9 +74,9 @@ const resDA = computed(() => {
     calcMonsterDef(monster.value, 'physical'),
     monster.value.physicalR,
     SkillRatio.FanOfKnives(localBasePower.value),
-    buffedDA.value + buffedThrowAP.value / 10,
+    buffedDA.value * 10 + buffedThrowAP.value,
     0
   )
-  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value))
+  return Math.ceil(needDA / calcDABuffRatio(daBuffs.value) / 10)
 })
 </script>

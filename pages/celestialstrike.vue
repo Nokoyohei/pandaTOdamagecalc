@@ -28,7 +28,7 @@
         </v-btn-toggle>
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.CelestialStrike" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.CelestialStrike" />
         <stats-text-field
           v-model:input-stats="stats.ma"
           :need-stats="resMA"
@@ -43,24 +43,32 @@
 
 <script setup lang="ts">
 import {
-  calcCelestialStrikeDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import type { LightSkillName } from '~/types'
 
 const { mode, monster, stats, extraStats, maBuffs, buffedMA, monsterHP } =
   useSkillPage({ skillMode: 'dual' })
 
-const localBasePower = ref(BASE_POWER.CelestialStrike)
+const localBasePower = ref(SKILL_POWER.CelestialStrike)
 
 const selectedLightSkills = ref<LightSkillName[]>([])
 
-const lightSkills = [
+// サーバは習得済みスキルのうち eSkillSymbolType == 7 の個数を数える（FUN_0067F700）。
+// SkillParam2 で該当するプレイヤースキルはこの 9 つ。
+// アイコンは SkillParam2.FileName の .nri を BundleNum で切り出したもの
+const lightSkills: { value: LightSkillName; name: string; img: string }[] = [
+  {
+    value: 'LightPact',
+    name: 'Light Pact',
+    img: '/light_pact.gif'
+  },
   {
     value: 'ArrowOfLight',
     name: 'Arrow of Light',
@@ -72,34 +80,43 @@ const lightSkills = [
     img: '/emergency.gif'
   },
   {
-    value: 'BasicHealing',
-    name: 'Basic Healing',
-    img: '/treatment.gif'
-  },
-  {
     value: 'LightWave',
     name: 'Light Wave',
     img: '/plasma_shock.gif'
   },
   {
-    value: 'RadientStrike',
-    name: 'Radient Strike',
+    value: 'BasicHealing',
+    name: 'Basic Healing',
+    img: '/treatment.gif'
+  },
+  {
+    value: 'LightShield',
+    name: 'Light Shield',
+    img: '/light_shield.gif'
+  },
+  {
+    value: 'RadiantStrike',
+    name: 'Radiant Strike',
     img: '/shining_burst.gif'
   },
   {
-    value: 'HeartsGrace',
-    name: "Heart's Grase",
-    img: '/force_field.gif'
+    value: 'MedCure',
+    name: 'Med. Cure',
+    img: '/med_cure.gif'
   },
   {
-    value: 'SealingLight',
-    name: 'Sealing Light',
+    value: 'SearingLight',
+    name: 'Searing Light',
     img: '/holylance.gif'
   }
 ]
 
 const idealDamage = computed(() => {
-  return calcCelestialStrikeDamage(buffedMA.value, selectedLightSkills.value.length, localBasePower.value)
+  return magicAttackPower(
+    SkillPower.CelestialStrike(selectedLightSkills.value.length, localBasePower.value),
+    buffedMA.value,
+    25
+  )
 })
 
 const damage = computed(() => {
@@ -125,7 +142,7 @@ const resMA = computed(() => {
     monsterHP.value,
     calcMonsterDef(monster.value, 'magic'),
     monster.value.lightR,
-    SkillRatio.CelestialStrike(selectedLightSkills.value.length, localBasePower.value),
+    SkillPower.CelestialStrike(selectedLightSkills.value.length, localBasePower.value) / 100,
     buffedMA.value,
     25
   )

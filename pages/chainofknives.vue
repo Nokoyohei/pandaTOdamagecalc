@@ -34,37 +34,30 @@
 
 <script setup lang="ts">
 import {
-  calcChainOfKnivesDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcDABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, daBuffs, throwBuffs, debuffSkills, buffedDA, buffedThrowAP, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.ChainOfKnives : BASE_POWER.ChainOfKnives
+  isGodly.value ? GODLY_SKILL_POWER.ChainOfKnives : SKILL_POWER.ChainOfKnives
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() =>
-  calcChainOfKnivesDamage(
+  SkillPower.ChainOfKnives(
     buffedDA.value,
     buffedThrowAP.value,
     localBasePower.value
@@ -95,7 +88,7 @@ const resDA = computed(() => {
     calcMonsterDef(debuffedMonster.value, 'physical'),
     debuffedMonster.value.physicalR,
     SkillRatio.ChainOfKnives(localBasePower.value),
-    buffedDA.value * 16 + buffedThrowAP.value * 6,
+    buffedDA.value * 16 + buffedThrowAP.value,
     0
   )
 

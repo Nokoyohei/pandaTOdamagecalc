@@ -36,7 +36,6 @@
 
 <script setup lang="ts">
 import {
-  calcFullHouseDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
@@ -44,14 +43,14 @@ import {
   calcHVBuffRatio,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, apBuffs, lkBuffs, hvBuffs, buffedAP, buffedLK, buffedHV } = useSkillPage()
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.FullHouse : BASE_POWER.FullHouse
+  isGodly.value ? GODLY_SKILL_POWER.FullHouse : SKILL_POWER.FullHouse
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -59,7 +58,7 @@ watch(isGodly, () => {
 })
 
 const idealDamage = computed(() =>
-  calcFullHouseDamage(buffedAP.value, buffedLK.value, buffedHV.value, localBasePower.value)
+  SkillPower.FullHouse(buffedAP.value, buffedLK.value, buffedHV.value, localBasePower.value)
 )
 
 const damage = computed(() =>

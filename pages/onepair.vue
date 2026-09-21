@@ -41,22 +41,21 @@
 
 <script setup lang="ts">
 import {
-  calcOnePairDamage,
   calcDamage,
   calcMonsterDef,
   calcNeedStats,
   calcAPBuffRatio,
   calcHVBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, hvBuffs, debuffSkills, buffedAP, buffedHV, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.OnePair : BASE_POWER.OnePair
+  isGodly.value ? GODLY_SKILL_POWER.OnePair : SKILL_POWER.OnePair
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -64,20 +63,14 @@ watch(isGodly, () => {
 })
 const buff = ref<'ladyluck' | null>(null)
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const isLadyLuck = computed(() => {
   return buff.value?.includes('ladyluck')
 })
 
 const idealDamage = computed(() =>
-  calcOnePairDamage(buffedAP.value, buffedHV.value, isLadyLuck.value, localBasePower.value)
+  SkillPower.OnePair(buffedAP.value, buffedHV.value, isLadyLuck.value, localBasePower.value)
 )
 
 const damage = computed(() =>

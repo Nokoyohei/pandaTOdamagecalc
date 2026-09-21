@@ -3,4 +3,6 @@
   publish = ".output/public"
 
 [build.environment]
-  NODE_VERSION = "20"
+  # Nuxt 3.21 系の依存 (rollup-plugin-visualizer@7 など) が Node >= 22 を要求する。
+  # Netlify は yarn.lock を見て Yarn 1 で入れるので engines 不一致は install エラーになる
+  NODE_VERSION = "22"

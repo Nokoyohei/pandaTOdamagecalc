@@ -3,7 +3,10 @@
     <h1>{{ isGodly ? 'Godly Poison Assault' : 'Poison Assault' }} (Only Poison Damage)</h1>
     <BossMonsterPanel
       :damage="damage"
-      :damage-string="`${damage.toLocaleString()} * ${poisonTicks}`"
+      :damage-string="[
+        `${(damage * poisonTicks).toLocaleString()} total`,
+        `${damage.toLocaleString()} × ${poisonTicks}`
+      ]"
       v-model:monster="monster"
     />
 
@@ -32,16 +35,15 @@
 
 <script setup lang="ts">
 import {
-  calcPoisonDamage,
   calcDABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 
 const { stats, extraStats, monster, monsterHP, daBuffs, throwBuffs, buffedDA, buffedThrowAP } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.PoisonAssault : BASE_POWER.PoisonAssault
+  isGodly.value ? GODLY_SKILL_POWER.PoisonAssault : SKILL_POWER.PoisonAssault
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 const poisonTicks = computed(() => isGodly.value ? 10 : 30)
@@ -49,12 +51,8 @@ watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
 
-const poison = computed(() => {
-  return calcPoisonDamage(buffedDA.value, buffedThrowAP.value)
-})
-
 const damage = computed(() => {
-  return calcPoisonDamage(buffedDA.value, buffedThrowAP.value, localBasePower.value)
+  return SkillPower.Poison(buffedDA.value, buffedThrowAP.value, localBasePower.value)
 })
 
 const resDA = computed(() => {

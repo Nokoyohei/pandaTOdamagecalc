@@ -3,12 +3,12 @@
     <h1>{{ isGodly ? 'Godly Double Shot' : 'Double Shot' }}</h1>
     <BossMonsterPanel
       :damage="damage"
-      :damage-string="`${damage.toLocaleString()} * 2`"
+      :damage-string="[`${(damage * 2).toLocaleString()} total`, `${damage.toLocaleString()} × 2`]"
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
       :crit-damage="critDamage"
-      :crit-damage-string="`${critDamage.toLocaleString()} * 2`"
+      :crit-damage-string="[`${(critDamage * 2).toLocaleString()} total`, `${critDamage.toLocaleString()} × 2`]"
     ></BossMonsterPanel>
     <div class="d-flex justify-center mb-4">
       <v-btn-toggle v-model="sharpSense" multiple bg-color="black">
@@ -55,20 +55,20 @@
 
 <script setup lang="ts">
 import {
-  calcDoubleShotDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcACBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, acBuffs, debuffSkills, buffedAC, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.DoubleShot : BASE_POWER.DoubleShot
+  isGodly.value ? GODLY_SKILL_POWER.DoubleShot : SKILL_POWER.DoubleShot
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -81,21 +81,15 @@ const effectiveCritMultiplier = computed(() => {
   return CRIT_MULTIPLIER.gun
 })
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('gun', 'gunR')
 
 const idealDamage = computed(() =>
-  calcDoubleShotDamage(buffedAC.value * 20 + stats.value.gunAP, localBasePower.value)
+  SkillPower.DoubleShot(buffedAC.value, stats.value.gunAP, localBasePower.value)
 )
 
 const damage = computed(() => {
   return calcDamage(
-    calcMonsterDef(monster.value, 'gun'),
+    calcMonsterDef(debuffedMonster.value, 'gun'),
     debuffedMonster.value.gunR,
     idealDamage.value
   )
@@ -103,7 +97,7 @@ const damage = computed(() => {
 
 const critDamage = computed(() =>
   calcDamage(
-    calcMonsterDef(monster.value, 'gun'),
+    calcMonsterDef(debuffedMonster.value, 'gun'),
     debuffedMonster.value.gunR,
     idealDamage.value,
     1,
@@ -114,7 +108,7 @@ const critDamage = computed(() =>
 const needStats = computed(() => {
   return calcNeedStats(
     monsterHP.value,
-    calcMonsterDef(monster.value, 'gun'),
+    calcMonsterDef(debuffedMonster.value, 'gun'),
     debuffedMonster.value.gunR,
     SkillRatio.DoubleShot(localBasePower.value),
     buffedAC.value * 20 + stats.value.gunAP,

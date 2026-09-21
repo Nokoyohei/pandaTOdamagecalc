@@ -7,7 +7,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.ChampionsBlade" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.ChampionsBlade" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -27,21 +27,20 @@
 
 <script setup lang="ts">
 import {
-  calcChampionsBladeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, apBuffs, buffedAP } = useSkillPage()
 
-const localBasePower = ref(BASE_POWER.ChampionsBlade)
+const localBasePower = ref(SKILL_POWER.ChampionsBlade)
 
 const idealDamage = computed(() =>
-  calcChampionsBladeDamage(buffedAP.value, stats.value.fire, localBasePower.value)
+  SkillPower.ChampionsBlade(buffedAP.value, stats.value.fire, localBasePower.value)
 )
 
 const damage = computed(() =>

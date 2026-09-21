@@ -29,15 +29,14 @@
 
 <script setup lang="ts">
 import {
-  calcDarkCommandoDamage,
-  calcGravityCrashDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { mode, monster, stats, extraStats, maBuffs, dlBuffs, buffedMA, monsterHP } =
@@ -45,7 +44,7 @@ const { mode, monster, stats, extraStats, maBuffs, dlBuffs, buffedMA, monsterHP 
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.GravityCrash : BASE_POWER.GravityCrash
+  isGodly.value ? GODLY_SKILL_POWER.GravityCrash : SKILL_POWER.GravityCrash
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
@@ -54,9 +53,9 @@ watch(isGodly, () => {
 
 const damage = computed(() => {
   let darkCommandoDamage = dlBuffs.value.includes('darkCommando')
-    ? calcDarkCommandoDamage(buffedMA.value)
+    ? magicAttackPower(SkillPower.DarkCommando(), buffedMA.value, 49)
     : 0
-  let gravityCrashDamage = calcGravityCrashDamage(buffedMA.value, localBasePower.value)
+  let gravityCrashDamage = magicAttackPower(SkillPower.GravityCrash(localBasePower.value), buffedMA.value, 49)
   if (dlBuffs.value.includes('bloodTestament')) {
     darkCommandoDamage = Math.round(
       darkCommandoDamage * (1 + BloodTestamentBuff)
@@ -82,9 +81,9 @@ const damage = computed(() => {
 
 const critDamage = computed(() => {
   let darkCommandoDamage = dlBuffs.value.includes('darkCommando')
-    ? calcDarkCommandoDamage(buffedMA.value)
+    ? magicAttackPower(SkillPower.DarkCommando(), buffedMA.value, 49)
     : 0
-  let gravityCrashDamage = calcGravityCrashDamage(buffedMA.value, localBasePower.value)
+  let gravityCrashDamage = magicAttackPower(SkillPower.GravityCrash(localBasePower.value), buffedMA.value, 49)
   if (dlBuffs.value.includes('bloodTestament')) {
     darkCommandoDamage = Math.round(
       darkCommandoDamage * (1 + BloodTestamentBuff)
@@ -114,8 +113,8 @@ const critDamage = computed(() => {
 
 const resMA = computed(() => {
   const attackRatio = dlBuffs.value.includes('darkCommando')
-    ? SkillRatio.GravityCrash(localBasePower.value) + SkillRatio.DarkCommando()
-    : SkillRatio.GravityCrash(localBasePower.value)
+    ? (SkillPower.GravityCrash(localBasePower.value) + SkillPower.DarkCommando()) / 100
+    : SkillPower.GravityCrash(localBasePower.value) / 100
   const constStats = 49
   const monsterDef =
     calcMonsterDef(monster.value, 'magic') *

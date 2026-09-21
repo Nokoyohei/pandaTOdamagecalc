@@ -14,7 +14,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:da-buffs="daBuffs" v-model:lk-buffs="lkBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.SuddenAttack" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.SuddenAttack" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -43,7 +43,6 @@
 
 <script setup lang="ts">
 import {
-  calcSuddenAttackDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
@@ -51,24 +50,18 @@ import {
   calcAPBuffRatio,
   calcLKBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, daBuffs, lkBuffs, debuffSkills, buffedAP, buffedDA, buffedLK, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.SuddenAttack)
+const localBasePower = ref(SKILL_POWER.SuddenAttack)
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() =>
-  calcSuddenAttackDamage(
+  SkillPower.SuddenAttack(
     buffedAP.value,
     buffedDA.value,
     buffedLK.value,

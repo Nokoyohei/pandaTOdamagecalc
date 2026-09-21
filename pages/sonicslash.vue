@@ -5,6 +5,8 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
+      :debuff-skills-def="debuffSkillsDef"
+      v-model:debuff="debuffSkills"
       :crit-damage="critDamage"
     />
     <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
@@ -33,38 +35,31 @@
 
 <script setup lang="ts">
 import {
-  calcSonicSlashDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER, GODLY_BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })
 
 const isGodly = useGodly()
 const activeDefaultPower = computed(() =>
-  isGodly.value ? GODLY_BASE_POWER.SonicSlash : BASE_POWER.SonicSlash
+  isGodly.value ? GODLY_SKILL_POWER.SonicSlash : SKILL_POWER.SonicSlash
 )
 const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() => {
-  return calcSonicSlashDamage(buffedAP.value, stats.value.water, localBasePower.value)
+  return SkillPower.SonicSlash(buffedAP.value, stats.value.water, localBasePower.value)
 })
 
 const damage = computed(() => {

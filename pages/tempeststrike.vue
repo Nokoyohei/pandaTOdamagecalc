@@ -23,7 +23,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.TempestStrike" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.TempestStrike" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -43,37 +43,31 @@
 
 <script setup lang="ts">
 import {
-  calcTempestStrikeDamage,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, debuffSkills, buffedAP, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.TempestStrike)
+const localBasePower = ref(SKILL_POWER.TempestStrike)
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const maxIdealDamage = computed(() => {
-  return calcTempestStrikeDamage(buffedAP.value, stats.value.wind, localBasePower.value)
+  return SkillPower.TempestStrike(buffedAP.value, stats.value.wind, localBasePower.value)
 })
 
 const minIdealDamage = computed(() => {
-  return calcTempestStrikeDamage(buffedAP.value, 0, localBasePower.value)
+  return SkillPower.TempestStrike(buffedAP.value, 0, localBasePower.value)
 })
 
 const avgIdealDamage = computed(() => {
-  return calcTempestStrikeDamage(buffedAP.value, stats.value.wind / 2, localBasePower.value)
+  return SkillPower.TempestStrike(buffedAP.value, stats.value.wind / 2, localBasePower.value)
 })
 
 const maxDamage = computed(() => {

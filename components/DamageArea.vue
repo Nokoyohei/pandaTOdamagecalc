@@ -11,7 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { toInt32, INT32_MAX, EXTRA_DAMAGE_UNIT } from '~/utils/calc'
+import { EXTRA_DAMAGE_UNIT } from '~/utils/calc'
+import { toInt32, INT32_MAX } from '~/utils/x87'
 
 const props = defineProps<{
   damage: string | number

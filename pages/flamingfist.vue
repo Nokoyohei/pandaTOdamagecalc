@@ -13,7 +13,7 @@
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:ma-buffs="maBuffs" />
       </v-col>
       <v-col cols="12" md="7" order-md="0">
-        <BasePowerSlider v-model="localBasePower" :default-power="BASE_POWER.FlamingFist" />
+        <BasePowerSlider v-model="localBasePower" :default-power="SKILL_POWER.FlamingFist" />
         <StatsTextField
           v-model:input-stats="stats.ap"
           :need-stats="resAP"
@@ -40,50 +40,58 @@
 
 <script setup lang="ts">
 import {
-  calcFlamingFistDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
   calcMABuffRatio
 } from '~/utils/calc'
-import SkillRatio, { BASE_POWER } from '~/utils/skillRatio'
+import { debuffDefsFor } from '~/utils/debuffs'
+import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, debuffSkills, buffedAP, buffedMA, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
-const localBasePower = ref(BASE_POWER.FlamingFist)
+const localBasePower = ref(SKILL_POWER.FlamingFist)
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'RaionsSpace',
-    name: "Raion's space",
-    img: '/thunderarea.gif'
-  }
-]
+// FUN_0073E640 @0x73e705: 術者の火属性が 0 より大きければ火魔法 (BH_MagicSkill, MA−0)、
+// 0 なら物理 (BH_Physical, PhysicalR) として同じ power を投げる
+const isFireMagic = computed(() => stats.value.fire > 0)
 
-const idealDamage = computed(() => {
-  return calcFlamingFistDamage(buffedAP.value, stats.value.fire, buffedMA.value, localBasePower.value)
-})
+const debuffSkillsDef = computed(() =>
+  isFireMagic.value ? debuffDefsFor('magic', 'fireR') : debuffDefsFor('physical', 'physicalR')
+)
 
-const damage = computed(() => {
-  return calcDamage(
-    calcMonsterDef(debuffedMonster.value, 'magic'),
-    debuffedMonster.value.fireR,
-    idealDamage.value
-  )
-})
+const power = computed(() =>
+  SkillPower.FlamingFist(buffedAP.value, stats.value.fire, localBasePower.value)
+)
 
-const critDamage = computed(() => {
-  return calcDamage(
-    calcMonsterDef(debuffedMonster.value, 'magic'),
-    debuffedMonster.value.fireR,
-    idealDamage.value,
-    1,
-    CRIT_MULTIPLIER.magic
-  )
-})
+const idealDamage = computed(() =>
+  isFireMagic.value ? magicAttackPower(power.value, buffedMA.value, 0) : power.value
+)
+
+const hitDamage = (critical: boolean) =>
+  isFireMagic.value
+    ? calcDamage(
+        calcMonsterDef(debuffedMonster.value, 'magic'),
+        debuffedMonster.value.fireR,
+        idealDamage.value,
+        1,
+        critical ? CRIT_MULTIPLIER.magic : 1,
+        'magic'
+      )
+    : calcDamage(
+        calcMonsterDef(debuffedMonster.value, 'physical'),
+        debuffedMonster.value.physicalR,
+        idealDamage.value,
+        1,
+        critical ? CRIT_MULTIPLIER.physical : 1,
+        'physical'
+      )
+
+const damage = computed(() => hitDamage(false))
+const critDamage = computed(() => hitDamage(true))
 
 const resAP = computed(() => {
   const needAP = calcNeedStats(

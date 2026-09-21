@@ -29,21 +29,23 @@
 
 <script setup lang="ts">
 import {
-  calcMagicalSoulDamage,
+  magicAttackPower,
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
   calcAPBuffRatio,
   calcMABuffRatio
 } from '~/utils/calc'
+import SkillPower from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, buffedAP, buffedMA } = useSkillPage({ skillMode: 'boss' })
 
 const idealDamage = computed(() => {
-  return calcMagicalSoulDamage(
-    buffedAP.value,
-    buffedMA.value
+  return magicAttackPower(
+    SkillPower.MagicalSoul(buffedAP.value),
+    buffedMA.value,
+    0
   )
 })
 

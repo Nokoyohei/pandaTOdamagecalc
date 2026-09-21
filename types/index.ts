@@ -20,7 +20,7 @@ export interface Skill {
   value: number
   name: string
   attr: attribute
-  ratio: number
+  power: number
   img: string
 }
 
@@ -64,21 +64,30 @@ export type DABuffName = 'sixthSense' | 'secondAnniversary' | 'godlySixthSense'
 export type MABuffName = 'mistOfMana' | 'godlyMistOfMana'
 export type DLBuffName = 'bloodTestament' | 'darkCommando'
 export type HVBuffName = 'dodgeMaster' | 'godlyDodgeMaster'
+// eSkillSymbolType == 7 のスキル（Celestial Strike の威力に効く）
 export type LightSkillName =
+  | 'LightPact'
   | 'ArrowOfLight'
-  | 'BasicHealing'
-  | 'LightWave'
-  | 'RadientStrike'
   | 'CatastropheHeal'
-  | 'HeartsGrace'
-  | 'SealingLight'
+  | 'LightWave'
+  | 'BasicHealing'
+  | 'LightShield'
+  | 'RadiantStrike'
+  | 'MedCure'
+  | 'SearingLight'
 export type BlessingSkillName =
   | 'SalamanderBlessing'
   | 'RaionBlessing'
   | 'GnomeBlessing'
   | 'UndineBlessing'
   | 'SylphBlessing'
-export type DebuffName = 'ShieldBreaker' | 'RaionsSpace'
+export type DebuffName =
+  | 'ShieldBreaker'
+  | 'UndinesGarden'
+  | 'RaionsSpace'
+  | 'SalamandersTerritory'
+  | 'GnomesDomain'
+  | 'SylphsPlayground'
 
 export type skillPanel = {
   name: string
