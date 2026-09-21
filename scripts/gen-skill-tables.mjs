@@ -195,7 +195,7 @@ const target = new URL('../utils/skillTable.ts', import.meta.url)
 const parse = (src) => {
   const map = new Map()
   let section = ''
-  for (const line of src.split('\n')) {
+  for (const line of src.split(/\r?\n/)) {
     const s = line.match(/^export const (\w+) = \{/)
     if (s) section = s[1]
     const m = line.match(/^\s+'?([\w.]+)'?: (-?[\d.]+),?$/)

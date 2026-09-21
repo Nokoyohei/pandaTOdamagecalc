@@ -214,7 +214,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     resist: 'fireR',
     stats: ['ma'],
     table: { label: 'AP', default: T.phoenix_rising },
-    params: [{ key: 'ticks', label: 'Ticks', default: T['phoenix_rising.ticks'], hint: 'One tick every 2 s for Seconds (Lv11: 20 s)' }],
+    params: [{ key: 'ticks', label: 'Ticks', default: T['phoenix_rising.ticks'], hint: `One tick every 2 s for Seconds (Lv11: ${T['phoenix_rising.ticks'] * 2} s)` }],
     power: (s, t) => magicAttackPower(t, s.ma, 49),
     hits: (_s, _t, p) => Math.max(1, Math.trunc(p.ticks)),
     note: 'Damage shown is per tick. Each tick rolls its own critical',
@@ -285,7 +285,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     table: { label: 'Ratio', default: T.fist_full_of_galders },
     params: [
       { key: 'galder', label: 'Galder per hit', default: 100 },
-      { key: 'count', label: 'Hits', default: T['fist_full_of_galders.count'], hint: 'ESAction_GellderChainHit.Count (Lv11: 4). Needs Count × 100 galder' }
+      { key: 'count', label: 'Hits', default: T['fist_full_of_galders.count'], hint: `ESAction_GellderChainHit.Count (Lv11: ${T['fist_full_of_galders.count']}). Needs Count × 100 galder` }
     ],
     power: (_s, t, p) => ftol(Math.max(p.galder, 0) * ratio(t)),
     hits: (_s, _t, p) => Math.max(1, Math.trunc(p.count)),
@@ -329,7 +329,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     resist: 'physicalR',
     stats: ['hp'],
     table: { label: 'Ratio', default: T.impelling_rage },
-    params: [{ key: 'distance', label: 'Dash distance', default: T['impelling_rage.distance'], hint: 'Up to Radius (Lv11: 196)' }],
+    params: [{ key: 'distance', label: 'Dash distance', default: T['impelling_rage.distance'], hint: `Up to Radius (Lv11: ${T['impelling_rage.distance']})` }],
     power: (s, t, p) => ftol((p.distance + 40) * s.hp * ratio(t) / 800),
     note: 'HP is current HP (assumed full)',
     ref: 'ESAChargingHit 0x6d6370 @0x6d654c: ftol((√(dx²+dy²) + 40) × HP × P.Ratio / 800)'
@@ -342,7 +342,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     resist: 'physicalR',
     stats: ['hp'],
     table: { label: 'Ratio', default: T.power_charging },
-    params: [{ key: 'distance', label: 'Dash distance', default: T['power_charging.distance'], hint: 'Up to Radius (Lv11: 240)' }],
+    params: [{ key: 'distance', label: 'Dash distance', default: T['power_charging.distance'], hint: `Up to Radius (Lv11: ${T['power_charging.distance']})` }],
     power: (s, t, p) => ftol((p.distance + 40) * s.hp * ratio(t) / 800),
     note: 'HP is current HP (assumed full)',
     ref: 'ESAPowerChargingDo 0x6decf0 @0x6deec3: ftol((distance + 40) × HP × P.Ratio / 800)'

@@ -129,7 +129,7 @@ export const BOSS_SKILL_TABLE = {
   /** 1304 Mega Flash Cut — ESAction_PowerFlashAttack.Ratio (Lv11, ×100) */
   mega_flash_cut: 2000,
   /** 1108 Tetra Punch — ESAction_ComboHit.Ratio (Lv11, ×100) */
-  tetra_punch: 400,
+  tetra_punch: 1200,
   /** 1501 Shadow — ESAction_OnesOtherSelf.Ratio (Lv11, ×100) */
   shadow: 1000,
   /** 1501 Shadow — ESAction_OnesOtherSelf.Count (Lv11) */
@@ -181,7 +181,7 @@ export const BOSS_SKILL_TABLE = {
   /** 4205 Impelling Rage — ESAction_Charging.Ratio (Lv11, ×100) */
   impelling_rage: 600,
   /** 4205 Impelling Rage — ESAction_Charging.Radius (Lv11) */
-  'impelling_rage.distance': 196,
+  'impelling_rage.distance': 250,
   /** 4502 Power Charging — ESAction_PowerCharging.Ratio (Lv11, ×100) */
   power_charging: 650,
   /** 4502 Power Charging — ESAction_PowerCharging.Radius (Lv11) */
@@ -203,7 +203,7 @@ export const GODLY_BOSS_SKILL_TABLE = {
   /** 11304 Godly Mega Flash Cut — ESAction_GodlyPowerFlashAttack.Ratio (Lv11, ×100) */
   mega_flash_cut: 10000,
   /** 11108 Godly Tetra Punch — ESAction_GodlyComboHit.Ratio (Lv11, ×100) */
-  tetra_punch: 3000,
+  tetra_punch: 6000,
   /** 11501 Godly Shadow — ESAction_GodlyOnesOtherSelf.Ratio (Lv11, ×100) */
   shadow: 2000,
   /** 11501 Godly Shadow — ESAction_GodlyOnesOtherSelf.Count (Lv11) */
