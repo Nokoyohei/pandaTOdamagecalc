@@ -40,6 +40,8 @@ export interface BossSkillDef {
   power: (s: SkillStats, table: number, p: Record<string, number>) => number
   /** 1 発あたりの表示に対する回数（表示用） */
   hits?: (s: SkillStats, table: number, p: Record<string, number>) => number
+  /** 連撃で耐性適用後のダメージに掛かる倍率列（Tetra Punch の 1, 2, 4, 8） */
+  hitMultipliers?: number[]
   /** 対象 DP に掛かる係数（Raging Nail の DisDefenceRatio） */
   defenseScale?: (table: number, p: Record<string, number>) => number
   /** DP を 0 として BattleHelper に渡す（Furious Galder Throw） */
@@ -155,9 +157,10 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     stats: ['ap'],
     table: { label: 'Ratio', default: 400, godly: 3000 },
     power: (s, t) => ftol(s.ap * ratio(t)),
-    hits: () => 2,
-    note: 'Damage shown is per hit; two hits per cast',
-    ref: 'FUN_0073C940 @0x73c9eb / @0x73ca7f: FUN_006CDDC0 twice, ftol(AP × P.Ratio)'
+    // 4 連撃。2 発目以降は直前のダメージが通っていればその 2 倍（shl eax,1）、外れたら 0
+    hitMultipliers: [1, 2, 4, 8],
+    note: 'Four hits: d, 2d, 4d, 8d (each doubles the previous hit if it landed). Total 15d',
+    ref: 'FUN_0073C940 @0x73c9eb: ftol(AP × P.Ratio) via FUN_006CDDC0, loop @0x73ca43 (4 hits) with @0x73caab shl eax,1'
   },
   shadow: {
     key: 'shadow',

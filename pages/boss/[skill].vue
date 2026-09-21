@@ -210,12 +210,20 @@ const hitDamage = (critMultiplier: number) => {
 const damage = computed(() => hitDamage(1))
 const critDamage = computed(() => hitDamage(CRIT_MULTIPLIER[def.attackType]))
 
-const damageString = computed(() =>
-  hits.value > 1 ? `${damage.value.toLocaleString()} * ${hits.value}` : undefined
-)
-const critDamageString = computed(() =>
-  hits.value > 1 ? `${critDamage.value.toLocaleString()} * ${hits.value}` : undefined
-)
+// 連撃の倍率列（Tetra Punch）。耐性適用後のダメージに整数倍が掛かる
+const multipliers = def.hitMultipliers
+const multiplierSum = multipliers?.reduce((a, b) => a + b, 0) ?? 1
+
+const describe = (perHit: number) => {
+  if (multipliers) {
+    const total = multipliers.reduce((sum, m) => sum + perHit * m, 0)
+    return [`${total.toLocaleString()} total`, `${perHit.toLocaleString()} × (${multipliers.join(' + ')})`]
+  }
+  if (hits.value > 1) return `${perHit.toLocaleString()} * ${hits.value}`
+  return undefined
+}
+const damageString = computed(() => describe(damage.value))
+const critDamageString = computed(() => describe(critDamage.value))
 
 // --- 必要ステータス ---------------------------------------------------------------
 // 攻撃力はどのステータスにも線形なので、1 増やしたときの差分を perStat にして逆算する
@@ -231,7 +239,7 @@ const buffRatioOf: Partial<Record<StatKey, () => number>> = {
 const needStats = computed<Partial<Record<StatKey, number>>>(() => {
   const result: Partial<Record<StatKey, number>> = {}
   const base = attackPower.value
-  const hpPerHit = monsterHP.value / hits.value
+  const hpPerHit = monsterHP.value / hits.value / multiplierSum
   for (const key of def.stats) {
     const bumped = { ...skillStats.value, [key]: skillStats.value[key] + 1 }
     const perStat = def.power(bumped, localTable.value, params) - base
