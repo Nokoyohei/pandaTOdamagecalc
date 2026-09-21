@@ -13,7 +13,7 @@ const byId = (id: number): BossMonster => {
   return monsterFromRow(row)
 }
 
-// 防御・耐性 0 の的（libconfig の Torobbie 2183 は HP 100 なので使わない）
+// 防御・耐性 0 の的（libconfig の Torobbie 2183 は HP 100 なので使わない）。Torobbie だけ手書き
 const torobbie: Monster = {
   hp: 100000000,
   dp: 0,
@@ -33,25 +33,8 @@ const torobbie: Monster = {
 
 const toilet: Monster = byId(2371) // Haunted Toilet
 const cora: Monster = byId(2775) // Cora Merrymaker
+const werepot: Monster = byId(2449) // Werepot M4
 const tantalos: Monster = byId(16760) // Tantalos
-
-// libconfig の MonsterParamEx2 に一致する行が無い（HP 100000 / DP 100000 の Werepot は存在しない）ので旧値のまま
-const werepot: Monster = {
-  hp: 100000,
-  dp: 100000,
-  md: 100000,
-  hv: 10000,
-  fireR: 80,
-  waterR: 80,
-  windR: 80,
-  earthR: 80,
-  elecR: 80,
-  lightR: 80,
-  darkR: 0,
-  noPropR: 80,
-  physicalR: 80,
-  gunR: 80
-}
 
 const bossTorrobie: BossMonster = {
   ...torobbie,
