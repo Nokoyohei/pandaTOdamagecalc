@@ -1,7 +1,15 @@
 <template>
   <v-container>
     <h1>Tornado Blast</h1>
-    <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
+    <BossMonsterPanel
+      v-if="mode === 'boss'"
+      :damage="damage"
+      v-model:monster="monster"
+      :debuff-skills-def="debuffSkillsDef"
+      v-model:debuff="debuffSkills"
+      :crit-damage="critDamage"
+    />
+    <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ma-buffs="maBuffs" />
@@ -28,10 +36,15 @@ import {
   calcMonsterDef,
   calcMABuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
-const { stats, extraStats, monster, maBuffs, buffedMA } = useSkillPage()
+const { mode, stats, extraStats, monster, monsterHP, maBuffs, buffedMA, debuffSkills, debuffedMonster } =
+  useSkillPage({ skillMode: 'dual' })
+
+// 風属性なので Gnome's Domain
+const debuffSkillsDef = debuffDefsFor('magic', 'windR')
 
 const localBasePower = ref(SKILL_POWER.TornadoBlast)
 
@@ -41,16 +54,16 @@ const idealDamage = computed(() =>
 
 const damage = computed(() =>
   calcDamage(
-    calcMonsterDef(monster.value, 'magic'),
-    monster.value.windR,
+    calcMonsterDef(debuffedMonster.value, 'magic'),
+    debuffedMonster.value.windR,
     idealDamage.value
   )
 )
 
 const critDamage = computed(() =>
   calcDamage(
-    calcMonsterDef(monster.value, 'magic'),
-    monster.value.windR,
+    calcMonsterDef(debuffedMonster.value, 'magic'),
+    debuffedMonster.value.windR,
     idealDamage.value,
     1,
     CRIT_MULTIPLIER.magic
@@ -59,9 +72,9 @@ const critDamage = computed(() =>
 
 const resMA = computed(() => {
   const needMA = calcNeedStats(
-    monster.value.hp,
-    calcMonsterDef(monster.value, 'magic'),
-    monster.value.windR,
+    monsterHP.value,
+    calcMonsterDef(debuffedMonster.value, 'magic'),
+    debuffedMonster.value.windR,
     SkillPower.TornadoBlast(localBasePower.value) / 100,
     buffedMA.value,
     49

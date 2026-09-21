@@ -10,6 +10,10 @@ export const BOSS_SKILL_MENU: { title: string; keys: string[] }[] = [
   {
     title: 'MAGIC TYPE',
     keys: [
+      'drip_bomb',
+      'whirlwind_blaze',
+      'incinerate',
+      'thunderbolt',
       'hellfire',
       'arrow_of_light',
       'dark_lance',

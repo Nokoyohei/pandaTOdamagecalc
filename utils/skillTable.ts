@@ -134,6 +134,16 @@ export const BOSS_SKILL_TABLE = {
   shadow: 1000,
   /** 1501 Shadow — ESAction_OnesOtherSelf.Count (Lv11) */
   'shadow.count': 10,
+  /** 2103 Drip Bomb — ESAction_WaterBall.AP (Lv11) */
+  drip_bomb: 60000,
+  /** 2107 Whirlwind Blaze — ESAction_WhirlFlame.AP (Lv11) */
+  whirlwind_blaze: 4100,
+  /** 2114 Incinerate — ESAction_FireExplosion.AP (Lv11) */
+  incinerate: 5600,
+  /** 2128 Thunderbolt — ESAction_CallLightning.M_AP (Lv11) */
+  thunderbolt: 900,
+  /** 2128 Thunderbolt — ESAction_CallLightning.MaxCount (Lv11) */
+  'thunderbolt.count': 12,
   /** 2203 Hellfire — ESAction_HellFire.AP (Lv11) */
   hellfire: 5500,
   /** 2205 Arrow of Light — ESAction_LightningBolt.AP (Lv11) */
@@ -362,6 +372,14 @@ export const BOSS_SKILL_APPLY_RATIO = {
   tetra_punch: 1,
   /** 1501 Shadow — ESAction_OnesOtherSelf.ApplyRatio (Lv11) */
   shadow: 0.94,
+  /** 2103 Drip Bomb — ESAction_WaterBall.ApplyRatio (Lv11) */
+  drip_bomb: 1.04,
+  /** 2107 Whirlwind Blaze — ESAction_WhirlFlame.ApplyRatio (Lv11) */
+  whirlwind_blaze: 0.84,
+  /** 2114 Incinerate — ESAction_FireExplosion.ApplyRatio (Lv11) */
+  incinerate: 0.94,
+  /** 2128 Thunderbolt — ESAction_CallLightning.ApplyRT (Lv11) */
+  thunderbolt: 1.04,
   /** 2203 Hellfire — ESAction_HellFire.ApplyRatio (Lv11) */
   hellfire: 0.84,
   /** 2205 Arrow of Light — ESAction_LightningBolt.ApplyRatio (Lv11) */

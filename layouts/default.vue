@@ -150,7 +150,11 @@ const bossMenu = [
       { imgsrc: '/celestialstrike.gif', title: 'CELESTIAL STRIKE', to: '/celestialstrike?mode=boss' },
       { imgsrc: '/raizin.gif', title: 'STAFF OF THUNDER', to: '/staffofthunder?mode=boss' },
       { imgsrc: '/earthshaker.gif', title: 'EARTHQUAKE', to: '/earthquake?mode=boss' },
-      { imgsrc: '/tempest.gif', title: 'RAGING STORM', to: '/ragingstorm?mode=boss' }
+      { imgsrc: '/tempest.gif', title: 'RAGING STORM', to: '/ragingstorm?mode=boss' },
+      { imgsrc: '/lightning.gif', title: 'ELECTRO ATTACK', to: '/electroattack?mode=boss' },
+      { imgsrc: '/earthquake.gif', title: 'CLEAVING TERRA', to: '/cleavingterra?mode=boss' },
+      { imgsrc: '/wind_edgh.gif', title: 'WIND BLADE', to: '/windblade?mode=boss' },
+      { imgsrc: '/tornadoblast.gif', title: 'TORNADO BLAST', to: '/tornadoblast?mode=boss' }
     ]
   },
   {

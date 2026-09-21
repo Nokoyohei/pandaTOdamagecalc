@@ -177,6 +177,37 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
   },
 
   /* ------------------------------------------------------------------ Magic */
+  drip_bomb: magic('drip_bomb', 'Drip Bomb', 'waterR', T.drip_bomb, 49, 'ESAWaterBall 0x72bc30: P.AP / MA−49 / Water'),
+  whirlwind_blaze: magic(
+    'whirlwind_blaze',
+    'Whirlwind Blaze',
+    'fireR',
+    T.whirlwind_blaze,
+    49,
+    'ESAWhirlFlame 0x72c090: P.AP / MA−49 / Fire'
+  ),
+  incinerate: magic('incinerate', 'Incinerate', 'fireR', T.incinerate, 49, 'ESAFireExplosion 0x730f10: P.AP / MA−49 / Fire'),
+  thunderbolt: {
+    key: 'thunderbolt',
+    title: 'Thunderbolt',
+    icon: '/thunderbolt.gif',
+    attackType: 'magic',
+    resist: 'elecR',
+    stats: ['ma'],
+    table: { label: 'M_AP', default: T.thunderbolt },
+    params: [
+      {
+        key: 'count',
+        label: 'Bolts',
+        default: T['thunderbolt.count'],
+        hint: 'rand() % MaxCount + 1 bolts, all in one hit. Default is the maximum (ESAction_CallLightning.MaxCount)'
+      }
+    ],
+    // power = 落雷数 × M_AP を 1 発として BH_MagicSkill に渡す
+    power: (s, t, p) => magicAttackPower(t * Math.max(1, Math.trunc(p.count)), s.ma, 25),
+    note: 'Bolt count is random (1 to MaxCount); the default shows the best case',
+    ref: 'ESACallLightning 0x73f3f0: (rand() % P.MaxCount + 1) × P.M_AP / MA−25 / Elec'
+  },
   hellfire: magic('hellfire', 'Hellfire', 'darkR', T.hellfire, 49, 'FUN_0072D030 @0x72d0d0: P.AP / MA−49 / Dark'),
   arrow_of_light: magic('arrow_of_light', 'Arrow of Light', 'lightR', T.arrow_of_light, 49, 'FUN_0072D490 @0x72d537: P.AP / MA−49 / Light'),
   dark_lance: magic('dark_lance', 'Dark Lance', 'darkR', T.dark_lance, 49, 'FUN_0072EF20 @0x72efc7: P.AP / MA−49 / Dark'),

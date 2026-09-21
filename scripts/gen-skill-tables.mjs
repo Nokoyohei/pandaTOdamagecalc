@@ -94,6 +94,12 @@ const BOSS = [
   ratio('tetra_punch', 1108),
   ratio('shadow', 1501),
   { key: 'shadow.count', id: 1501, field: 'Count', kind: 'raw' },
+  // 1 次職（Witch / Wizard）の属性攻撃
+  ap('drip_bomb', 2103),
+  ap('whirlwind_blaze', 2107),
+  ap('incinerate', 2114),
+  ap('thunderbolt', 2128, 'M_AP'),
+  { key: 'thunderbolt.count', id: 2128, field: 'MaxCount', kind: 'raw' },
   ap('hellfire', 2203),
   ap('arrow_of_light', 2205),
   ap('dark_lance', 2208),
