@@ -351,7 +351,28 @@ const ed: BossMonster = {
   gaugeNum: 5
 }
 
+// MonsterParamEx2 2208 Ixion (Lv 999)
+const ixion: BossMonster = {
+  hp: 10000000,
+  dp: 300000,
+  md: 50000,
+  hv: 3000,
+  da: 10000,
+  fireR: 150,
+  waterR: 99,
+  windR: 99,
+  earthR: 96,
+  elecR: 90,
+  lightR: 90,
+  darkR: 80,
+  noPropR: 65,
+  physicalR: 96,
+  gunR: 96,
+  gaugeNum: 5
+}
+
 export {
+  ixion,
   torobbie,
   toilet,
   cora,

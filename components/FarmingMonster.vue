@@ -24,6 +24,7 @@
           {{ content.title }}
         </v-tooltip>
       </v-tabs>
+      <MonsterPicker v-model:selected="pickedId" @pick="pickMonster" />
       <v-card color="surface" rounded="lg" elevation="2">
         <ChartLine
           :chart-data="chartData"
@@ -54,7 +55,15 @@ const props = defineProps<{
 const monster = defineModel<Monster>('monster', { required: true })
 
 const datanum = 100
-const tab = ref(0)
+const tab = ref<number | null>(0)
+
+// 検索ボックスで選んだモンスター（タブを押したら解除する）
+const pickedId = ref<number | null>(null)
+
+function pickMonster(picked: Monster) {
+  tab.value = null
+  monster.value = picked
+}
 
 const tabContents = [
   {
@@ -90,6 +99,8 @@ const tabContents = [
 ]
 
 function changeSelectedMonster() {
+  if (tab.value == null) return
+  pickedId.value = null
   monster.value = [torobbie, toilet, cora, werepot, tantalos][tab.value]
 }
 
