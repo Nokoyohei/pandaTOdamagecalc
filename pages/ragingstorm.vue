@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Raging Storm</h1>
-    <p>{{ idealDamage }}</p>
+    <p>{{ idealDamage.toFixed(0) }}</p>
     <FarmingMonster :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
     <v-row>
       <v-col cols="12" md="5" order-md="1">
