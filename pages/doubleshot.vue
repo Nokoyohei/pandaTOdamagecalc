@@ -3,12 +3,12 @@
     <h1>{{ isGodly ? 'Godly Double Shot' : 'Double Shot' }}</h1>
     <BossMonsterPanel
       :damage="damage"
-      :damage-string="`${damage.toLocaleString()} * 2`"
+      :damage-string="[`${(damage * 2).toLocaleString()} total`, `${damage.toLocaleString()} × 2`]"
       v-model:monster="monster"
       :debuff-skills-def="debuffSkillsDef"
       v-model:debuff="debuffSkills"
       :crit-damage="critDamage"
-      :crit-damage-string="`${critDamage.toLocaleString()} * 2`"
+      :crit-damage-string="[`${(critDamage * 2).toLocaleString()} total`, `${critDamage.toLocaleString()} × 2`]"
     ></BossMonsterPanel>
     <div class="d-flex justify-center mb-4">
       <v-btn-toggle v-model="sharpSense" multiple bg-color="black">

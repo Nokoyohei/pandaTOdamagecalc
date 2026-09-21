@@ -212,7 +212,9 @@ const describe = (perHit: number) => {
     const total = multipliers.reduce((sum, m) => sum + perHit * m, 0)
     return [`${total.toLocaleString()} total`, `${perHit.toLocaleString()} × (${multipliers.join(' + ')})`]
   }
-  if (hits.value > 1) return `${perHit.toLocaleString()} * ${hits.value}`
+  if (hits.value > 1) {
+    return [`${(perHit * hits.value).toLocaleString()} total`, `${perHit.toLocaleString()} × ${hits.value}`]
+  }
   return undefined
 }
 const damageString = computed(() => describe(damage.value))

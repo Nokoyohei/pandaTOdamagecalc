@@ -4,6 +4,7 @@
     <BossMonsterPanel
       :damage="fisrtHitDamage + secondHitDamage"
       :damage-string="[
+        `${(fisrtHitDamage + secondHitDamage).toLocaleString()} total`,
         `1st hit: ${fisrtHitDamage.toLocaleString()}`,
         `2nd hit: ${secondHitDamage.toLocaleString()}`
       ]"
@@ -12,6 +13,7 @@
       v-model:debuff="debuffSkills"
       :crit-damage="critFirstHitDamage + critSecondHitDamage"
       :crit-damage-string="[
+        `${(critFirstHitDamage + critSecondHitDamage).toLocaleString()} total`,
         `1st hit: ${critFirstHitDamage.toLocaleString()}`,
         `2nd hit: ${critSecondHitDamage.toLocaleString()}`
       ]"

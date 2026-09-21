@@ -3,7 +3,10 @@
     <h1>{{ isGodly ? 'Godly Poison Assault' : 'Poison Assault' }} (Only Poison Damage)</h1>
     <BossMonsterPanel
       :damage="damage"
-      :damage-string="`${damage.toLocaleString()} * ${poisonTicks}`"
+      :damage-string="[
+        `${(damage * poisonTicks).toLocaleString()} total`,
+        `${damage.toLocaleString()} × ${poisonTicks}`
+      ]"
       v-model:monster="monster"
     />
 
