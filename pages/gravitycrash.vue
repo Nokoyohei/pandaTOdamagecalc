@@ -33,9 +33,9 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio
+  calcMABuffRatio,
+  calcBloodTestamentRatio
 } from '~/utils/calc'
-import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
@@ -56,14 +56,9 @@ const damage = computed(() => {
     ? magicAttackPower(SkillPower.DarkCommando(), buffedMA.value, 49)
     : 0
   let gravityCrashDamage = magicAttackPower(SkillPower.GravityCrash(localBasePower.value), buffedMA.value, 49)
-  if (dlBuffs.value.includes('bloodTestament')) {
-    darkCommandoDamage = Math.round(
-      darkCommandoDamage * (1 + BloodTestamentBuff)
-    )
-    gravityCrashDamage = Math.round(
-      gravityCrashDamage * (1 + BloodTestamentBuff)
-    )
-  }
+  const bloodTestament = calcBloodTestamentRatio(dlBuffs.value)
+  darkCommandoDamage = Math.round(darkCommandoDamage * bloodTestament)
+  gravityCrashDamage = Math.round(gravityCrashDamage * bloodTestament)
 
   return (
     calcDamage(
@@ -84,14 +79,9 @@ const critDamage = computed(() => {
     ? magicAttackPower(SkillPower.DarkCommando(), buffedMA.value, 49)
     : 0
   let gravityCrashDamage = magicAttackPower(SkillPower.GravityCrash(localBasePower.value), buffedMA.value, 49)
-  if (dlBuffs.value.includes('bloodTestament')) {
-    darkCommandoDamage = Math.round(
-      darkCommandoDamage * (1 + BloodTestamentBuff)
-    )
-    gravityCrashDamage = Math.round(
-      gravityCrashDamage * (1 + BloodTestamentBuff)
-    )
-  }
+  const bloodTestament = calcBloodTestamentRatio(dlBuffs.value)
+  darkCommandoDamage = Math.round(darkCommandoDamage * bloodTestament)
+  gravityCrashDamage = Math.round(gravityCrashDamage * bloodTestament)
 
   return (
     calcDamage(
@@ -120,9 +110,7 @@ const resMA = computed(() => {
     calcMonsterDef(monster.value, 'magic') *
     (dlBuffs.value.includes('darkCommando') ? 2 : 1)
 
-  const buff = dlBuffs.value.includes('bloodTestament')
-    ? 1 + BloodTestamentBuff
-    : 1
+  const buff = calcBloodTestamentRatio(dlBuffs.value)
 
   const needMA = calcNeedStats(
     monsterHP.value,

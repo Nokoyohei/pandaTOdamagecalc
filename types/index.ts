@@ -64,7 +64,7 @@ export type LKBuffName = 'luckySeven' | 'auraOfLuck' | 'firstAnniversary' | 'god
 export type ThrowBuffName = 'precisePitch'
 export type DABuffName = 'sixthSense' | 'secondAnniversary' | 'godlySixthSense'
 export type MABuffName = 'mistOfMana' | 'godlyMistOfMana'
-export type DLBuffName = 'bloodTestament' | 'darkCommando'
+export type DLBuffName = 'bloodTestament' | 'godlyBloodTestament' | 'darkCommando'
 export type HVBuffName = 'dodgeMaster' | 'godlyDodgeMaster'
 // eSkillSymbolType == 7 のスキル（Celestial Strike の威力に効く）
 export type LightSkillName =

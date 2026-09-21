@@ -226,6 +226,10 @@ export const MISC_SKILL_TABLE = {
   magicalSoulRatio2: 220,
   /** 4001 Power Blow — SkillParam2.MaxSKLV */
   hitComboPassiveLevel: 11,
+  /** 2219 Blood Testament — ESAction_BloodyOath.MARatio (Lv11) */
+  bloodTestamentRatio: 0.5,
+  /** 12219 Godly Blood Testament — ESAction_GodlyBloodyOath.MARatio (Lv11) */
+  godlyBloodTestamentRatio: 1.5,
 } as const
 
 /** 命中判定の bonus（ApplyRatio）。キーは SKILL_TABLE と同じ */

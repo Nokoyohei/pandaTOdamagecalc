@@ -318,6 +318,13 @@ export const calcMABuffRatio = (MABuff: ('mistOfMana' | 'godlyMistOfMana')[]) =>
   return buffRatio
 }
 
+// Blood Testament は闇魔法のダメージに × (1 + MARatio)。Godly があればそちらを優先
+export const calcBloodTestamentRatio = (DLBuff: ('bloodTestament' | 'godlyBloodTestament' | 'darkCommando')[]) => {
+  if (DLBuff.includes('godlyBloodTestament')) return 1 + BuffRatio.GodlyBloodTestamentBuff
+  if (DLBuff.includes('bloodTestament')) return 1 + BuffRatio.BloodTestamentBuff
+  return 1
+}
+
 export const calcACBuffRatio = (
   ACBuff: ('gunBooster' | 'bullsEye' | 'eagleEye' | 'godlyBullsEye' | 'godlyEagleEye')[]
 ) => {

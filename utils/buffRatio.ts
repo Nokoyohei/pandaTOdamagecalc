@@ -1,7 +1,9 @@
 import { MISC_SKILL_TABLE } from '~/utils/skillTable'
 
 const MistOfManaBuff = 0.65
-export const BloodTestamentBuff = 0.5
+// Blood Testament (2219) ESAction_BloodyOath.MARatio / Godly (12219) GodlyBloodyOath.MARatio（utils/skillTable.ts、生成物）
+export const BloodTestamentBuff: number = MISC_SKILL_TABLE.bloodTestamentRatio
+export const GodlyBloodTestamentBuff: number = MISC_SKILL_TABLE.godlyBloodTestamentRatio
 const PumpingHeartBuff = 0.16
 const AdrenalineBuff = 0.26
 const LuckySevenBuff = 0.65
@@ -29,6 +31,7 @@ const GodlySixthSenseBuff = 1.5
 export default {
   MistOfManaBuff,
   BloodTestamentBuff,
+  GodlyBloodTestamentBuff,
   PumpingHeartBuff,
   AdrenalineBuff,
   LuckySevenBuff,

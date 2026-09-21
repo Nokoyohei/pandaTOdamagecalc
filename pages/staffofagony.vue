@@ -31,9 +31,9 @@ import {
   calcDamage,
   calcNeedStats,
   calcMonsterDef,
-  calcMABuffRatio
+  calcMABuffRatio,
+  calcBloodTestamentRatio
 } from '~/utils/calc'
-import { BloodTestamentBuff } from '~/utils/buffRatio'
 import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
@@ -63,9 +63,7 @@ const idealDarkCommandoDamage = computed(() =>
 )
 
 const bossBuff = computed(() =>
-  dlBuffs.value.includes('bloodTestament')
-    ? 1 + BloodTestamentBuff
-    : 1
+  calcBloodTestamentRatio(dlBuffs.value)
 )
 
 const damage = computed(() =>
@@ -111,9 +109,7 @@ const resMA = computed(() => {
     calcMonsterDef(monster.value, 'magic') *
     (dlBuffs.value.includes('darkCommando') ? 2 : 1)
 
-  const buff = dlBuffs.value.includes('bloodTestament')
-    ? 1 + BloodTestamentBuff
-    : 1
+  const buff = calcBloodTestamentRatio(dlBuffs.value)
 
   const needMA = calcNeedStats(
     monsterHP.value,
@@ -139,9 +135,7 @@ const resDark = computed(() => {
     calcMonsterDef(monster.value, 'magic') *
     (dlBuffs.value.includes('darkCommando') ? 2 : 1)
 
-  const buff = dlBuffs.value.includes('bloodTestament')
-    ? 1 + BloodTestamentBuff
-    : 1
+  const buff = calcBloodTestamentRatio(dlBuffs.value)
 
   return Math.ceil(
     (calcNeedStats(

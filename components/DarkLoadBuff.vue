@@ -16,6 +16,14 @@
         </template>
       </v-switch>
     </v-col>
+    <v-col cols="6" md="5">
+      <v-switch v-model="buff" value="godlyBloodTestament">
+        <template #label>
+          <img src="/bloodTestament.gif" />
+          Godly Blood Testament
+        </template>
+      </v-switch>
+    </v-col>
   </v-row>
 </template>
 

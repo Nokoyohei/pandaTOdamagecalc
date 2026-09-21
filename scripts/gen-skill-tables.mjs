@@ -144,7 +144,10 @@ const MISC = [
   { key: 'magicalSoulRatio1', id: 2014, field: 'Ratio1', kind: 'raw' },
   { key: 'magicalSoulRatio2', id: 2014, field: 'Ratio2', kind: 'raw' },
   // 2 Hit Combo が参照するパッシブ (Power Blow 4001) の最大レベル
-  { key: 'hitComboPassiveLevel', id: 4001, field: 'MaxSKLV', kind: 'raw' }
+  { key: 'hitComboPassiveLevel', id: 4001, field: 'MaxSKLV', kind: 'raw' },
+  // Blood Testament (2219) / Godly (12219): 闇魔法ダメージ × (1 + MARatio)
+  { key: 'bloodTestamentRatio', id: 2219, field: 'MARatio', kind: 'raw' },
+  { key: 'godlyBloodTestamentRatio', id: 12219, field: 'MARatio', kind: 'raw' }
 ]
 
 function resolve(entry) {

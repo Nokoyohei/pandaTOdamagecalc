@@ -67,11 +67,11 @@ import {
   calcLKBuffRatio,
   calcHVBuffRatio,
   calcDABuffRatio,
-  calcACBuffRatio
+  calcACBuffRatio,
+  calcBloodTestamentRatio
 } from '~/utils/calc'
 import { ftol } from '~/utils/x87'
 import SkillPower from '~/utils/skillPower'
-import { BloodTestamentBuff } from '~/utils/buffRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import { BOSS_SKILLS } from '~/utils/bossSkills'
 import { debuffDefsFor } from '~/utils/debuffs'
@@ -168,7 +168,7 @@ const monsterDef = computed(() => {
 const monsterResist = computed(() => (def.resist === 'none' ? 0 : target.value[def.resist]))
 
 const extraMultiplier = computed(() =>
-  isDarkMagic && dlBuffs.value.includes('bloodTestament') ? 1 + BloodTestamentBuff : 1
+  isDarkMagic ? calcBloodTestamentRatio(dlBuffs.value) : 1
 )
 
 const attackPower = computed(() => def.power(skillStats.value, localTable.value, params))
