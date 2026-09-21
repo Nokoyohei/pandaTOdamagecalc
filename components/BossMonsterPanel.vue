@@ -24,6 +24,7 @@
           {{ content.title }}
         </v-tooltip>
       </v-tabs>
+      <MonsterPicker v-model:selected="pickedId" @pick="pickMonster" />
       <v-card color="surface" rounded="lg" elevation="2">
         <ChartLine
           :chart-data="chartData"
@@ -115,7 +116,8 @@ import {
   rosaspina,
   punisherRosaspina,
   trueGodKoiosu,
-  ed
+  ed,
+  ixion
 } from '~/utils/monsters'
 import type { Monster, BossMonster, DebuffName, skillPanel } from '~/types'
 
@@ -138,7 +140,7 @@ const showCasterMA = computed(() => debuff.value?.some((d) => d !== 'ShieldBreak
 const boss = computed(() => monster.value as BossMonster)
 
 const datanum = 100
-const tab = ref(0)
+const tab = ref<number | null>(0)
 
 const textColor = ['pink', 'red', 'deep-orange']
 
@@ -192,6 +194,12 @@ const tabContents = [
     alt: 'CHRONOS'
   },
   {
+    srcimg: '/ixion.gif',
+    height: '76',
+    title: 'Ixion',
+    alt: 'IXION'
+  },
+  {
     srcimg: '/ed.gif',
     height: '76',
     title: 'Ed',
@@ -233,22 +241,35 @@ const critDamageAreaMessage = computed(() => {
   return [props.critDamageString].flat()
 })
 
+const tabMonsters: BossMonster[] = [
+  bossTorrobie,
+  requiem,
+  predator,
+  mong,
+  koiosu,
+  madray,
+  kevin,
+  chronos,
+  ixion,
+  ed,
+  requiemHarbinger,
+  rosaspina,
+  punisherRosaspina,
+  trueGodKoiosu
+]
+
+// 検索ボックスで選んだモンスター（タブを押したら解除する）
+const pickedId = ref<number | null>(null)
+
 function changeSelectedMonster() {
-  monster.value = [
-    bossTorrobie,
-    requiem,
-    predator,
-    mong,
-    koiosu,
-    madray,
-    kevin,
-    chronos,
-    ed,
-    requiemHarbinger,
-    rosaspina,
-    punisherRosaspina,
-    trueGodKoiosu,
-  ][tab.value]
+  if (tab.value == null) return
+  pickedId.value = null
+  monster.value = tabMonsters[tab.value]
+}
+
+function pickMonster(picked: BossMonster) {
+  tab.value = null
+  monster.value = picked
 }
 
 const totalHp = computed(() => monster.value.hp * boss.value.gaugeNum)

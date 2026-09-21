@@ -2,11 +2,12 @@ import { ftol, F32_0_01 } from '~/utils/x87'
 import { magicAttackPower } from '~/utils/calc'
 import type { AttackType } from '~/utils/calc'
 import type { Monster } from '~/types'
+import { BOSS_SKILL_TABLE as T, GODLY_BOSS_SKILL_TABLE as G } from '~/utils/skillTable'
 
 /*
  * ボス用に追加した 3 次職以降の攻撃スキル。
  * 式は GameServer.exe の各ハンドラを逆アセンブルして確認したもの（ref にアドレス）。
- * 既定値は PandaTO の ESAction_* テーブル最大レベル行。
+ * 既定値は PandaTO の ESAction_* テーブル最大レベル行（utils/skillTable.ts、scripts/gen-skill-tables.mjs が生成）。
  *   物理: table = P.Ratio × 100（UI の刻みを整数にするため）
  *   魔法: table = P.AP / P.M_AP そのもの。power × (MA − maPenalty) / 100 で攻撃力になる
  */
@@ -85,7 +86,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap'],
-    table: { label: 'Ratio', default: 355 },
+    table: { label: 'Ratio', default: T.lacerator },
     power: (s, t) => ftol(s.ap * ratio(t)),
     ref: 'ESASharpBrandish 0x6cdbe0 → FUN_006CDDC0: ftol(AP × P.Ratio)'
   },
@@ -96,7 +97,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap'],
-    table: { label: 'Ratio', default: 500 },
+    table: { label: 'Ratio', default: T.piercing_wave },
     power: (s, t) => ftol(s.ap * ratio(t)),
     ref: 'FUN_0072F9F0 @0x72fa8b → FUN_006CDDC0: ftol(AP × P.Ratio)'
   },
@@ -107,7 +108,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'dx'],
-    table: { label: 'Ratio', default: 108 },
+    table: { label: 'Ratio', default: T.blazing_strike },
     power: (s, t) => ftol(s.ap * ratio(t)),
     // 0x733277: (10 − DX) / 6 + 1 回（idiv、上限 10）。DX が低いほど回数が増える
     hits: (s) => Math.min(Math.trunc((10 - s.dx) / 6) + 1, 10),
@@ -121,7 +122,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'fire'],
-    table: { label: 'Ratio', default: 450 },
+    table: { label: 'Ratio', default: T.inferno_blade },
     power: (s, t) => ftol(s.ap * (s.fire * F32_0_01 + ratio(t))),
     note: "Shares ESAction_BlastBrandish with Champion's Blade",
     ref: 'FUN_0073B200 @0x73b228: ftol(AP × (Fire × 0.01f + P.Ratio))'
@@ -133,7 +134,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'ac'],
-    table: { label: 'Ratio', default: 2000 },
+    table: { label: 'Ratio', default: T.flash_cut },
     power: (s, t) => ftol((s.ap + s.ac * 8) * ratio(t)),
     ref: 'ESA(0x6e0400) → exec 0x4FC → FUN_0073A0C0 @0x73a103: ftol((AP + AC × 8) × P.Ratio)'
   },
@@ -144,7 +145,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'ac'],
-    table: { label: 'Ratio', default: 2000, godly: 10000 },
+    table: { label: 'Ratio', default: T.mega_flash_cut, godly: G.mega_flash_cut },
     power: (s, t) => ftol((s.ap + s.ac * 16) * ratio(t)),
     ref: 'ESA(0x6f8670) → exec 0x4FC → FUN_0073A0C0 @0x73a0ef: AC × 16 for skill 1304'
   },
@@ -155,7 +156,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap'],
-    table: { label: 'Ratio', default: 400, godly: 3000 },
+    table: { label: 'Ratio', default: T.tetra_punch, godly: G.tetra_punch },
     power: (s, t) => ftol(s.ap * ratio(t)),
     // 4 連撃。2 発目以降は直前のダメージが通っていればその 2 倍（shl eax,1）、外れたら 0
     hitMultipliers: [1, 2, 4, 8],
@@ -169,26 +170,26 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'dx'],
-    table: { label: 'Ratio', default: 1000, godly: 2000 },
-    params: [{ key: 'count', label: 'Count', default: 10, godlyDefault: 20, hint: 'ESAction_OnesOtherSelf.Count (multiplier on a single hit)' }],
+    table: { label: 'Ratio', default: T.shadow, godly: G.shadow },
+    params: [{ key: 'count', label: 'Count', default: T['shadow.count'], godlyDefault: G['shadow.count'], hint: 'ESAction_OnesOtherSelf.Count (multiplier on a single hit)' }],
     power: (s, t, p) => ftol((s.ap + (11 - s.dx) * 24) * ratio(t) * p.count),
     ref: 'FUN_00738150 @0x7381c5: ftol((AP + (11 − DX) × 24) × P.Ratio × P.Count)'
   },
 
   /* ------------------------------------------------------------------ Magic */
-  hellfire: magic('hellfire', 'Hellfire', 'darkR', 5500, 49, 'FUN_0072D030 @0x72d0d0: P.AP / MA−49 / Dark'),
-  arrow_of_light: magic('arrow_of_light', 'Arrow of Light', 'lightR', 6000, 49, 'FUN_0072D490 @0x72d537: P.AP / MA−49 / Light'),
-  dark_lance: magic('dark_lance', 'Dark Lance', 'darkR', 6100, 49, 'FUN_0072EF20 @0x72efc7: P.AP / MA−49 / Dark'),
-  light_wave: magic('light_wave', 'Light Wave', 'lightR', 5000, 49, 'FUN_0072F840 @0x72f90e: P.AP / MA−49 / Light'),
-  radiant_strike: magic('radiant_strike', 'Radiant Strike', 'lightR', 5300, 49, 'FUN_007348E0 @0x7349ae: P.AP / MA−49 / Light'),
-  aqua_bomb: magic('aqua_bomb', 'Aqua Bomb', 'waterR', 20000, 49, 'FUN_00737200 @0x73729f: P.AP / MA−49 / Water'),
-  dragon_storm: magic('dragon_storm', 'Dragon Storm', 'fireR', 20000, 49, 'FUN_007394A0 @0x7394f5: P.AP / MA−49 / Fire'),
-  searing_light: magic('searing_light', 'Searing Light', 'lightR', 6000, 25, 'ESASkyRay 0x6dd540 @0x6dd5cf: P.AP / MA−25 / Light'),
+  hellfire: magic('hellfire', 'Hellfire', 'darkR', T.hellfire, 49, 'FUN_0072D030 @0x72d0d0: P.AP / MA−49 / Dark'),
+  arrow_of_light: magic('arrow_of_light', 'Arrow of Light', 'lightR', T.arrow_of_light, 49, 'FUN_0072D490 @0x72d537: P.AP / MA−49 / Light'),
+  dark_lance: magic('dark_lance', 'Dark Lance', 'darkR', T.dark_lance, 49, 'FUN_0072EF20 @0x72efc7: P.AP / MA−49 / Dark'),
+  light_wave: magic('light_wave', 'Light Wave', 'lightR', T.light_wave, 49, 'FUN_0072F840 @0x72f90e: P.AP / MA−49 / Light'),
+  radiant_strike: magic('radiant_strike', 'Radiant Strike', 'lightR', T.radiant_strike, 49, 'FUN_007348E0 @0x7349ae: P.AP / MA−49 / Light'),
+  aqua_bomb: magic('aqua_bomb', 'Aqua Bomb', 'waterR', T.aqua_bomb, 49, 'FUN_00737200 @0x73729f: P.AP / MA−49 / Water'),
+  dragon_storm: magic('dragon_storm', 'Dragon Storm', 'fireR', T.dragon_storm, 49, 'FUN_007394A0 @0x7394f5: P.AP / MA−49 / Fire'),
+  searing_light: magic('searing_light', 'Searing Light', 'lightR', T.searing_light, 25, 'ESASkyRay 0x6dd540 @0x6dd5cf: P.AP / MA−25 / Light'),
   ghostly_whisper: magic(
     'ghostly_whisper',
     'Ghostly Whisper',
     'darkR',
-    2160,
+    T.ghostly_whisper,
     49,
     'ESADarkWhisper 0x6fbf80 @0x6fc1ba: (short)this+0xCC ← P.M_AP / MA−49 / Dark',
     'M_AP'
@@ -200,7 +201,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'magic',
     resist: 'windR',
     stats: ['ma', 'ac'],
-    table: { label: 'AP', default: 2640 },
+    table: { label: 'AP', default: T.razor_gale },
     // maPenalty = 49 − AC なので MA + AC − 49 で効く（Raging Storm と同型）
     power: (s, t) => magicAttackPower(t, s.ma + s.ac, 49),
     ref: 'FUN_0073BB30 @0x73bc13: mov edx,0x31 ; sub edx,[AC] → maPenalty = 49 − AC / P.AP / Wind'
@@ -212,8 +213,8 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'magic',
     resist: 'fireR',
     stats: ['ma'],
-    table: { label: 'AP', default: 4000 },
-    params: [{ key: 'ticks', label: 'Ticks', default: 10, hint: 'One tick every 2 s for Seconds (Lv11: 20 s)' }],
+    table: { label: 'AP', default: T.phoenix_rising },
+    params: [{ key: 'ticks', label: 'Ticks', default: T['phoenix_rising.ticks'], hint: 'One tick every 2 s for Seconds (Lv11: 20 s)' }],
     power: (s, t) => magicAttackPower(t, s.ma, 49),
     hits: (_s, _t, p) => Math.max(1, Math.trunc(p.ticks)),
     note: 'Damage shown is per tick. Each tick rolls its own critical',
@@ -226,8 +227,8 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'magic',
     resist: 'noPropR',
     stats: ['ma'],
-    table: { label: 'AP', default: 35000 },
-    params: [{ key: 'count', label: 'Hits', default: 15, hint: 'ESAction_GodlyChainArrow.Count' }],
+    table: { label: 'AP', default: T.godly_arrow_rush },
+    params: [{ key: 'count', label: 'Hits', default: T['godly_arrow_rush.count'], hint: 'ESAction_GodlyChainArrow.Count' }],
     power: (s, t) => magicAttackPower(t, s.ma, 49),
     // 0x72a853: cmp ecx,[P.Count] のループで同じ対象に Count 回 BH_MagicSkill
     hits: (_s, _t, p) => Math.max(1, Math.trunc(p.count)),
@@ -243,7 +244,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'gunR',
     stats: ['da', 'ac'],
-    table: { label: 'Ratio', default: 355 },
+    table: { label: 'Ratio', default: T.butt_plate },
     power: (s, t) => ftol(((s.da + s.ac) * 8 - 392) * ratio(t)),
     note: 'Defense is DP, resistance is GunR (propMask 0x100)',
     ref: 'FUN_0072B6E0 @0x72b765: ftol(((DA + AC) × 8 − 392) × P.Ratio)'
@@ -255,7 +256,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['wt'],
-    table: { label: 'Pouch of Pain Ratio', default: 70 },
+    table: { label: 'Pouch of Pain Ratio', default: T.poison_pouch },
     params: [{ key: 'weight', label: 'Carried weight', default: 0, hint: '0 = assume carrying MaxWT' }],
     power: (s, t, p) => ftol((p.weight > 0 ? Math.min(p.weight, s.wt) : s.wt) * ratio(t)),
     note: 'Initial hit only. The ratio is Pouch of Pain (3105) Lv11 Ratio, 0 if not learned. Poison ticks are not included',
@@ -270,7 +271,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap'],
-    table: { label: 'Ratio', default: 600 },
+    table: { label: 'Ratio', default: T.beast_claw },
     power: (s, t) => ftol(s.ap * ratio(t)),
     ref: 'FUN_00732FB0 @0x73304b → FUN_006CDDC0: ftol(AP × P.Ratio)'
   },
@@ -281,10 +282,10 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'none',
     stats: [],
-    table: { label: 'Ratio', default: 920 },
+    table: { label: 'Ratio', default: T.fist_full_of_galders },
     params: [
       { key: 'galder', label: 'Galder per hit', default: 100 },
-      { key: 'count', label: 'Hits', default: 4, hint: 'ESAction_GellderChainHit.Count (Lv11: 4). Needs Count × 100 galder' }
+      { key: 'count', label: 'Hits', default: T['fist_full_of_galders.count'], hint: 'ESAction_GellderChainHit.Count (Lv11: 4). Needs Count × 100 galder' }
     ],
     power: (_s, t, p) => ftol(Math.max(p.galder, 0) * ratio(t)),
     hits: (_s, _t, p) => Math.max(1, Math.trunc(p.count)),
@@ -299,7 +300,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap'],
-    table: { label: 'Ratio', default: 1200 },
+    table: { label: 'Ratio', default: T.fatal_wound },
     power: (s, t) => ftol(s.ap * ratio(t)),
     note: 'Initial hit only. ConRatio damage over time is not included',
     ref: 'ESASharpClaw 0x6d6fa0 → FUN_006CDDC0: ftol(AP × P.Ratio)'
@@ -311,10 +312,10 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'hv'],
-    table: { label: 'Ratio', default: 265 },
+    table: { label: 'Ratio', default: T.card_strike },
     params: [
       { key: 'distance', label: 'Distance', default: 0, hint: 'Distance to the target. Damage falls off toward Radius' },
-      { key: 'radius', label: 'Radius', default: 52 }
+      { key: 'radius', label: 'Radius', default: T['card_strike.radius'] }
     ],
     power: (s, t) => ftol((s.ap + s.hv * 8) * ratio(t)),
     postMultiplier: (_s, _t, p) => (p.radius > 0 ? Math.max(0, 1 - p.distance / p.radius) : 1),
@@ -327,8 +328,8 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['hp'],
-    table: { label: 'Ratio', default: 600 },
-    params: [{ key: 'distance', label: 'Dash distance', default: 196, hint: 'Up to Radius (Lv11: 196)' }],
+    table: { label: 'Ratio', default: T.impelling_rage },
+    params: [{ key: 'distance', label: 'Dash distance', default: T['impelling_rage.distance'], hint: 'Up to Radius (Lv11: 196)' }],
     power: (s, t, p) => ftol((p.distance + 40) * s.hp * ratio(t) / 800),
     note: 'HP is current HP (assumed full)',
     ref: 'ESAChargingHit 0x6d6370 @0x6d654c: ftol((√(dx²+dy²) + 40) × HP × P.Ratio / 800)'
@@ -340,8 +341,8 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['hp'],
-    table: { label: 'Ratio', default: 650 },
-    params: [{ key: 'distance', label: 'Dash distance', default: 240, hint: 'Up to Radius (Lv11: 240)' }],
+    table: { label: 'Ratio', default: T.power_charging },
+    params: [{ key: 'distance', label: 'Dash distance', default: T['power_charging.distance'], hint: 'Up to Radius (Lv11: 240)' }],
     power: (s, t, p) => ftol((p.distance + 40) * s.hp * ratio(t) / 800),
     note: 'HP is current HP (assumed full)',
     ref: 'ESAPowerChargingDo 0x6decf0 @0x6deec3: ftol((distance + 40) × HP × P.Ratio / 800)'
@@ -353,7 +354,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['hv'],
-    table: { label: 'Ratio', default: 1500, godly: 12000 },
+    table: { label: 'Ratio', default: T.wild_nail, godly: G.wild_nail },
     power: (s, t) => ftol(s.hv * 16 * ratio(t)),
     ref: 'FUN_00735330 @0x7353ab: ftol((HV << 4) × P.Ratio)'
   },
@@ -364,7 +365,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'none',
     stats: [],
-    table: { label: 'Ratio', default: 680 },
+    table: { label: 'Ratio', default: T.furious_galder_throw },
     params: [
       {
         key: 'galder',
@@ -385,8 +386,8 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'hv'],
-    table: { label: 'Ratio', default: 2500 },
-    params: [{ key: 'disDefence', label: 'DisDefenceRatio', default: 80, hint: 'Target DP is scaled to this %' }],
+    table: { label: 'Ratio', default: T.raging_nail },
+    params: [{ key: 'disDefence', label: 'DisDefenceRatio', default: T['raging_nail.disDefence'], hint: 'Target DP is scaled to this %' }],
     power: (s, t) => ftol((s.ap + s.hv * 16) * ratio(t) * 0.5),
     defenseScale: (_t, p) => p.disDefence / 100,
     ref: 'FUN_0073EA00 @0x73ea8a: ftol((AP + HV × 16) × P.Ratio × 0.5), DP = ftol(DP × DisDefenceRatio / 100)'
@@ -398,7 +399,7 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     attackType: 'physical',
     resist: 'physicalR',
     stats: ['ap', 'hp'],
-    table: { label: 'Ratio', default: 700 },
+    table: { label: 'Ratio', default: T.heavy_hit },
     power: (s, t) => ftol((s.ap + s.hp / 8) * ratio(t)),
     note: 'HP is current HP (assumed full)',
     ref: 'FUN_0073EDA0 @0x73ee3c: ftol((AP + HP / 8.0) × P.Ratio)'
