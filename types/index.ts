@@ -3,6 +3,8 @@ export interface Monster {
   dp: number
   md: number
   hv: number
+  /** 魔法・射撃の命中判定と魔法回避に使う */
+  lk: number
   fireR: number
   waterR: number
   earthR: number

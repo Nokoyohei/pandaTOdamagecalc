@@ -55,6 +55,7 @@
             />
           </div>
         </div>
+        <HitCheckLine v-if="hitCheck" :hit="hitCheck" />
       </v-card>
       <div v-if="debuff" class="text-center">
         debuff:
@@ -101,6 +102,7 @@
 
 <script setup lang="ts">
 import type { ChartData, ChartOptions } from 'chart.js'
+import { HIT_CHECK_KEY } from '~/utils/hitCheck'
 import { makeArr } from '~/utils/calc'
 import { shieldBreakerAmount, areaRatio } from '~/utils/debuffs'
 import {
@@ -138,6 +140,9 @@ const showCasterDA = computed(() => debuff.value?.includes('ShieldBreaker') ?? f
 const showCasterMA = computed(() => debuff.value?.some((d) => d !== 'ShieldBreaker') ?? false)
 
 const boss = computed(() => monster.value as BossMonster)
+
+// useSkillPage が provide する命中判定（ページによっては無い）
+const hitCheck = inject(HIT_CHECK_KEY, null)
 
 const datanum = 100
 const tab = ref<number | null>(0)

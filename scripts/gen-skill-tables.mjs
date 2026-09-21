@@ -159,14 +159,16 @@ function resolve(entry) {
     return { value: Number(skill.MaxSKLV), source: `${entry.id} ${skill.Name.trim()} — SkillParam2.MaxSKLV` }
   }
   const row = maxLevelRow(loadTable(bot, tableName))
-  if (!row || !(entry.field in row)) throw new Error(`${entry.key}: ${tableName}.${entry.field} missing`)
-  let value = Number(row[entry.field])
-  if (!Number.isFinite(value)) throw new Error(`${entry.key}: ${tableName}.${entry.field} = ${row[entry.field]}`)
-  const kind = entry.kind ?? (entry.field.endsWith('Ratio') ? 'ratio100' : 'raw')
+  // field は候補を配列で渡せる（SwampField / FireField は ApplyRatio が ApplyRT という列名）
+  const field = [entry.field].flat().find((f) => row && f in row)
+  if (!field) throw new Error(`${entry.key}: ${tableName}.${[entry.field].flat().join('|')} missing`)
+  let value = Number(row[field])
+  if (!Number.isFinite(value)) throw new Error(`${entry.key}: ${tableName}.${field} = ${row[field]}`)
+  const kind = entry.kind ?? (field.endsWith('Ratio') ? 'ratio100' : 'raw')
   if (kind === 'ratio100') value = Math.round(value * 100)
   if (entry.transform) value = entry.transform(value)
   const who = skill ? `${entry.id} ${skill.Name.trim()}` : tableName
-  return { value, source: `${who} — ${tableName}.${entry.field} (Lv${row.Level}${kind === 'ratio100' ? ', ×100' : ''})` }
+  return { value, source: `${who} — ${tableName}.${field} (Lv${row.Level}${kind === 'ratio100' ? ', ×100' : ''})` }
 }
 
 const block = (name, doc, entries) => {
@@ -178,6 +180,19 @@ const block = (name, doc, entries) => {
   return `/** ${doc} */\nexport const ${name} = {\n${lines.join('\n')}\n} as const\n`
 }
 
+/*
+  命中判定の bonus = 同じテーブルの ApplyRatio（SPEC 04_damage.md 「bonus = ESAction_* テーブルの ApplyRatio」）。
+  スキルごと（'<key>.<param>' を除く）に power と同じテーブルから取る
+*/
+const applyRatioOf = (entries, extra = []) =>
+  [...entries.filter((e) => !e.key.includes('.')), ...extra].map((e) => ({
+    key: e.key,
+    id: e.id,
+    table: e.table,
+    field: ['ApplyRatio', 'ApplyRT'],
+    kind: 'raw'
+  }))
+
 const out = `/* eslint-disable */
 // 自動生成: scripts/gen-skill-tables.mjs（pandaTO-internal-bot の SkillParam2 → ESAction_* 最大 Level 行）
 // 手で編集しない。値を変えたいときは internal-bot のデータを更新して \`npm run sync-data\`
@@ -188,7 +203,11 @@ ${block('SKILL_TABLE', 'utils/skillPower.ts の SKILL_POWER', SKILL)}
 ${block('GODLY_SKILL_TABLE', 'utils/skillPower.ts の GODLY_SKILL_POWER', GODLY_SKILL)}
 ${block('BOSS_SKILL_TABLE', "utils/bossSkills.ts の既定値。'<key>' = table、'<key>.<param>' = params", BOSS)}
 ${block('GODLY_BOSS_SKILL_TABLE', 'utils/bossSkills.ts の Godly 既定値', GODLY_BOSS)}
-${block('MISC_SKILL_TABLE', 'パッシブ・デバフなど', MISC)}`
+${block('MISC_SKILL_TABLE', 'パッシブ・デバフなど', MISC)}
+${block('SKILL_APPLY_RATIO', '命中判定の bonus（ApplyRatio）。キーは SKILL_TABLE と同じ', applyRatioOf(SKILL, [{ key: 'MagicalSoul', id: 2014 }]))}
+${block('GODLY_SKILL_APPLY_RATIO', 'Godly の命中判定 bonus', applyRatioOf(GODLY_SKILL))}
+${block('BOSS_SKILL_APPLY_RATIO', 'ボス用スキルの命中判定 bonus。キーは BOSS_SKILL_TABLE と同じ', applyRatioOf(BOSS))}
+${block('GODLY_BOSS_SKILL_APPLY_RATIO', 'ボス用 Godly の命中判定 bonus', applyRatioOf(GODLY_BOSS))}`
 
 // 前回の生成結果と比べて変わった値を出す（CI のログで差分が追えるように）
 const target = new URL('../utils/skillTable.ts', import.meta.url)

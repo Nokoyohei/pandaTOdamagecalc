@@ -1,7 +1,7 @@
 // pandaTO-internal-bot の libconfig JSON から utils/monsterList.ts と public/monster/*.gif を生成する
 //   node scripts/gen-monster-list.mjs [--bot=<pandaTO-internal-bot dir>] [--data=<client data dir>] [--no-gifs]
 //
-//   MonsterParamEx2.json     : ステータス・耐性
+//   MonsterParamEx2.json     : ステータス・耐性・LK（命中判定用）
 //   BossMonsterparamEx.json  : LifeCnt（HP ゲージは LifeCnt + 1 本）
 //   CharacterInfo.json       : FileName（data\monster\monNNN.nri）
 //   <data>/monster/monNNN.nri: internal-bot の nri-converter.js で「正面を向いて動く」アニメ GIF にする
@@ -118,7 +118,7 @@ const imageOf = (id) => {
 
 const tuples = monsters.map((r) => {
   const t = COLS.map((c) => (c === 'Name' ? JSON.stringify(r[c].trim()) : String(Number(r[c]) || 0)))
-  t.push(String(lifeCnt.get(r.ID) ?? 0), JSON.stringify(imageOf(r.ID)))
+  t.push(String(lifeCnt.get(r.ID) ?? 0), JSON.stringify(imageOf(r.ID)), String(Number(r.LkLv) || 0))
   return `  [${t.join(', ')}]`
 })
 
@@ -126,11 +126,11 @@ const out = `/* eslint-disable */
 // 自動生成: scripts/gen-monster-list.mjs（MonsterParamEx2 ${monsters.length} 行 + BossMonsterparamEx.LifeCnt + CharacterInfo.FileName）
 // [ID, Name, Level, IsBoss, MaxHpLv, DpLv, MdLv, HvLv, DaLv,
 //  FireR, WaterR, WindR, EarthR, ElecR, LightR, DarkR, NoPropR, PhysicalR, GunR,
-//  LifeCnt, image base name under /monster/ ('' if none)]
+//  LifeCnt, image base name under /monster/ ('' if none), LkLv]
 export type MonsterRow = [
   number, string, number, number, number, number, number, number, number,
   number, number, number, number, number, number, number, number, number, number,
-  number, string
+  number, string, number
 ]
 
 export const MONSTER_ROWS: MonsterRow[] = [
