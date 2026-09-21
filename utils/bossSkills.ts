@@ -219,15 +219,21 @@ export const BOSS_SKILLS: Record<string, BossSkillDef> = {
     note: 'Damage shown is per tick. Each tick rolls its own critical',
     ref: 'ESAFireBurnDo 0x6ebdc0 @0x6ebe07: (this+0xF4 ← P.AP) / MA−49 / Fire, bonus 1.0, every 2000 ms'
   },
-  godly_arrow_rush: magic(
-    'godly_arrow_rush',
-    'Godly Arrow Rush',
-    'noPropR',
-    35000,
-    49,
-    'FUN_0072A7E0 @0x72a887: P.AP / MA−49 / NoProp (0x80). One hit per target',
-    'AP'
-  ),
+  godly_arrow_rush: {
+    key: 'godly_arrow_rush',
+    title: 'Godly Arrow Rush',
+    icon: '/godly_arrow_rush.gif',
+    attackType: 'magic',
+    resist: 'noPropR',
+    stats: ['ma'],
+    table: { label: 'AP', default: 35000 },
+    params: [{ key: 'count', label: 'Hits', default: 15, hint: 'ESAction_GodlyChainArrow.Count' }],
+    power: (s, t) => magicAttackPower(t, s.ma, 49),
+    // 0x72a853: cmp ecx,[P.Count] のループで同じ対象に Count 回 BH_MagicSkill
+    hits: (_s, _t, p) => Math.max(1, Math.trunc(p.count)),
+    note: 'Damage shown is per arrow. Each arrow rolls its own hit and critical',
+    ref: 'FUN_0072A7E0 @0x72a837: Count ← P.Count, loop @0x72a853, @0x72a887: BH_MagicSkill(P.AP, MA−49, NoProp 0x80) per arrow'
+  },
 
   /* ------------------------------------------------------------------ Sense */
   butt_plate: {
