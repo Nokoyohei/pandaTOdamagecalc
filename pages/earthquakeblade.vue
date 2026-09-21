@@ -40,9 +40,9 @@ import {
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSkills, debuffedMonster } =
   useSkillPage({ skillMode: 'dual' })
@@ -56,13 +56,7 @@ watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() => {
   return SkillPower.EarthquakeBlade(buffedAP.value, stats.value.soil, localBasePower.value)

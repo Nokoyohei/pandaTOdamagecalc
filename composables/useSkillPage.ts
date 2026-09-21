@@ -7,10 +7,10 @@ import {
   calcDABuffRatio,
   calcACBuffRatio,
   calcThrowBuffRatio,
-  calcDebuffedMonster,
   initStatus,
   initExtraStatus
 } from '~/utils/calc'
+import { calcDebuffedMonster } from '~/utils/debuffs'
 import type {
   Monster,
   BossMonster,
@@ -91,8 +91,12 @@ export function useSkillPage(options: { skillMode?: 'farming' | 'boss' | 'dual' 
       : monster.value.hp
   )
 
+  // デバフの量は術者（= 入力中のキャラ）の DA / MA で決まる
   const debuffedMonster = computed(() =>
-    calcDebuffedMonster(monster.value, debuffSkills.value)
+    calcDebuffedMonster(monster.value, debuffSkills.value, {
+      da: buffedDA.value,
+      ma: buffedMA.value
+    })
   )
 
   onBeforeMount(() => {

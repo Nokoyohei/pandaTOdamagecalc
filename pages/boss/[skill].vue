@@ -74,6 +74,7 @@ import SkillPower from '~/utils/skillPower'
 import { BloodTestamentBuff } from '~/utils/buffRatio'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 import { BOSS_SKILLS } from '~/utils/bossSkills'
+import { debuffDefsFor } from '~/utils/debuffs'
 import type { SkillStats, StatKey } from '~/utils/bossSkills'
 import type { Status, skillPanel } from '~/types'
 
@@ -119,16 +120,8 @@ const acBuffsModel = uses('ac') ? acBuffs : ref(undefined)
 const hvBuffsModel = uses('hv') ? hvBuffs : ref(undefined)
 const dlBuffsModel = isDarkMagic ? dlBuffs : ref(undefined)
 
-// Shield Breaker は物理、Raion's Space は火属性魔法にだけ意味がある
-const debuffSkillsDef = computed<skillPanel[] | undefined>(() => {
-  if (def.attackType === 'physical' && !def.ignoreDefense) {
-    return [{ value: 'ShieldBreaker', name: 'Shield Breaker', img: '/barrier_break.gif' }]
-  }
-  if (def.resist === 'fireR') {
-    return [{ value: 'RaionsSpace', name: "Raion's space", img: '/thunderarea.gif' }]
-  }
-  return undefined
-})
+// 物理・銃には Shield Breaker、属性には対応する Area デバフ
+const debuffSkillsDef = computed<skillPanel[] | undefined>(() => debuffDefsFor(def.attackType, def.resist))
 
 // --- スライダー値（テーブル列）とスキル固有パラメータ ---------------------------
 const tableDefault = computed(() =>

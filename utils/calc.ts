@@ -1,5 +1,5 @@
 import BuffRatio from '~/utils/buffRatio'
-import type { Monster, DebuffName, BossMonster, Status, Attributes } from '~/types'
+import type { Monster, Status, Attributes } from '~/types'
 import { ftol, f32, toInt32, F32_0_9, F32_0_75, F32_0_01 } from '~/utils/x87'
 
 export const initStatus = (): Status & Attributes => {
@@ -142,23 +142,6 @@ export const applyResistance = (damage: number, resistance: number) => {
 
 // 折り返し 1 回あたりのダメージ増分 = 2^32 * 0.01f
 export const EXTRA_DAMAGE_UNIT = Math.trunc(2 ** 32 * F32_0_01)
-
-// Calculate the debuffed monster's
-export const calcDebuffedMonster = (
-  monster: Monster | BossMonster,
-  debuff: DebuffName[]
-) => {
-  const debuffedMonster = { ...monster } as BossMonster
-  if (debuff.includes('RaionsSpace')) {
-    debuffedMonster.fireR = debuffedMonster.fireR > 150 ? 100 : 1
-  }
-  if (debuff.includes('ShieldBreaker')) {
-    debuffedMonster.physicalR = monster.physicalR - 80
-    debuffedMonster.gunR = monster.gunR - 80
-    debuffedMonster.dp = monster.dp * 0.72
-  }
-  return debuffedMonster
-}
 
 /*
   対象の実効防御値。rawDamage 側で float32 へ丸められるので、

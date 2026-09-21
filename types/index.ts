@@ -81,7 +81,13 @@ export type BlessingSkillName =
   | 'GnomeBlessing'
   | 'UndineBlessing'
   | 'SylphBlessing'
-export type DebuffName = 'ShieldBreaker' | 'RaionsSpace'
+export type DebuffName =
+  | 'ShieldBreaker'
+  | 'UndinesGarden'
+  | 'RaionsSpace'
+  | 'SalamandersTerritory'
+  | 'GnomesDomain'
+  | 'SylphsPlayground'
 
 export type skillPanel = {
   name: string

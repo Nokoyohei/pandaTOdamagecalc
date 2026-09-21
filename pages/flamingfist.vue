@@ -47,21 +47,15 @@ import {
   calcAPBuffRatio,
   calcMABuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
-import type { skillPanel } from '~/types'
 
 const { stats, extraStats, monster, monsterHP, apBuffs, maBuffs, debuffSkills, buffedAP, buffedMA, debuffedMonster } = useSkillPage({ skillMode: 'boss' })
 
 const localBasePower = ref(SKILL_POWER.FlamingFist)
 
-const debuffSkillsDef: skillPanel[] = [
-  {
-    value: 'RaionsSpace',
-    name: "Raion's space",
-    img: '/thunderarea.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('magic', 'fireR')
 
 const idealDamage = computed(() => {
   return magicAttackPower(

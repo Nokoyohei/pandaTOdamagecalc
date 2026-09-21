@@ -48,6 +48,7 @@ import {
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
@@ -55,13 +56,7 @@ const { stats, extraStats, monster, monsterHP, apBuffs, debuffSkills, buffedAP, 
 
 const localBasePower = ref(SKILL_POWER.TempestStrike)
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const maxIdealDamage = computed(() => {
   return SkillPower.TempestStrike(buffedAP.value, stats.value.wind, localBasePower.value)

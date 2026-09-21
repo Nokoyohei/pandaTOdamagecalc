@@ -5,6 +5,8 @@
       v-if="mode === 'boss'"
       :damage="damage"
       v-model:monster="monster"
+      :debuff-skills-def="debuffSkillsDef"
+      v-model:debuff="debuffSkills"
       :crit-damage="critDamage"
     />
     <FarmingMonster v-else :damage="damage" v-model:monster="monster" :crit-damage="critDamage" />
@@ -38,6 +40,7 @@ import {
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
@@ -46,13 +49,7 @@ const { mode, monster, stats, extraStats, apBuffs, buffedAP, monsterHP, debuffSk
 
 const localBasePower = ref(SKILL_POWER.TidalSlash)
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() => {
   return SkillPower.TidalSlash(buffedAP.value, stats.value.water, localBasePower.value)

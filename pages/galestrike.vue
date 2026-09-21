@@ -48,6 +48,7 @@ import {
   calcMonsterDef,
   calcAPBuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
@@ -62,13 +63,7 @@ watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const maxIdealDamage = computed(() => {
   return SkillPower.GaleStrike(buffedAP.value, stats.value.wind, localBasePower.value)

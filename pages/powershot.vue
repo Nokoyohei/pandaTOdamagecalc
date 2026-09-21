@@ -58,6 +58,7 @@ import {
   calcMonsterDef,
   calcACBuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, GODLY_SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER, SHARP_SENSE_MULTIPLIER, GODLY_SHARP_SENSE_MULTIPLIER } from '~/utils/critical'
 
@@ -78,13 +79,7 @@ const effectiveCritMultiplier = computed(() => {
   return CRIT_MULTIPLIER.gun
 })
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('gun', 'gunR')
 
 const idealDamage = computed(() =>
   SkillPower.PowerShot(buffedAC.value, stats.value.gunAP, localBasePower.value)
@@ -92,7 +87,7 @@ const idealDamage = computed(() =>
 
 const damage = computed(() => {
   return calcDamage(
-    calcMonsterDef(monster.value, 'gun'),
+    calcMonsterDef(debuffedMonster.value, 'gun'),
     debuffedMonster.value.gunR,
     idealDamage.value
   )
@@ -100,7 +95,7 @@ const damage = computed(() => {
 
 const critDamage = computed(() =>
   calcDamage(
-    calcMonsterDef(monster.value, 'gun'),
+    calcMonsterDef(debuffedMonster.value, 'gun'),
     debuffedMonster.value.gunR,
     idealDamage.value,
     1,
@@ -111,7 +106,7 @@ const critDamage = computed(() =>
 const needStats = computed(() => {
   return calcNeedStats(
     monsterHP.value,
-    calcMonsterDef(monster.value, 'gun'),
+    calcMonsterDef(debuffedMonster.value, 'gun'),
     debuffedMonster.value.gunR,
     SkillRatio.PowerShot(localBasePower.value),
     buffedAC.value * 20 + stats.value.gunAP,

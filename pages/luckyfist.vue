@@ -33,6 +33,7 @@ import {
   calcMonsterDef,
   calcLKBuffRatio
 } from '~/utils/calc'
+import { debuffDefsFor } from '~/utils/debuffs'
 import SkillPower, { SKILL_POWER, SkillRatio } from '~/utils/skillPower'
 import { CRIT_MULTIPLIER } from '~/utils/critical'
 
@@ -40,13 +41,7 @@ const { stats, extraStats, monster, monsterHP, lkBuffs, debuffSkills, buffedLK, 
 
 const localBasePower = ref(SKILL_POWER.LuckyFist)
 
-const debuffSkillsDef = [
-  {
-    value: 'ShieldBreaker',
-    name: 'Shield Breaker',
-    img: '/barrier_break.gif'
-  }
-]
+const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
 const idealDamage = computed(() =>
   SkillPower.LuckyFist(monster.value.hp, buffedLK.value, localBasePower.value)
