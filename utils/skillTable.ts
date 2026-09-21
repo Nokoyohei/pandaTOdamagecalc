@@ -145,7 +145,7 @@ export const BOSS_SKILL_TABLE = {
   /** 2214 Radiant Strike — ESAction_ShiningRay.AP (Lv11) */
   radiant_strike: 5300,
   /** 2301 Aqua Bomb — ESAction_WaterShower.AP (Lv11) */
-  aqua_bomb: 20000,
+  aqua_bomb: 90000,
   /** 2303 Dragon Storm — ESAction_FireDragon.AP (Lv11) */
   dragon_storm: 20000,
   /** 2502 Searing Light — ESAction_SkyRay.AP (Lv11) */
