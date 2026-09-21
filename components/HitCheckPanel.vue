@@ -26,21 +26,33 @@
           {{ hit.bonus === 1 ? 'No ApplyRatio on gun attacks' : `ApplyRatio ${hit.bonus} of this skill's table` }}
         </div>
       </v-tooltip>
+      <!-- ページ側に入力欄が無いステータスは、ここをクリックで開いて入力する -->
+      <v-btn
+        v-if="!hit.ownsStat"
+        variant="text"
+        size="x-small"
+        class="ml-1 text-caption"
+        :append-icon="open ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+        @click="open = !open"
+      >
+        {{ open ? 'hide' : `edit ${statLabel} / buffs` }}
+      </v-btn>
     </div>
 
-    <!-- ページ側に入力欄が無いステータスはここで入力する（バフも一緒に） -->
-    <template v-if="!hit.ownsStat">
-      <StatsTextField
-        v-model:input-stats="ctx.stats.value[stat]"
-        v-model:extra-stats="ctx.extraStats.value[stat]"
-        :need-stats="delta"
-        :buffed-stats="hit.need.now"
-        :label="statLabel"
-        class="mt-2"
-      />
-      <LKBuff v-if="stat === 'lk'" v-model:buff="ctx.lkBuffs.value" />
-      <ACBuff v-else v-model:buff="ctx.acBuffs.value" />
-    </template>
+    <v-expand-transition>
+      <div v-if="!hit.ownsStat && open">
+        <StatsTextField
+          v-model:input-stats="ctx.stats.value[stat]"
+          v-model:extra-stats="ctx.extraStats.value[stat]"
+          :need-stats="delta"
+          :buffed-stats="hit.need.now"
+          :label="statLabel"
+          class="mt-2"
+        />
+        <LKBuff v-if="stat === 'lk'" v-model:buff="ctx.lkBuffs.value" />
+        <ACBuff v-else v-model:buff="ctx.acBuffs.value" />
+      </div>
+    </v-expand-transition>
   </div>
 </template>
 
@@ -54,6 +66,9 @@ const hit = computed(() => props.ctx.hitCheck.value)
 const stat = computed(() => hit.value?.need.stat ?? 'lk')
 const statLabel = computed(() => stat.value.toUpperCase())
 const sure = computed(() => (hit.value?.hitRate ?? 0) >= 100)
+
+// 入力欄は既定で閉じておく
+const open = ref(false)
 
 // need 欄に出す「あといくら」（バフ前の入力値ベース）
 const delta = computed(() => {
