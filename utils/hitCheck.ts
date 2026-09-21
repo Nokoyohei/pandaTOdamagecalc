@@ -17,7 +17,7 @@ import type { InjectionKey, Ref } from 'vue'
  *      hit = clamp(ftol((AC − HV_tgt × 2.5 + 40) × 1.2 × bonus), 20, 100)  → rand() % 100 < hit
  *  魔法スキル FUN_0059BEB0
  *      hit = clamp(ftol((LK − LK_tgt + 90) × 1.2 × bonus), 20, 100)
- *      さらに FUN_0059D370 の回避 min(LK_tgt × 0.5, 50)% が別に入る（攻撃側のステータスでは消せない）
+ *      （FUN_0059D370 の回避 min(LK_tgt × 0.5, 50)% は攻撃側では消せないので表示しない）
  *  射撃 FUN_0059D500
  *      (LK − LK_tgt + 80) < rand() % 100 で外れ。bonus は掛からない
  *
@@ -35,8 +35,6 @@ export const magicHitRate = (lk: number, targetLk: number, bonus: number) =>
 
 // rand() % 100 は 0〜99。X = LK − LK_tgt + 80 に対して r ≤ X で命中なので X + 1 通り
 export const gunHitRate = (lk: number, targetLk: number) => clamp(lk - targetLk + 81, 0, 100)
-
-export const magicDodgeRate = (targetLk: number) => Math.min(targetLk * 0.5, 50)
 
 /** rate(stat) が 100 になる最小の整数ステータス */
 const minStatFor = (rate: (stat: number) => number, estimate: number) => {
@@ -62,8 +60,6 @@ export interface HitCheck {
   hitRate: number
   /** 確定ヒットに必要なステータス（バフ前の入力値ベース） */
   need: { stat: 'AC' | 'LK'; value: number; now: number }
-  /** 魔法のみ: 対象の LK による回避率 (%) */
-  dodge?: number
 }
 
 export const HIT_CHECK_KEY: InjectionKey<Ref<HitCheck | null>> = Symbol('hitCheck')
@@ -163,7 +159,6 @@ export function calcHitCheck(
     attackType,
     bonus,
     hitRate: magicHitRate(attacker.lk, target.lk, bonus),
-    need: { stat: 'LK', value: Math.ceil(needLkForSureHit(target.lk, bonus) / attacker.lkBuffRatio), now: attacker.lk },
-    dodge: magicDodgeRate(target.lk)
+    need: { stat: 'LK', value: Math.ceil(needLkForSureHit(target.lk, bonus) / attacker.lkBuffRatio), now: attacker.lk }
   }
 }

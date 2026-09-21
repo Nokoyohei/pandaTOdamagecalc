@@ -11,9 +11,6 @@
             · sure hit needs {{ hit.need.stat }}
             <span class="font-weight-bold text-amber">{{ hit.need.value.toLocaleString() }}</span>
           </span>
-          <span v-if="hit.dodge" style="opacity: 0.7">
-            · target dodge {{ hit.dodge }}% (its LK; cannot be countered)
-          </span>
         </span>
       </template>
       <div v-if="hit.attackType === 'physical'">
@@ -23,7 +20,7 @@
         miss when (LK − target LK + 80) &lt; rand() % 100 — sure hit at target LK + 19
       </div>
       <div v-else>
-        hit% = clamp(⌊(LK − target LK + 90) × 1.2 × {{ hit.bonus }}⌋, 20, 100); dodge = min(target LK × 0.5, 50)%
+        hit% = clamp(⌊(LK − target LK + 90) × 1.2 × {{ hit.bonus }}⌋, 20, 100)
       </div>
       <div style="opacity: 0.7">{{ hit.bonus === 1 ? 'No ApplyRatio on gun attacks' : `ApplyRatio ${hit.bonus} of this skill's table` }} · buffed {{ hit.need.stat }} now {{ hit.need.now.toLocaleString() }} · needed value is before buffs</div>
     </v-tooltip>
