@@ -1,8 +1,6 @@
 import BuffRatio from '~/utils/buffRatio'
 import type { Monster, DebuffName, BossMonster, Status, Attributes } from '~/types'
-import { ftol, f32, toInt32, INT32_MAX, F32_0_9, F32_0_75, F32_0_01 } from '~/utils/x87'
-
-export { ftol, f32, toInt32, INT32_MAX, F32_0_9, F32_0_75, F32_0_01 }
+import { ftol, f32, toInt32, F32_0_9, F32_0_75, F32_0_01 } from '~/utils/x87'
 
 export const initStatus = (): Status & Attributes => {
   return {

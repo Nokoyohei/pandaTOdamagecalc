@@ -59,6 +59,8 @@
 </template>
 
 <script setup>
+import { BOSS_SKILLS, BOSS_SKILL_MENU } from '~/utils/bossSkills'
+
 const rail = ref(true)
 const farmingPanel = ref([])
 const title = 'PandaTO Damage calculator'
@@ -174,6 +176,24 @@ const bossMenu = [
     ]
   }
 ]
+
+// utils/bossSkills.ts のスキルは boss メニューにだけ出す（farming には出さない）
+for (const group of BOSS_SKILL_MENU) {
+  const menuGroup = bossMenu.find((g) => g.title === group.title)
+  if (!menuGroup) continue
+  for (const key of group.keys) {
+    const skill = BOSS_SKILLS[key]
+    menuGroup.skills.push({ imgsrc: skill.icon, title: skill.title.toUpperCase(), to: `/boss/${key}` })
+    if (skill.table.godly != null) {
+      menuGroup.skills.push({
+        imgsrc: skill.icon,
+        title: `GODLY ${skill.title.toUpperCase()}`,
+        to: `/boss/${key}?godly=true`,
+        godly: true
+      })
+    }
+  }
+}
 
 const currentHeader = ref({ img: '/mac.gif', title: 'Farming' })
 const otherHeader = ref({ img: '/hecate.gif', title: 'Boss' })
