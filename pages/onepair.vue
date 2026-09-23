@@ -14,7 +14,7 @@
         <v-switch v-model="buff" value="ladyluck">
           <template #label>
             <img src="/ladyluck.gif" />
-            LadyLuck
+            Lady Luck ×{{ ladyLuckMultiplier.toFixed(2) }} ({{ SKILL_POWER.LadyLuck }} cards)
           </template>
         </v-switch>
       </v-col>
@@ -68,6 +68,9 @@ const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 const isLadyLuck = computed(() => {
   return buff.value?.includes('ladyluck')
 })
+
+// power × (1 + cards / 15)。cards は ESAction_LuckyGoddess の MaxCard（生成テーブル）
+const ladyLuckMultiplier = computed(() => 1 + SkillRatio.LadyLuck())
 
 const idealDamage = computed(() =>
   SkillPower.OnePair(buffedAP.value, buffedHV.value, isLadyLuck.value, localBasePower.value)
