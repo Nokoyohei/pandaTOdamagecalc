@@ -11,7 +11,7 @@
     <v-row>
       <v-col cols="12" md="5" order-md="1">
         <BuffPanel v-model:ap-buffs="apBuffs" v-model:hv-buffs="hvBuffs" />
-        <v-switch v-model="buff" value="ladyluck">
+        <v-switch v-model="isLadyLuck">
           <template #label>
             <img src="/ladyluck.gif" />
             Lady Luck ×{{ ladyLuckMultiplier.toFixed(2) }} ({{ SKILL_POWER.LadyLuck }} cards)
@@ -61,13 +61,11 @@ const localBasePower = ref<number>(activeDefaultPower.value)
 watch(isGodly, () => {
   localBasePower.value = activeDefaultPower.value
 })
-const buff = ref<'ladyluck' | null>(null)
 
 const debuffSkillsDef = debuffDefsFor('physical', 'physicalR')
 
-const isLadyLuck = computed(() => {
-  return buff.value?.includes('ladyluck')
-})
+// v-switch を value 付きで使うと OFF 時に false が入り `false.includes` で落ちていたので、素の boolean にする
+const isLadyLuck = ref(false)
 
 // power × (1 + cards / 15)。cards は ESAction_LuckyGoddess の MaxCard（生成テーブル）
 const ladyLuckMultiplier = computed(() => 1 + SkillRatio.LadyLuck())
