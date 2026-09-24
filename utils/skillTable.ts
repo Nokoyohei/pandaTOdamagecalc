@@ -47,7 +47,7 @@ export const SKILL_TABLE = {
   /** 4204 One Pair — ESAction_OnePair.Ratio (Lv11, ×100) */
   OnePair: 3000,
   /** 4210 Lady Luck — ESAction_LuckyGoddess.MaxCard (Lv11) */
-  LadyLuck: 10,
+  LadyLuck: 6,
   /** 1210 Earthquake Blade — ESAction_EarthquakeSword.Ratio (Lv11, ×100) */
   EarthquakeBlade: 440,
   /** 1502 Sonic Slash — ESAction_PowerSeaBrandish.Ratio (Lv11, ×100) */
@@ -105,7 +105,7 @@ export const GODLY_SKILL_TABLE = {
   /** 13501 Godly Berserk — ESAction_GodlyReckless.Ratio (Lv11, ×100) */
   Berserk: 1000,
   /** 14204 Godly One Pair — ESAction_GodlyOnePair.Ratio (Lv11, ×100) */
-  OnePair: 12000,
+  OnePair: 24000,
   /** 14302 Godly 2 Hit Combo — ESAction_GodlyTwoChainAttack.Ratio (Lv11, ×100) */
   HitCombo: 8000,
   /** 14501 Godly Full House — ESAction_GodlyFullHouse.Ratio (Lv11, ×100) */
