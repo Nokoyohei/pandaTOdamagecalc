@@ -75,9 +75,9 @@ export const SKILL_TABLE = {
   /** 3501 Berserk — ESAction_Reckless.Ratio (Lv11, ×100) */
   Berserk: 350,
   /** 3202 Power Shot — ESAction_PowerShot.Ratio (Lv11, ×100) */
-  PowerShot: 1500,
+  PowerShot: 2100,
   /** 3206 Double Shot — ESAction_DoubleShot.Ratio (Lv11, ×100) */
-  DoubleShot: 1000,
+  DoubleShot: 1300,
 } as const
 
 /** utils/skillPower.ts の GODLY_SKILL_POWER */
@@ -97,9 +97,9 @@ export const GODLY_SKILL_TABLE = {
   /** 13110 Godly Chain of Knives — ESAction_GodlyChainThrow.Ratio (Lv11, ×100) */
   ChainOfKnives: 12000,
   /** 13202 Godly Power Shot — ESAction_GodlyPowerShot.Ratio (Lv11, ×100) */
-  PowerShot: 4500,
+  PowerShot: 5500,
   /** 13206 Godly Double Shot — ESAction_GodlyDoubleShot.Ratio (Lv11, ×100) */
-  DoubleShot: 3000,
+  DoubleShot: 3900,
   /** 13306 Godly Poison Assult — ESAction_GodlyPoisonAssault.Ratio (Lv11, ×100) */
   PoisonAssault: 7000,
   /** 13501 Godly Berserk — ESAction_GodlyReckless.Ratio (Lv11, ×100) */
@@ -107,7 +107,7 @@ export const GODLY_SKILL_TABLE = {
   /** 14204 Godly One Pair — ESAction_GodlyOnePair.Ratio (Lv11, ×100) */
   OnePair: 24000,
   /** 14302 Godly 2 Hit Combo — ESAction_GodlyTwoChainAttack.Ratio (Lv11, ×100) */
-  HitCombo: 8000,
+  HitCombo: 7000,
   /** 14501 Godly Full House — ESAction_GodlyFullHouse.Ratio (Lv11, ×100) */
   FullHouse: 2000,
   /** ESAction_GodlyWideThrow — ESAction_GodlyWideThrow.Ratio (Lv11, ×100) */
@@ -129,7 +129,7 @@ export const BOSS_SKILL_TABLE = {
   /** 1304 Mega Flash Cut — ESAction_PowerFlashAttack.Ratio (Lv11, ×100) */
   mega_flash_cut: 2000,
   /** 1108 Tetra Punch — ESAction_ComboHit.Ratio (Lv11, ×100) */
-  tetra_punch: 1200,
+  tetra_punch: 800,
   /** 1501 Shadow — ESAction_OnesOtherSelf.Ratio (Lv11, ×100) */
   shadow: 1000,
   /** 1501 Shadow — ESAction_OnesOtherSelf.Count (Lv11) */
@@ -215,9 +215,9 @@ export const GODLY_BOSS_SKILL_TABLE = {
   /** 11108 Godly Tetra Punch — ESAction_GodlyComboHit.Ratio (Lv11, ×100) */
   tetra_punch: 6000,
   /** 11501 Godly Shadow — ESAction_GodlyOnesOtherSelf.Ratio (Lv11, ×100) */
-  shadow: 2000,
+  shadow: 3000,
   /** 11501 Godly Shadow — ESAction_GodlyOnesOtherSelf.Count (Lv11) */
-  'shadow.count': 20,
+  'shadow.count': 30,
   /** 14207 Godly Wild Nail — ESAction_GodlyWildAttack.Ratio (Lv11, ×100) */
   wild_nail: 12000,
 } as const
@@ -237,9 +237,9 @@ export const MISC_SKILL_TABLE = {
   /** 4001 Power Blow — SkillParam2.MaxSKLV */
   hitComboPassiveLevel: 11,
   /** 2219 Blood Testament — ESAction_BloodyOath.MARatio (Lv11) */
-  bloodTestamentRatio: 0.5,
+  bloodTestamentRatio: 0.75,
   /** 12219 Godly Blood Testament — ESAction_GodlyBloodyOath.MARatio (Lv11) */
-  godlyBloodTestamentRatio: 1.5,
+  godlyBloodTestamentRatio: 2.5,
 } as const
 
 /** 命中判定の bonus（ApplyRatio）。キーは SKILL_TABLE と同じ */
