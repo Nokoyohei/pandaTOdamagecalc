@@ -23,7 +23,7 @@ export const SKILL_TABLE = {
   /** 2305 Raging Storm — ESAction_MustangWind.AP (Lv11) */
   RagingStorm: 2700,
   /** 2105 Electro Attack — ESAction_ThunderBolt.AP (Lv11) */
-  ElectroAttack: 2510,
+  ElectroAttack: 3500,
   /** 2302 Staff of Thunder — ESAction_ElectricSpear.AP (Lv11) */
   StaffOfThunder: 35000,
   /** 2123 Tesla Field — ESAction_ElectricField.AP (Lv11) */
